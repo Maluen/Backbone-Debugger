@@ -14,10 +14,32 @@ Features
 
 Install from source
 --------
-* [Download the project tarball](https://github.com/Maluen/Backbone-Debugger/archive/master.zip).
 * Open Chrome.
+* [Download the project tarball](https://github.com/Maluen/Backbone-Debugger/archive/master.zip).
 * Click on Tools -> Settings -> Extensions
 * Select the "Enable developer mode" checkbox in the upper right of the window.
 * Click on "Load unpacked extension"
 * Select the downloaded src folder.
 * Enjoy!
+
+Screenshots
+--------
+**Views**:
+
+![Views](http://img827.imageshack.us/img827/7707/viewsf.jpg "Views")
+
+**Models**:
+
+![Models](http://img442.imageshack.us/img442/9179/models.jpg "Models")
+
+**Collections**:
+
+![Collections](http://img4.imageshack.us/img4/8056/collectionsq.jpg "Collections")
+
+**Routers**:
+
+![Routers](http://img23.imageshack.us/img23/7677/routerse.jpg "Routers")
+
+**Elements sidebar extension**:
+
+![Elements sidebar extension](http://img842.imageshack.us/img842/1971/elementssidebar.jpg "Elements sidebar extension")
