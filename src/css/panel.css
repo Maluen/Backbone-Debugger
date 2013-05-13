@@ -1,0 +1,89 @@
+html, body {
+    height: 100%;
+}
+
+.fill { 
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    background-color: #F5F5F5;
+    padding: 0;
+}
+
+.btn-link {
+    padding: 0;
+}
+
+.container-fluid {
+    padding: 0;
+}
+
+#debugDisabled {
+    padding: 15px;
+}
+
+#waiting {
+    padding: 15px;
+}
+
+.nav-tabs {
+    height: 100%;
+    margin-right: 0 !important;
+}
+
+/* Turns dropdown into dropright for left-aligned nav-tabs */
+.tabs-left .nav-tabs .dropdown-menu {
+    position: absolute;
+    left: 99px;
+    top: -2px;
+}
+.caret-right {
+    -webkit-transform: rotate(270deg);
+}
+
+.tab-pane {
+    height: 100%;
+    overflow-y: auto;
+    padding: 0 15px;
+}
+
+.appComponentList>li {
+    background-color: #EBEBEB;
+}
+
+.appComponentToggle {
+    text-align: left;
+}
+
+@-webkit-keyframes highlight {
+    0%  { background-color: #57A0FF; 
+          color: black; }
+}
+.highlight {
+    -webkit-animation: highlight 2s;
+}
+
+.appComponent {
+    background-color: white;
+    border-style: solid;
+    border-color: rgb(221, 221, 221);
+    border-width: 1px;
+    border-collapse: collapse;
+}
+
+.appComponent ul {
+    padding-top: 5px;
+}
+
+.appComponentActions {
+    max-height: 185px !important;
+    overflow-x: hidden;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+.appComponentActions table {
+    margin-bottom: 0;
+}

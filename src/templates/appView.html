@@ -1,0 +1,55 @@
+<a class="appComponentToggle btn btn-link"
+   data-toggle="collapse" 
+   data-target="#view{{component_index}}">
+   View {{component_index}}
+</a>
+
+<div id="view{{component_index}}" class="appComponent collapse {{#if isOpen}}in{{/if}}">
+	
+	<ul>
+		<!--
+	    <li><b>Type</b>: <a class="printType btn btn-link" title="Print in console">[object Object]</a></li>
+	    -->
+	    <li>
+	    	<b>this</b>: 
+	    	<a class="printAppComponent btn btn-link" title="Print in console">[object Object]</a>
+	    </li>
+
+	    <li><b>Status</b>: {{component_status}}</li>
+
+	    <li>
+	    	<b>Element</b>:
+	    	<a class="printElement btn btn-link" title="Print in console">HTML Element</a>
+	    </li>
+
+	    {{#unlessNull component_modelIndex}}
+	    <li>
+	    	<b>Model</b>: 
+	    	<a class="inspectComponent btn btn-link" 
+	    	   data-component-category="Model"
+	    	   data-component-index="{{component_modelIndex}}"
+	    	   title="Inspect">
+	    	   Model {{component_modelIndex}}
+	    	</a>
+	    </li>
+	    {{/unlessNull}}
+
+	    {{#unlessNull component_collectionIndex}}
+	    <li>
+	    	<b>Collection</b>: 
+	    	<a class="inspectComponent btn btn-link"
+	    	   data-component-category="Collection"
+	    	   data-component-index="{{component_collectionIndex}}"
+	    	   title="Inspect">
+	    	   Collection {{component_collectionIndex}}
+	    	</a>
+	    </li>
+	    {{/unlessNull}}
+
+	    <li>
+	    	<p><b>Actions:</b></p>
+	    	<div class="appComponentActions">
+	    	</div>
+	    </li>
+	</ul>
+</div>

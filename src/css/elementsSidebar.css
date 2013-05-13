@@ -1,0 +1,11 @@
+body {
+	font-size: 13px;
+}
+
+.title {
+	color: #c80101;
+}
+
+#backboneViewContainer {
+	display: none;
+}

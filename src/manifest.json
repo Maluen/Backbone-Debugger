@@ -1,0 +1,25 @@
+{
+  "name": "Backbone Debugger",
+  "version": "0.1",
+  "description": "Debugger for JavaScript Applications made with the Backbone framework.",
+  "minimum_chrome_version": "20.0",
+  "manifest_version": 2,
+  
+  "devtools_page": "devtools.html",
+  
+  "background": {
+    "scripts": ["js/background.js"],
+    "persistent": false
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*", "file://*/*"],
+      "js": ["js/contentscript.js"],
+      "run_at": "document_start"
+    }
+  ],
+
+  // fix the handlebars template unsafe eval error
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+}
