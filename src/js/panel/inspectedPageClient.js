@@ -49,7 +49,10 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
 
         // Ricarica la pagina iniettando gli script specificati nell'array, i quali
         // verranno eseguiti nell'ordine in cui sono specificati.
-        this.reloadInjecting = function(scripts) {
+        // injectionData è un hash opzionale a cui gli script avranno accesso tramite una variabile omonima,
+        // deve essere JSON-compatibile, tipicamente è usata per passare dati non direttamente accessibili
+        // agli script iniettati, come ad esempio l'url dell'estensione.
+        this.reloadInjecting = function(scripts, injectionData) {
             var scriptsContents = []; // array con il contenuto dei vari script
             var scriptsLoaded = 0;
 
@@ -57,14 +60,23 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
                 // scarica i vari script in modo asincrono (l'ordine di completamento dei download è casuale)
                 utils.httpRequest("get", scripts[i], function(data) {
                     // script numero i caricato
-                    scriptsContents[i] = data;
+
+                    // eseguendo lo script tramite eval invece che direttamente, è possibile specificare
+                    // il suo url tramite il commento speciale sourceURL, 
+                    // in modo da poter debuggare e distinguere i vari file iniettati.
+                    scriptsContents[i] = "eval("+JSON.stringify("//@ sourceURL="+scripts[i]+"\n"+data)+");";
 
                     scriptsLoaded++;
                     if (scriptsLoaded == scripts.length) {
                         // script caricati
 
                         // unisce i vari script separandoli con un ritorno a capo
-                        var toInject = scriptsContents.join('\n');
+                        var toInject = scriptsContents.join('\n')+"\n"; // last "\n" prevents EOF error when injecting a single file with no newline at the end
+
+                        // inserisce all'inizio gli injectionData
+                        injectionData = (injectionData !== undefined) ? injectionData : {};
+                        var injectionDataCode = "var injectionData = "+JSON.stringify(injectionData)+";\n";
+                        toInject = injectionDataCode + toInject;
 
                         // Ricarica la pagina con gli script iniettati in cima
                         chrome.devtools.inspectedWindow.reload({
