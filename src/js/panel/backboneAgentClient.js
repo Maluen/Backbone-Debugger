@@ -22,11 +22,18 @@ define(["backbone", "underscore", "inspectedPageClient"], function(Backbone, _, 
 
         // Avvia l'agent riavviando la pagina ispezionata e iniettandolo all'inizio di questa.
         this.activate = function() {
+            /*
             inspectedPageClient.reloadInjecting([
                 chrome.extension.getURL("js/lib/watch.js"),
                 chrome.extension.getURL("js/lib/Object.observe.poly.js"),
                 chrome.extension.getURL("js/backboneAgent.js")
             ]);
+            */
+            inspectedPageClient.reloadInjecting([
+                chrome.extension.getURL("js/backboneAgent/loader.js")
+            ], {
+                "extensionUrl": chrome.extension.getURL("")
+            });
         }
 
         // Esegue la funzione sull'inspected page utilizzando l'agent come context.

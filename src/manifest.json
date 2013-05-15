@@ -20,6 +20,12 @@
     }
   ],
 
+  // Needed by backboneAgent loader:
+  "web_accessible_resources": [
+    "js/lib/*",
+    "js/backboneAgent/*"
+  ],
+
   // fix the handlebars template unsafe eval error
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }

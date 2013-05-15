@@ -226,6 +226,25 @@ window.__backboneAgent = new (function() {
         }
     }
 
+    // @private
+    var isArray = function(object) {
+        return Object.prototype.toString.call(object) == '[object Array]';
+    }
+
+    // @private
+    // Restituisce un clone dell'oggetto passato.
+    // N.B: le sottoproprietà non saranno clonate (shallow clone).
+    var clone = function(object) {
+        if (typeof object != "object") return object;
+        if (isArray(object)) return object.slice();
+
+        var newObject = {};
+        for (var prop in object) {
+          newObject[prop] = object[prop];
+        }
+        return newObject;
+    }
+
     //// Metodi per impostare proprietà "nascoste" all'interno degli oggetti 
     //// (tipicamente usati per memorizzare l'AppComponentInfo di un dato componente dell'app
     ////  o i dati riguardanti l'initialize patchata nei componenti backbone)
@@ -487,18 +506,19 @@ window.__backboneAgent = new (function() {
                     // argomenti, non rendendo possibile la modifica dell'input, 
                     // per cui in questo caso anticipiamo il comportamento e usiamo this.events
                     // come input.
-                    events = _.result(this, 'events'); // this.events può essere anche una funzione che restituisce l'hash
+                    // (this.events può essere anche una funzione che restituisce l'hash)
+                    events = (typeof this.events == "function") ? this.events() : this.events;
                 }
 
                 // bisogna modificare al volo le callback in events
                 // per poter tracciare quando vengono chiamate
-                events = _.clone(events); // evita di modificare l'oggetto originale
+                events = clone(events); // evita di modificare l'oggetto originale
                 for (var eventType in events) {
                     if (events.hasOwnProperty(eventType)) {
                         // la callback può essere direttamente una funzione o il nome di una
                         // funzione nella view
                         var callback = events[eventType];
-                        if (!_.isFunction(callback)) {
+                        if (typeof callback != "function") {
                             callback = this[callback];
                         }
                         if (!callback) {
