@@ -15,11 +15,11 @@ Features
 Install from source
 --------
 Using Google Chrome:
-* [Download the project tarball](https://github.com/Maluen/Backbone-Debugger/archive/master.zip).
+* [Download the project tarball](https://github.com/Maluen/Backbone-Debugger/archive/master.zip) and extract it somewhere.
 * Click on Tools -> Settings -> Extensions
-* Select the "Enable developer mode" checkbox in the upper right of the window.
-* Click on "Load unpacked extension"
-* Select the downloaded src folder.
+* Select "Enable developer mode" in the upper right of the window.
+* Click on "Load unpacked extension".
+* Select the extracted folder.
 * Enjoy!
 
 Known Limitations
@@ -31,7 +31,7 @@ However, constant efforts are taken in this direction to address the most possib
 Development status
 --------
 **Version**: 0.1  
-**Phase**: testing
+**Main activity**: stabilizing
 
 Screenshots
 --------
