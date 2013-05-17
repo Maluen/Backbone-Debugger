@@ -23,7 +23,7 @@ function(Backbone, _, $, AppComponentView, Handlebars, template) {
 			// mantiene aperta la lista degli attributi se lo era
 			var isAttributesOpen = false;
 			var appModelAttributesEl = this.$(".attributes");
-			if (appModelAttributesEl) { // la vista è già stata renderizzata precedentemente
+			if (appModelAttributesEl.length > 0) { // la vista è già stata renderizzata precedentemente
 				isAttributesOpen = appModelAttributesEl.hasClass("in");
 			}
 			templateData["isAttributesOpen"] = isAttributesOpen;

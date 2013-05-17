@@ -49,7 +49,7 @@ function(Backbone, _, $, AppComponentActionsView) {
 			// mantiene aperta la vista se lo era
 			var isOpen = false;
 			var appComponentEl = this.$(".appComponent");
-			if (appComponentEl) { // la vista è già stata renderizzata precedentemente
+			if (appComponentEl.length > 0) { // la vista è già stata renderizzata precedentemente
 				isOpen = appComponentEl.hasClass("in");
 			}
 			templateData["isOpen"] = isOpen;
