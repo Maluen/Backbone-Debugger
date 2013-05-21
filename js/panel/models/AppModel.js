@@ -28,7 +28,7 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                 for (var attributeName in realAttributes) {
                     if (realAttributes.hasOwnProperty(attributeName)) {
                         var attributeValue = realAttributes[attributeName];
-                        if (typeof attributeValue == "object") {
+                        if (typeof attributeValue == "object" && attributeValue !== null) {
                             // placeholder
                             if (Object.prototype.toString.call(attributeValue) === '[object Array]') {
                                 attributeValue = [];

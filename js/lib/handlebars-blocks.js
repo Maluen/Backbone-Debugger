@@ -7,7 +7,7 @@ Handlebars.registerHelper('unlessNull', function(conditionals, options) {
 });
 
 Handlebars.registerHelper('unlessIsObject', function(conditionals, options) {
-	if (typeof conditionals != "object") {
+	if (typeof conditionals != "object" || conditionals === null) {
 		return options.fn(this);
 	} else {
 		return options.inverse(this);
