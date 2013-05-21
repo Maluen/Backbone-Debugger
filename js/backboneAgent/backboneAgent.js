@@ -2,12 +2,138 @@
 
 window.__backboneAgent = new (function() {
 
+    //// METODI DI UTILITÀ ////
+
     // Imposta il this nella funzione func pari all'oggetto scope.
     var bind = function(func, scope) {
         return function() {
             return func.apply(scope, arguments);
         }
     }
+
+    // @private
+    // Nota: null non è considerato un oggetto.
+    var isObject = function(target) {
+        return typeof target == "object" && target !== null;
+    }
+
+    // @private
+    var isArray = function(object) {
+        return Object.prototype.toString.call(object) == '[object Array]';
+    }
+
+    // @private
+    // Restituisce un clone dell'oggetto passato.
+    // N.B: le sottoproprietà non saranno clonate (shallow clone).
+    var clone = function(object) {
+        if (!isObject(object)) return object;
+        if (isArray(object)) return object.slice();
+
+        var newObject = {};
+        for (var prop in object) {
+          newObject[prop] = object[prop];
+        }
+        return newObject;
+    }
+
+    // @private
+    var watchOnce = function(object, property, callback) {
+        watch(object, property, function onceHandler(prop, action, newvalue, oldvalue) {
+            // facendo l'unwatch prima di chiamare la callback (invece di farlo dopo),
+            // è possibile in quest'ultima impostare la proprietà property 
+            // senza incorrere in un loop infinito.
+            unwatch(object, property, onceHandler);
+
+            callback(prop, action, newvalue, oldvalue);     
+        });
+    }
+
+    // @private
+    // Esegue la callback ogni volta che viene settata la proprietà property sull'oggetto object
+    var onSetted = function(object, property, callback) {
+        watch(object, property, function(prop, action, difference, oldvalue) {
+            if (action == "set") { callback(); }
+        }, 0);
+    }
+
+    // @private
+    // Come la onSetted, ma la callback viene chiamata solo LA PRIMA VOLTA che la proprietà è settata.
+    var onceSetted = function(object, property, callback) {
+        watchOnce(object, property, function(prop, action, difference, oldvalue) {
+            if (action == "set") { callback(); }
+        }, 0);
+    }
+
+    // @private
+    // Utilizza le librerie watch.js e Object.observe.poly.js per monitorare i set
+    // della proprietà property di object e delle sue sottoproprietà, comprese quelle che
+    // non sono presenti all'avvio del watching in quanto aggiunte successivamente.
+    // Il livello di profondità del watching è specificato da recursionLevel (come in watch.js):
+    // undefined => ricorsione completa, 0 => no ricorsione (solo il livello 0), n>0 => dal livello 0 al livello n)
+    var onSettedDeep = function(object, property, onChange, recursionLevel) {
+
+        // funzione per monitorare le sottoproprietà, esistenti e aggiunte successivamente
+        var handleSubProperties = function(parentObject) {
+            if (recursionLevel !== 0 && isObject(parentObject)) {
+                var subRecursionLevel = (recursionLevel===undefined)? recursionLevel : recursionLevel-1;
+
+                // monitora le sottoproprietà esistenti
+                for (var subProperty in parentObject) {
+                    if (parentObject.hasOwnProperty(subProperty)) {
+                        onSettedDeep(parentObject, subProperty, onChange, subRecursionLevel);
+                    }
+                }
+
+                // monitora le sottoproprietà aggiunte successivamente
+                Object.observe(object[property], function(updates) {
+                    for (var i=0,l=updates.length; i<l; i++) {
+                        var update = updates[i];
+                        var subProperty = update.name;
+
+                        if (update.type == "new") { // nuova sottoproprietà
+                            onSettedDeep(parentObject, subProperty, onChange, subRecursionLevel);
+
+                            onChange();
+                        }
+                    } 
+                });
+            }
+        }
+
+        // monitora i set della property
+        onSetted(object, property, function() {
+            // monitora i set per le sottoproprietà del nuovo (eventuale) oggetto settato
+            handleSubProperties(object[property]);
+            
+            onChange(); 
+        });
+
+        // monitora i set delle sottoproprietà
+        handleSubProperties(object[property]);
+    }
+
+    // @private
+    // Sostituisce la funzione functionName di object con quella restituita dalla funzione patcher.
+    // La funzione patcher viene chiamata con la funzione originale come argomento.
+    var patchFunction = function(object, functionName, patcher) {
+        var originalFunction = object[functionName];
+        object[functionName] = patcher(originalFunction);
+    }
+
+    // @private
+    // Come patchFunction, ma aspetta che il metodo sia settato se questo è undefined al momento
+    // della chiamata.
+    var patchFunctionLater = function(object, functionName, patcher) {
+        if (object[functionName] === undefined) {
+            onceSetted(object, functionName, function() {
+                patchFunction(object, functionName, patcher);
+            });
+        } else {
+            patchFunction(object, functionName, patcher);
+        }
+    }
+
+    ////
 
     // @private
     // Azione di un componente dell'app.
@@ -126,124 +252,6 @@ window.__backboneAgent = new (function() {
         }
         return candidateViewInfo;
     }, this);
-    
-    //// PARTE COMPLETAMENTE PRIVATA ////
-
-    // @private
-	var watchOnce = function(object, property, callback) {
-		watch(object, property, function onceHandler(prop, action, newvalue, oldvalue) {
-			// facendo l'unwatch prima di chiamare la callback (invece di farlo dopo),
-			// è possibile in quest'ultima impostare la proprietà property 
-			// senza incorrere in un loop infinito.
-			unwatch(object, property, onceHandler);
-
-			callback(prop, action, newvalue, oldvalue);		
-		});
-	}
-
-    // @private
-    // Esegue la callback ogni volta che viene settata la proprietà property sull'oggetto object
-    var onSetted = function(object, property, callback) {
-		watch(object, property, function(prop, action, difference, oldvalue) {
-			if (action == "set") { callback(); }
-		}, 0);
-    }
-
-    // @private
-    // Come la onSetted, ma la callback viene chiamata solo LA PRIMA VOLTA che la proprietà è settata.
-    var onceSetted = function(object, property, callback) {
-		watchOnce(object, property, function(prop, action, difference, oldvalue) {
-			if (action == "set") { callback(); }
-		}, 0);
-    }
-
-    // @private
-    // Utilizza le librerie watch.js e Object.observe.poly.js per monitorare i set
-    // della proprietà property di object e delle sue sottoproprietà, comprese quelle che
-    // non sono presenti all'avvio del watching in quanto aggiunte successivamente.
-    // Il livello di profondità del watching è specificato da recursionLevel (come in watch.js):
-    // undefined => ricorsione completa, 0 => no ricorsione (solo il livello 0), n>0 => dal livello 0 al livello n)
-    var onSettedDeep = function(object, property, onChange, recursionLevel) {
-
-        // funzione per monitorare le sottoproprietà, esistenti e aggiunte successivamente
-        var handleSubProperties = function(parentObject) {
-            if (recursionLevel !== 0 && typeof parentObject == "object") {
-                var subRecursionLevel = (recursionLevel===undefined)? recursionLevel : recursionLevel-1;
-
-                // monitora le sottoproprietà esistenti
-                for (var subProperty in parentObject) {
-                    if (parentObject.hasOwnProperty(subProperty)) {
-                        onSettedDeep(parentObject, subProperty, onChange, subRecursionLevel);
-                    }
-                }
-
-                // monitora le sottoproprietà aggiunte successivamente
-                Object.observe(object[property], function(updates) {
-                    for (var i=0,l=updates.length; i<l; i++) {
-                        var update = updates[i];
-                        var subProperty = update.name;
-
-                        if (update.type == "new") { // nuova sottoproprietà
-                            onSettedDeep(parentObject, subProperty, onChange, subRecursionLevel);
-
-                            onChange();
-                        }
-                    } 
-                });
-            }
-        }
-
-        // monitora i set della property
-        onSetted(object, property, function() {
-            // monitora i set per le sottoproprietà del nuovo (eventuale) oggetto settato
-            handleSubProperties(object[property]);
-            
-            onChange(); 
-        });
-
-        // monitora i set delle sottoproprietà
-        handleSubProperties(object[property]);
-    }
-
-    // @private
-    // Sostituisce la funzione functionName di object con quella restituita dalla funzione patcher.
-    // La funzione patcher viene chiamata con la funzione originale come argomento.
-    var patchFunction = function(object, functionName, patcher) {
-    	var originalFunction = object[functionName];
-    	object[functionName] = patcher(originalFunction);
-    }
-
-    // @private
-    // Come patchFunction, ma aspetta che il metodo sia settato se questo è undefined al momento
-    // della chiamata.
-    var patchFunctionLater = function(object, functionName, patcher) {
-        if (object[functionName] === undefined) {
-            onceSetted(object, functionName, function() {
-                patchFunction(object, functionName, patcher);
-            });
-        } else {
-            patchFunction(object, functionName, patcher);
-        }
-    }
-
-    // @private
-    var isArray = function(object) {
-        return Object.prototype.toString.call(object) == '[object Array]';
-    }
-
-    // @private
-    // Restituisce un clone dell'oggetto passato.
-    // N.B: le sottoproprietà non saranno clonate (shallow clone).
-    var clone = function(object) {
-        if (typeof object != "object") return object;
-        if (isArray(object)) return object.slice();
-
-        var newObject = {};
-        for (var prop in object) {
-          newObject[prop] = object[prop];
-        }
-        return newObject;
-    }
 
     //// Metodi per impostare proprietà "nascoste" all'interno degli oggetti 
     //// (tipicamente usati per memorizzare l'AppComponentInfo di un dato componente dell'app
@@ -259,12 +267,12 @@ window.__backboneAgent = new (function() {
     var hiddenPropertyPrefix = "__backboneDebugger__";
     // @private
     var getHiddenProperty = function(object, property) {
-        if (typeof object !== "object") return;
+        if (!isObject(object)) return;
         return object[hiddenPropertyPrefix+property];
     };
     // @private
     var setHiddenProperty = function(object, property, value) {
-        if (typeof object !== "object") return;
+        if (!isObject(object)) return;
         object[hiddenPropertyPrefix+property] = value;
     };
 
