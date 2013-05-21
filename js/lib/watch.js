@@ -13,6 +13,8 @@
 // Modifiche: 
 // - righe 281-282 (rimosso JSON.stringify), issue https://github.com/melanke/Watch.JS/issues/37
 // - righe 191,241,274-276 (aggiunto parametro level), issue https://github.com/melanke/Watch.JS/issues/30
+// - modificati "for in" in for standard per gli array, aggiunto il check hasOwnProperty altrimenti,
+//   issue https://github.com/melanke/Watch.JS/issues/45
 
 "use strict";
 (function (factory) {
@@ -58,14 +60,18 @@
         if(!(typeof a == "string") && !(typeof b == "string") && !isArray(a) && !isArray(b)){
 
             for(var i in a){
-                if(!b[i]){
-                    aplus.push(i);
+                if (a.hasOwnProperty(i)) {
+                    if(!b[i]){
+                        aplus.push(i);
+                    }
                 }
             }
 
             for(var j in b){
-                if(!a[j]){
-                    bplus.push(j);
+                if (b.hasOwnProperty(j)) {
+                    if(!a[j]){
+                        bplus.push(j);
+                    }
                 }
             }
         }
@@ -151,7 +157,9 @@
             }
         } else {
             for (var prop2 in obj) { //for each attribute if obj is an object
-                props.push(prop2); //put in the props
+                if (obj.hasOwnProperty(prop2)) {
+                    props.push(prop2); //put in the props
+                }
             }
         }
 
@@ -166,7 +174,9 @@
         }
 
         for (var prop in props) { //watch each attribute of "props" if is an object
-            watchOne(obj, props[prop], watcher, level, addNRemove);
+            if (props.hasOwnProperty(prop)) {
+                watchOne(obj, props[prop], watcher, level, addNRemove);
+            }
         }
 
     };
@@ -223,7 +233,9 @@
             }
         } else {
             for (var prop2 in obj) { //for each attribute if obj is an object
-                props.push(prop2); //put in the props
+                if (obj.hasOwnProperty(prop2)) {
+                    props.push(prop2); //put in the props
+                }
             }
         }
 
@@ -234,7 +246,9 @@
     var unwatchMany = function (obj, props, watcher) {
 
         for (var prop2 in props) { //watch each attribute of "props" if is an object
-            unwatchOne(obj, props[prop2], watcher);
+            if (props.hasOwnProperty(prop2)) {
+                unwatchOne(obj, props[prop2], watcher);
+            }
         }
     };
 
@@ -252,7 +266,7 @@
             obj.watchers[prop] = [];
         }
 
-        for(var i in obj.watchers[prop]){
+        for (var i=0,l=obj.watchers[prop].length; i<l; i++) {
             if(obj.watchers[prop][i] === watcher){
                 return;
             }
@@ -293,10 +307,8 @@
 
     var callWatchers = function (obj, prop, action, newval, oldval) {
 
-        for (var wr in obj.watchers[prop]) {
-            if (isInt(wr)){
-                obj.watchers[prop][wr].call(obj, prop, action, newval, oldval);
-            }
+        for (var wr=0,l=obj.watchers[prop].length; wr<l; wr++) {
+            obj.watchers[prop][wr].call(obj, prop, action, newval, oldval);
         }
     };
 
@@ -327,7 +339,7 @@
     };
 
     var unwatchOne = function (obj, prop, watcher) {
-        for(var i in obj.watchers[prop]){
+        for (var i=0,l=obj.watchers[prop].length; i<l; i++) {
             var w = obj.watchers[prop][i];
 
             if(w == watcher) {
@@ -340,14 +352,14 @@
 
     var loop = function(){
 
-        for(var i in lengthsubjects){
+        for(var i=0,l=lengthsubjects.length; i<l; i++) {
 
             var subj = lengthsubjects[i];
             var difference = getObjDiff(subj.obj[subj.prop], subj.actual);
             
             if(difference.added.length || difference.removed.length){
                 if(difference.added.length){
-                    for(var j in subj.obj.watchers[subj.prop]){
+                    for (var j=0,l=obj.watchers[subj.prop].length; j<l; j++) {
                         watchMany(subj.obj[subj.prop], difference.added, subj.obj.watchers[subj.prop][j], subj.level - 1, true);
                     }
                 }
@@ -355,7 +367,6 @@
                 callWatchers(subj.obj, subj.prop, "differentattr", difference, subj.actual);
             }
             subj.actual = clone(subj.obj[subj.prop]);
-
         }
 
     };
@@ -374,7 +385,7 @@
 
     var removeFromLengthSubjects = function(obj, prop, watcher){
 
-        for (var i in lengthsubjects) {
+        for (var i=0,l=lengthsubjects.length; i<l; i++) {
             var subj = lengthsubjects[i];
 
             if (subj.obj == obj && subj.prop == prop && subj.watcher == watcher) {
