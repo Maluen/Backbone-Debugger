@@ -1,7 +1,7 @@
 Backbone Debugger
 =================
 
-Chrome extension for real-time debugging of JavaScript Applications made with the Backbone framework.
+Chrome extension for real-time debugging of Backbone based Web Applications.
 
 Features
 --------

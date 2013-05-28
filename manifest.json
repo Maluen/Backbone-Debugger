@@ -1,7 +1,7 @@
 {
   "name": "Backbone Debugger",
   "version": "0.1",
-  "description": "Debugger for JavaScript Applications made with the Backbone framework.",
+  "description": "Debugger for Backbone based Web Applications.",
   "minimum_chrome_version": "20.0",
   "manifest_version": 2,
   
