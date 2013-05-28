@@ -39,7 +39,7 @@ function(Backbone, _, $, AppComponentView, Handlebars, template) {
 		},
 
 		printAppModelAttribute: function(event) {
-			// TODO: cosa succede se attributeName ha caratteri html codificati? es. "a&some"
+			// TODO: cosa succede se attributeName ha caratteri html codificati? es. "a<some"
 			// il decode viene fatto in automatico da jquery?
 
 			var button = $(event.target);

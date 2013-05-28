@@ -1,4 +1,4 @@
-/* NOTA BENE: il metodo passato deve esser già stato fetchato / con dati validi. */
+/* NOTA BENE: il modello passato deve esser già stato fetchato / con dati validi. */
 
 define(["backbone", "underscore", "jquery", "views/containers/AppComponentActionsView"],
 function(Backbone, _, $, AppComponentActionsView) {
@@ -25,7 +25,6 @@ function(Backbone, _, $, AppComponentActionsView) {
 			this.handleActions(); // per le azioni già esistenti
 			this.listenTo(this.model.actions, "reset", this.handleActions);
 			this.listenTo(this.model.actions, "add", this.handleAction);
-
 
 			this.render();
 		},

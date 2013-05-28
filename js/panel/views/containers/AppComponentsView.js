@@ -15,13 +15,17 @@ function(Backbone, _, $, Handlebars, CollectionView, template) {
 
 		openAll: function() {
 			this.forEachItemView(_.bind(function(componentView) {
-				componentView.open();
+				setTimeout(function() { // smooth page reflow (one component view at a time)
+					componentView.open();
+				}, 0);
 			}, this));
 		},
 
 		closeAll: function() {
 			this.forEachItemView(_.bind(function(componentView) {
-				componentView.close();
+				setTimeout(function() { // smooth page reflow (one component view at a time)
+					componentView.close();
+				}, 0);
 			}, this));
 		},
 
