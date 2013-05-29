@@ -33,11 +33,10 @@ function(Backbone, _, $, AppComponentView, Handlebars, template) {
 			return templateData;
 		},
 
-		events: {
-			"click .printAppComponent": "printAppComponent", // definita nel padre
+		events: $.extend({
 			"click .printAppModelAttribute": "printAppModelAttribute"
-		},
-
+		}, AppComponentView.prototype.events),
+		
 		printAppModelAttribute: function(event) {
 			// TODO: cosa succede se attributeName ha caratteri html codificati? es. "a<some"
 			// il decode viene fatto in automatico da jquery?

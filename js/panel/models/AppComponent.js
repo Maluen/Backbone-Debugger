@@ -1,9 +1,7 @@
-/* L'aggiornamento in tempo reale viene attivato automaticamente in fase di inizializzazione. 
-   N.B: l'attributo component_index ed altre proprietà necessarie per il funzionamento
-   dell'aggiornamento in tempo reale devono essere passata alla initialize. */
+/* L'aggiornamento in tempo reale viene attivato automaticamente al termine della fetch. */
 
-define(["backbone", "underscore", "backboneAgentClient", "inspectedPageClient"],
-function(Backbone, _, backboneAgentClient, inspectedPageClient) {
+define(["backbone", "underscore", "defer", "backboneAgentClient", "inspectedPageClient"],
+function(Backbone, _, defer, backboneAgentClient, inspectedPageClient) {
 	
 	var AppComponent = Backbone.Model.extend({
 
@@ -14,8 +12,6 @@ function(Backbone, _, backboneAgentClient, inspectedPageClient) {
 
 		initialize: function(attributes, options) {
 			_.bindAll(this);
-
-			this.realTimeUpdate();
 		},
 
 		// funzione che chiama onComplete passandogli un hash con gli attributi del modello.
@@ -32,6 +28,7 @@ function(Backbone, _, backboneAgentClient, inspectedPageClient) {
             	// resetta gli attributi
                 this.clear({silent: true});
                 this.set(appComponentAttributes);
+                this.realTimeUpdate();
                 if (onComplete !== undefined) onComplete();
             }, this));
 		},
@@ -41,17 +38,19 @@ function(Backbone, _, backboneAgentClient, inspectedPageClient) {
 			// (per evitare che la logica venga eseguita più di una volta)
 			if (this.isRealTimeUpdateActive) return;
 
-            this.listenTo(inspectedPageClient, "backboneAgent:report", _.bind(function(report) {
-                var componentChanged = report.name == "change" && 
-                					   report.componentCategory == this.category &&
-                					   report.componentIndex === this.get("component_index");
-                if (componentChanged) {
-                	// recupera attributi aggiornati
-                	this.fetch();
-                }
+            defer.add(_.bind(function() { // binding many consecutive events freezes the ui (happens if there are a lot of app components)
+                this.listenTo(inspectedPageClient, "backboneAgent:report", _.bind(function(report) {
+                    var componentChanged = report.name == "change" && 
+                                           report.componentCategory == this.category &&
+                                           report.componentIndex === this.get("component_index");
+                    if (componentChanged) {
+                        // recupera attributi aggiornati
+                        this.fetch();
+                    }
+                }, this));
             }, this));
 
-			this.isRealTimeUpdateActive = true;
+            this.isRealTimeUpdateActive = true;
 		},
 
 		// stampa il componente dell'app sulla console

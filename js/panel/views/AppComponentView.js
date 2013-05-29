@@ -57,23 +57,44 @@ function(Backbone, _, $, AppComponentActionsView) {
 		},
 
 		render: function() {
-			this.el.innerHTML = this.template(this.templateData()); // NON usare this.$el.html() che disattiva gli event handler jquery delle sottoviste esistenti
+			// remove .appComponent handlers to prevent memory leaks
+			var appComponent = this.$('.appComponent');
+			if (appComponent) { appComponent.off(); }
 
+			this.el.innerHTML = this.template(this.templateData()); // NON usare this.$el.html() che disattiva gli event handler jquery delle sottoviste esistenti
 			// inserisce la vista con le azioni del componente
 			this.$(".appComponentActions").append(this.appComponentActionsView.el);
+
+			// evita di renderizzare l'html collassato per diminuire fortemente i tempi di rendering
+			// quando l'app ha molti componenti
+			var appComponent = this.$('.appComponent');
+			appComponent.css("display", "none"); // (because it's hidden by default)
+			appComponent.on('hidden', function () { // called just after the hide animation ends
+				appComponent.css("display", "none");
+			});
+			appComponent.on('show', function () { // called just before the show animation starts
+				appComponent.css("display", "block");
+			});
 
 			return this;
 		},
 
+		events: {
+			"click .printAppComponent": "printAppComponent"
+		},
+
 		open: function() {
-			this.$(".appComponent").addClass("in");
-			this.render();
+			// immediately open without animation
+			var appComponent = this.$(".appComponent");
+			appComponent.css("display", "block");
+			appComponent.addClass("in");
 		},
 
 		close: function() {
-			this.$(".appComponent").removeClass("in");
-			// boostrap non collapsa automaticamente l'elemento target, è necessaria una render
-			this.render();
+			// immediately close without animation
+			var appComponent = this.$(".appComponent");
+			appComponent.removeClass("in");
+			appComponent.css("display", "none");
 		},
 
 		highlightAnimation: function() {

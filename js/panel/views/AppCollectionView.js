@@ -33,9 +33,10 @@ function(Backbone, _, $, AppComponentView, utils, Handlebars, template) {
 			return templateData;
 		},
 
-		events: {
-			"click .printAppComponent": "printAppComponent" // definita nel padre
-		}
+		events: $.extend({
+			
+		}, AppComponentView.prototype.events)
+		
     });
     return AppCollectionView;
 });

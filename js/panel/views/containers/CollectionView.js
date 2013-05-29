@@ -44,29 +44,28 @@ function(Backbone, _, $, Handlebars) {
 			this.listenTo(this.collection, "add", _.bind(function(collectionItem) {
 				// nuovo item!
 				var newCollectionItemView = this.addItem(collectionItem);
-
-				setTimeout(_.bind(function() { // smooth page reflow (one item view at a time if there are many consecutive add)
-					this.render(); // la render è fatta prima in modo da aver accesso al collectionEl!
-					// aggiunge al collectionEl l'el per la vista del nuovo item alla posizione corretta
-					var collectionEl = this.$(this.collectionElSelector);
-					if (collectionEl.length > 0) {
-						var collectionItemViewLeftSibling;
-						this.forEachItemView(_.bind(function(collectionItemView) {
-							if (collectionItemView === newCollectionItemView) {
-								if (collectionItemViewLeftSibling) {
-									// inserisce l'el dopo il vicino sinistro
-									newCollectionItemView.$el.insertAfter(collectionItemViewLeftSibling.$el);
-								} else {
-									// non ha un vicino sinistro => primo el
-									collectionEl.prepend(collectionItemView.el);
-								}
+				// la render è fatta prima in modo da aver accesso al collectionEl 
+				// (e aggiornare eventuali altre infomazioni del template, ad es. uno span con il numero di item)
+				this.render();
+				// aggiunge al collectionEl l'el per la vista del nuovo item alla posizione corretta
+				var collectionEl = this.$(this.collectionElSelector);
+				if (collectionEl.length > 0) {
+					var collectionItemViewLeftSibling;
+					this.forEachItemView(_.bind(function(collectionItemView) {
+						if (collectionItemView === newCollectionItemView) {
+							if (collectionItemViewLeftSibling) {
+								// inserisce l'el dopo il vicino sinistro
+								newCollectionItemView.$el.insertAfter(collectionItemViewLeftSibling.$el);
 							} else {
-								// nuovo candidato a vicino sinistro
-								collectionItemViewLeftSibling = collectionItemView;
+								// non ha un vicino sinistro => primo el
+								collectionEl.prepend(collectionItemView.el);
 							}
-						}, this));
-					}
-				}, this), 0);
+						} else {
+							// nuovo candidato a vicino sinistro
+							collectionItemViewLeftSibling = collectionItemView;
+						}
+					}, this));
+				}
 			}, this));
 
 			this.render();

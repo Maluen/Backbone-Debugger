@@ -32,10 +32,9 @@ function(Backbone, _, $, AppComponentView, Handlebars, template) {
 			return templateData;
 		},
 
-		events: {
-			"click .printAppComponent": "printAppComponent", // definita nel padre
+		events: $.extend({
 			"click .printElement": "printElement"
-		},
+		}, AppComponentView.prototype.events),
 
 		printElement: function() {
 			this.model.printElement();

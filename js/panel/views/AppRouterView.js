@@ -6,9 +6,9 @@ function(Backbone, _, $, AppComponentView, Handlebars, template) {
 
 		template: Handlebars.compile(template),
 
-		events: {
-			"click .printAppComponent": "printAppComponent" // definita nel padre
-		}
+		events: $.extend({
+
+		}, AppComponentView.prototype.events)
 
     });
     return AppRouterView;

@@ -1,4 +1,4 @@
-/* L'aggiornamento in tempo reale viene attivato automaticamente in fase di inizializzazione. */
+/* L'aggiornamento in tempo reale viene attivato automaticamente al termine della fetch. */
 
 define(["backbone", "underscore"],
 function(Backbone, _) {
@@ -9,8 +9,6 @@ function(Backbone, _) {
 
 		initialize: function(models, options) {
 			_.bindAll(this);
-
-			this.realTimeUpdate();
 		},
 
 		// restituisce un nuovo modello (con l'indice settato)
@@ -24,7 +22,20 @@ function(Backbone, _) {
 		// chiama onComplete al termine dell'operazione.
 		// N.B: l'operazione termina dopo aver effettuato il fetch di tutti i modelli recuperati.
 		fetch: function(onComplete) {
+			var fetchComplete = _.bind(function(models) {
+				this.reset(models);
+				this.realTimeUpdate(); // ora ha senso avviare l'aggiornamento in tempo reale
+				if (onComplete !== undefined) onComplete();
+			}, this);
+
 			this.fetchModelsIndexes(_.bind(function(modelsIndexes) { // on complete
+				if (modelsIndexes.length == 0) {
+					// no models
+					fetchComplete([]);
+					return;
+				}
+
+				// there are models
 				var models = [];
 				var fetchedModels = 0;
 				for (var i=0,l=modelsIndexes.length; i<l; i++) {
@@ -35,8 +46,7 @@ function(Backbone, _) {
 						fetchedModels++;
 						if (fetchedModels === modelsIndexes.length) {
 							// fetch di tutti i modelli completato
-							this.reset(models);
-							if (onComplete !== undefined) onComplete();
+							fetchComplete(models);
 						}
 
 					}, this));
