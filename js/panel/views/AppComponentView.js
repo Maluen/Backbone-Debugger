@@ -61,14 +61,17 @@ function(Backbone, _, $, AppComponentActionsView) {
 			var appComponent = this.$('.appComponent');
 			if (appComponent.length > 0) { appComponent.off(); }
 
-			this.el.innerHTML = this.template(this.templateData()); // NON usare this.$el.html() che disattiva gli event handler jquery delle sottoviste esistenti
+			var templateData = this.templateData();
+			this.el.innerHTML = this.template(templateData); // NON usare this.$el.html() che disattiva gli event handler jquery delle sottoviste esistenti
 			// inserisce la vista con le azioni del componente
 			this.$(".appComponentActions").append(this.appComponentActionsView.el);
 
 			// evita di renderizzare l'html collassato per diminuire fortemente i tempi di rendering
 			// quando l'app ha molti componenti
 			var appComponent = this.$('.appComponent');
-			appComponent.css("display", "none"); // (because it's hidden by default)
+			if (!templateData['isOpen']) {
+				appComponent.css("display", "none");
+			}
 			appComponent.on('hidden', function () { // called just after the hide animation ends
 				appComponent.css("display", "none");
 			});
