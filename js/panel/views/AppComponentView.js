@@ -96,6 +96,7 @@ function(Backbone, _, $, AppComponentActionsView) {
 			var appComponent = this.$(".appComponent");
 			appComponent.css("display", "block");
 			appComponent.addClass("in");
+			this.render(); // required to update the css setted by a previous close animation
 		},
 
 		close: function() {
@@ -103,6 +104,7 @@ function(Backbone, _, $, AppComponentActionsView) {
 			var appComponent = this.$(".appComponent");
 			appComponent.removeClass("in");
 			appComponent.css("display", "none");
+			this.render();  // required to update the css setted by a previous open animation
 		},
 
 		highlightAnimation: function() {
