@@ -352,6 +352,9 @@ window.__backboneAgent = new (function() {
 
     // @private
     var sendAppComponentReport = function(report) {
+        // the timestamp is tipicaly used by the panel to exclude old reports
+        report.timestamp = Date.now();
+
         sendMessage({
             name: "backboneAgent:report",
             data: report

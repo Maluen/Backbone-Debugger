@@ -40,7 +40,7 @@ function(Backbone, _, backboneAgentClient, inspectedPageClient, Collection, AppC
 				if (report.name == "action" && report.componentCategory == this.component.category 
 					&& report.componentIndex === this.component.get("component_index")) 
 				{
-					onNew(report.componentActionIndex);
+					onNew(report.componentActionIndex, report.timestamp);
 				}
 			}, this));
 		}

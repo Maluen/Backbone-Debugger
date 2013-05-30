@@ -32,7 +32,7 @@ function(Backbone, _, backboneAgentClient, inspectedPageClient, Collection, AppC
 			this.listenTo(inspectedPageClient, "backboneAgent:report", _.bind(function(report) {		
 				if (report.componentCategory == this.componentCategory) {
 					if (report.name == "new") {
-						onNew(report.componentIndex);
+						onNew(report.componentIndex, report.timestamp);
 					}
 				}
 			}, this));

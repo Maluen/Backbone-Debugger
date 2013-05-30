@@ -59,7 +59,7 @@ function(Backbone, _, $, AppComponentActionsView) {
 		render: function() {
 			// remove .appComponent handlers to prevent memory leaks
 			var appComponent = this.$('.appComponent');
-			if (appComponent) { appComponent.off(); }
+			if (appComponent.length > 0) { appComponent.off(); }
 
 			this.el.innerHTML = this.template(this.templateData()); // NON usare this.$el.html() che disattiva gli event handler jquery delle sottoviste esistenti
 			// inserisce la vista con le azioni del componente

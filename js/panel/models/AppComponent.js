@@ -48,6 +48,12 @@ function(Backbone, _, defer, backboneAgentClient, inspectedPageClient) {
                         this.fetch();
                     }
                 }, this));
+
+                // l'avvio della realTimeUpdate è rimandato con la defer, per cui eventuali report
+                // inviati tra l'esecuzione e l'effettivo avvio di questa non sono stati gestiti,
+                // facendo la fetch adesso si ottiene allora lo stato comprensivo degli eventuali cambiamenti,
+                // dopodichè i prossimi report saranno gestiti.
+                this.fetch();
             }, this));
 
             this.isRealTimeUpdateActive = true;

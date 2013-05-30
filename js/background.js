@@ -25,7 +25,6 @@ chrome.extension.onConnect.addListener(function(port) {
 
 // Messaggio dalla pagina (tramite il content script), lo invia al panel
 chrome.extension.onMessage.addListener(function(message, sender, sendResponse) {
-	debugger;
 	if (sender.tab) {
 		var port = panelPorts[sender.tab.id];
 		if (port) {
