@@ -72,11 +72,16 @@ function(Backbone, _, $, AppComponentActionsView) {
 			if (!templateData['isOpen']) {
 				appComponent.css("display", "none");
 			}
-			appComponent.on('hidden', function () { // called just after the hide animation ends
-				appComponent.css("display", "none");
+			appComponent.on('hidden', function(event) { // fired just after the hide animation ends
+			    if ($(event.target).is(appComponent)) { // don't handle if fired by child collapsable elements
+			        appComponent.css("display", "none");
+			    }
+				
 			});
-			appComponent.on('show', function () { // called just before the show animation starts
-				appComponent.css("display", "block");
+			appComponent.on('show', function(event) { // fired just before the show animation starts
+			    if ($(event.target).is(appComponent)) { // don't handle if fired by child collapsable elements
+			        appComponent.css("display", "block");
+			    }
 			});
 
 			return this;
