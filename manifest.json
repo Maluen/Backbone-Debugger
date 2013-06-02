@@ -20,7 +20,7 @@
     }
   ],
 
-  // Needed by backboneAgent loader:
+  // needed by backboneAgent loader
   "web_accessible_resources": [
     "js/lib/*",
     "js/backboneAgent/*"
