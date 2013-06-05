@@ -38,29 +38,30 @@ window.__backboneAgent = new (function() {
 
     // @private
     var watchOnce = function(object, property, callback) {
-        watch(object, property, function onceHandler(prop, action, newvalue, oldvalue) {
+        watch(object, property, function onceHandler(prop, action, newValue, oldValue) {
             // facendo l'unwatch prima di chiamare la callback (invece di farlo dopo),
             // è possibile in quest'ultima impostare la proprietà property 
             // senza incorrere in un loop infinito.
             unwatch(object, property, onceHandler);
 
-            callback(prop, action, newvalue, oldvalue);     
+            callback(prop, action, newValue, oldValue);     
         });
     }
 
     // @private
-    // Esegue la callback ogni volta che viene settata la proprietà property sull'oggetto object
+    // Esegue la callback ogni volta che viene settata la proprietà property sull'oggetto object.
+    // Nota: alla callback viene passato il valore settato.
     var onSetted = function(object, property, callback) {
-        watch(object, property, function(prop, action, difference, oldvalue) {
-            if (action == "set") { callback(); }
+        watch(object, property, function(prop, action, newValue, oldValue) {
+            if (action == "set") { callback(newValue); }
         }, 0);
     }
 
     // @private
     // Come la onSetted, ma la callback viene chiamata solo LA PRIMA VOLTA che la proprietà è settata.
     var onceSetted = function(object, property, callback) {
-        watchOnce(object, property, function(prop, action, difference, oldvalue) {
-            if (action == "set") { callback(); }
+        watchOnce(object, property, function(prop, action, newValue, oldValue) {
+            if (action == "set") { callback(newValue); }
         }, 0);
     }
 
@@ -113,6 +114,29 @@ window.__backboneAgent = new (function() {
     }
 
     // @private
+    // Like onSetted, but calls the callback every time object[property] is setted to a non
+    // undefined value and also immediately if it's already non-undefined.
+    var onDefined = function(object, property, callback) {
+        if (object[property] !== undefined) callback(object[property]);
+        onSetted(object, property, function(newValue) {
+            if (newValue !== undefined) callback(newValue);
+        });
+    }
+
+    // @private
+    // Like onDefined, but calls the callback just once.
+    var onceDefined = function(object, property, callback) {
+        if (object[property] !== undefined) callback(object[property]);
+        watch(object, property, function handler(prop, action, newValue, oldValue) {
+            if (newValue !== undefined) {
+                unwatch(object, property, handler);
+
+                callback(newValue);
+            }
+        });
+    }
+
+    // @private
     // Sostituisce la funzione functionName di object con quella restituita dalla funzione patcher.
     // La funzione patcher viene chiamata con la funzione originale come argomento.
     var patchFunction = function(object, functionName, patcher) {
@@ -121,11 +145,11 @@ window.__backboneAgent = new (function() {
     }
 
     // @private
-    // Come patchFunction, ma aspetta che il metodo sia settato se questo è undefined al momento
+    // Come patchFunction, ma aspetta che il metodo sia definito se questo è undefined al momento
     // della chiamata.
     var patchFunctionLater = function(object, functionName, patcher) {
         if (object[functionName] === undefined) {
-            onceSetted(object, functionName, function() {
+            onceDefined(object, functionName, function() {
                 patchFunction(object, functionName, patcher);
             });
         } else {
@@ -284,7 +308,7 @@ window.__backboneAgent = new (function() {
     // I componenti Backbone validi sono Backbone.View, Backbone.Model, Backbone.Collection e Backbone.Router
     // N.B: suppone che il componente backbone sia stato settato solo inizialmente.
     var patchBackboneComponent = bind(function(BackboneComponent, instancePatcher) {
-    	onceSetted(BackboneComponent, "extend", function() {
+    	onceDefined(BackboneComponent, "extend", function() {
             // (l'extend è l'ultimo metodo impostato, quindi ora il componente è pronto)
 
             // Patcha la initialize del componente (e dei suoi sottotipi) per intercettare
@@ -496,8 +520,8 @@ window.__backboneAgent = new (function() {
     }, this);
 
     // @private
-    var patchBackboneView = bind(function() {
-    	patchBackboneComponent(window.Backbone.View, bind(function(view) {
+    var patchBackboneView = bind(function(BackboneView) {
+    	patchBackboneComponent(BackboneView, bind(function(view) { // on new instance
             // registra il nuovo componente dell'app
             var viewIndex = registerAppComponent("View", view);
 
@@ -587,8 +611,8 @@ window.__backboneAgent = new (function() {
     }, this);
 
     // @private
-    var patchBackboneModel = bind(function() {
-        patchBackboneComponent(window.Backbone.Model, bind(function(model) {
+    var patchBackboneModel = bind(function(BackboneModel) {
+        patchBackboneComponent(BackboneModel, bind(function(model) { // on new instance
             // registra il nuovo componente dell'app
             var modelIndex = registerAppComponent("Model", model);
 
@@ -608,8 +632,8 @@ window.__backboneAgent = new (function() {
     }, this);
 
     // @private
-    var patchBackboneCollection = bind(function() {
-        patchBackboneComponent(window.Backbone.Collection, bind(function(collection) {
+    var patchBackboneCollection = bind(function(BackboneCollection) {
+        patchBackboneComponent(BackboneCollection, bind(function(collection) { // on new instance
             // registra il nuovo componente dell'app
             var collectionIndex = registerAppComponent("Collection", collection);
 
@@ -627,8 +651,8 @@ window.__backboneAgent = new (function() {
     }, this);
 
     // @private
-    var patchBackboneRouter = bind(function() {
-        patchBackboneComponent(window.Backbone.Router, bind(function(router) {
+    var patchBackboneRouter = bind(function(BackboneRouter) {
+        patchBackboneComponent(BackboneRouter, bind(function(router) { // on new instance
             // registra il nuovo componente dell'app
             var routerIndex = registerAppComponent("Router", router);
 
@@ -642,11 +666,12 @@ window.__backboneAgent = new (function() {
     // @private
     // Metodo eseguito automaticamente all'atto della creazione dell'oggetto.
     var initialize = function() {
-        onSetted(window, "Backbone", function() {
-            onSetted(window.Backbone, "View", patchBackboneView);
-            onSetted(window.Backbone, "Model", patchBackboneModel);
-            onSetted(window.Backbone, "Collection", patchBackboneCollection);
-            onSetted(window.Backbone, "Router", patchBackboneRouter);
+        onSetted(window, "Backbone", function(Backbone) {
+            // note: the Backbone object might be only partially defined.
+            onceDefined(Backbone, "View", patchBackboneView);
+            onceDefined(Backbone, "Model", patchBackboneModel);
+            onceDefined(Backbone, "Collection", patchBackboneCollection);
+            onceDefined(Backbone, "Router", patchBackboneRouter);
         });
     }
 
