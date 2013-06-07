@@ -664,16 +664,66 @@ window.__backboneAgent = new (function() {
     }, this);
 
     // @private
+    // Calls the callback passing to it the Backbone object every time it's detected.
+    // The function uses multiple methods of detection.
+    var onBackboneDetected = function(callback) {
+        var handleBackbone = function(Backbone) {
+            // skip if already detected
+            // (needed because the app could define Backbone in multiple ways at once)
+            if (getHiddenProperty(Backbone, "isDetected")) return;
+            setHiddenProperty(Backbone, "isDetected", true);
+
+            callback(Backbone);
+        }
+
+        // global
+        onSetted(window, "Backbone", handleBackbone);
+
+        // AMD
+        patchFunctionLater(window, "define", function(originalFunction) { return function() {
+            // function arguments: (id? : String, dependencies? : Array, factory : Function)
+
+            // make arguments editable
+            var argumentsArray = Array.prototype.slice.call(arguments);
+            // find the factory function to patch it
+            for (var i=0,l=argumentsArray.length; i<l; i++) {
+                if (typeof argumentsArray[i] == "function") {
+                    // factory function found
+                    patchFunction(argumentsArray, i, function(originalFunction) { return function() {
+                        var module = originalFunction.apply(this, arguments);
+
+                        // check if Backbone has been defined by the factory fuction
+                        // (some factories set "this" to Backbone)
+                        var BackboneCandidate = module || this;
+                        var isBackbone = typeof BackboneCandidate == "object" &&
+                                         typeof BackboneCandidate.Model == "function" &&
+                                         typeof BackboneCandidate.Router == "function" &&
+                                         typeof BackboneCandidate.noConflict == "function";
+                        if (isBackbone) {
+                            handleBackbone(BackboneCandidate);
+                        }
+
+                        return module;
+                    }});
+
+                    break;
+                }
+            }
+            return originalFunction.apply(this, argumentsArray);
+        }});
+    };
+
+    // @private
     // Metodo eseguito automaticamente all'atto della creazione dell'oggetto.
     var initialize = function() {
-        onSetted(window, "Backbone", function(Backbone) {
+        onBackboneDetected(function(Backbone) {
             // note: the Backbone object might be only partially defined.
             onceDefined(Backbone, "View", patchBackboneView);
             onceDefined(Backbone, "Model", patchBackboneModel);
             onceDefined(Backbone, "Collection", patchBackboneCollection);
             onceDefined(Backbone, "Router", patchBackboneRouter);
         });
-    }
+    };
 
     initialize();
 })();
