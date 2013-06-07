@@ -1,6 +1,6 @@
 define(["backbone", "underscore", "models/AppComponent", "backboneAgentClient"],
 function(Backbone, _, AppComponent, backboneAgentClient) {
-    
+
     var AppRouter = AppComponent.extend({
 
         category: "Router",
@@ -13,8 +13,10 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
         fetchLogic: function(onComplete) {
             backboneAgentClient.execFunction(function(componentIndex) {
                 var appRouterInfo = this.getAppComponentInfoByIndex("Router", componentIndex);
+                var componentName = appRouterInfo.component.constructor.name;
 
                 var appRouterAttributes = {
+                    "component_name": componentName,
                     "component_index": appRouterInfo.index,
                 };
                 return appRouterAttributes;
