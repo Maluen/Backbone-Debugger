@@ -51,14 +51,16 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                 } catch (exception) {
                     appModelUrl = null;
                 }
-                
-                var componentName =
-                    appModelInfo.component.constructor.name +
-                    " " +
-                    (appModelInfo.component.attributes.name ||
-                     appModelInfo.component.attributes.title ||
-                     appModelInfo.index
-                    );
+
+                // e.g. "MyModel - modelTitle" or "MyModel" or modelTitle"
+                var componentName = appModelInfo.component.constructor.name || null;
+                var componentNameDetails = appModelInfo.component.attributes.name ||
+                                           appModelInfo.component.attributes.title || null;
+                if (componentName && componentNameDetails) {
+                    componentName += " - " + componentNameDetails;
+                } else {
+                    componentName = componentName || componentNameDetails;
+                }
 
                 var appModelInfo = {
                     "component_index": appModelInfo.index,

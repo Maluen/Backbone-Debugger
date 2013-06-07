@@ -21,8 +21,9 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
             backboneAgentClient.execFunction(function(componentIndex) {
                 var appViewInfo = this.getAppComponentInfoByIndex("View", componentIndex);
                 var componentModelInfo = this.getAppComponentInfo(appViewInfo.component.model);
-                var componentCollectionInfo = this.getAppComponentInfo(appViewInfo.component.collection);                
-                var componentName = appViewInfo.component.constructor.name;
+                var componentCollectionInfo = this.getAppComponentInfo(appViewInfo.component.collection);
+                                
+                var componentName = appViewInfo.component.constructor.name || null;
 
                 var appViewAttributes = {
                     "component_index": appViewInfo.index,

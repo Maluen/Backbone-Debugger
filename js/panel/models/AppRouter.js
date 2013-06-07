@@ -14,7 +14,8 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
         fetchLogic: function(onComplete) {
             backboneAgentClient.execFunction(function(componentIndex) {
                 var appRouterInfo = this.getAppComponentInfoByIndex("Router", componentIndex);
-                var componentName = appRouterInfo.component.constructor.name;
+                
+                var componentName = appRouterInfo.component.constructor.name || null;
 
                 var appRouterAttributes = {
                     "component_index": appRouterInfo.index,
