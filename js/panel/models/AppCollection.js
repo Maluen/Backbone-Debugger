@@ -1,6 +1,6 @@
 define(["backbone", "underscore", "models/AppComponent", "backboneAgentClient"],
 function(Backbone, _, AppComponent, backboneAgentClient) {
-	
+
 	var AppCollection = AppComponent.extend({
 
         category: "Collection",
@@ -17,7 +17,7 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
             backboneAgentClient.execFunction(function(componentIndex) {
                 var appCollectionInfo = this.getAppComponentInfoByIndex("Collection", componentIndex);
                 var collectionModels = appCollectionInfo.component.models;
-                
+
                 var collectionModelsIndexes = [];
                 for (var i=0,l=collectionModels.length; i<l; i++) {
                     var model = collectionModels[i];
@@ -36,8 +36,10 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                         collectionUrl = null;
                     }
                 }
+                var componentName = appCollectionInfo.component.constructor.name;
 
                 var appCollectionAttributes = {
+                    "component_name": componentName,
                     "component_index": appCollectionInfo.index,
                     "component_hasModel": appCollectionInfo.component.model !== undefined,
                     "component_models": collectionModelsIndexes,

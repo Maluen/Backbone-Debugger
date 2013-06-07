@@ -1,6 +1,6 @@
 define(["backbone", "underscore", "models/AppComponent", "backboneAgentClient"],
 function(Backbone, _, AppComponent, backboneAgentClient) {
-	
+
 	var AppModel = AppComponent.extend({
 
         category: "Model",
@@ -50,8 +50,16 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                 } catch (exception) {
                     appModelUrl = null;
                 }
+                var componentName =
+                    appModelInfo.component.constructor.name +
+                    " " +
+                    (appModelInfo.component.attributes.name ||
+                     appModelInfo.component.attributes.title ||
+                     appModelInfo.index
+                    );
 
                 var appModelInfo = {
+                    "component_name": componentName,
                     "component_index": appModelInfo.index,
                     "component_attributes": appModelAttributes,
                     "component_id": appModelInfo.component.id,

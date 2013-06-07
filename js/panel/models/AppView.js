@@ -3,7 +3,7 @@
 
 define(["backbone", "underscore", "models/AppComponent", "backboneAgentClient"],
 function(Backbone, _, AppComponent, backboneAgentClient) {
-	
+
 	var AppView = AppComponent.extend({
 
         category: "View",
@@ -21,8 +21,11 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                 var appViewInfo = this.getAppComponentInfoByIndex("View", componentIndex);
                 var componentModelInfo = this.getAppComponentInfo(appViewInfo.component.model);
                 var componentCollectionInfo = this.getAppComponentInfo(appViewInfo.component.collection);
-
+                var componentName =
+                    appViewInfo.component.constructor.name ||
+                    appViewInfo.component.__proto__.constructor.name;
                 var appViewAttributes = {
+                    "component_name": componentName,
                     "component_index": appViewInfo.index,
                     "component_modelIndex": componentModelInfo? componentModelInfo.index : null,
                     "component_collectionIndex": componentCollectionInfo? componentCollectionInfo.index : null
