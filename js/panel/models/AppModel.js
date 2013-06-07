@@ -51,6 +51,7 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                 } catch (exception) {
                     appModelUrl = null;
                 }
+                
                 var componentName =
                     appModelInfo.component.constructor.name +
                     " " +

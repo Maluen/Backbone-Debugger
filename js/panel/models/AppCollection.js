@@ -37,6 +37,7 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                         collectionUrl = null;
                     }
                 }
+                
                 var componentName = appCollectionInfo.component.constructor.name;
 
                 var appCollectionAttributes = {
