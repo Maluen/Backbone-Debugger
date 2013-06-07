@@ -6,11 +6,12 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
         category: "Collection",
 
 		defaults: {
-			"component_index": null, // intero
-            "component_hasModel": null, // booleano, true se la collezione ha la proprietà model settata
+			"component_index": null, // int
+            "component_name": null, // string
+            "component_hasModel": null, // bool, true se la collezione ha la proprietà model settata
                                         // (che mantiene il tipo dei modelli)
             "component_models": null, // array con gli indici dei modelli contenuti dalla collezione
-            "component_url": null, // stringa
+            "component_url": null, // string
 		},
 
 		fetchLogic: function(onComplete) {
@@ -39,8 +40,8 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                 var componentName = appCollectionInfo.component.constructor.name;
 
                 var appCollectionAttributes = {
-                    "component_name": componentName,
                     "component_index": appCollectionInfo.index,
+                    "component_name": componentName,
                     "component_hasModel": appCollectionInfo.component.model !== undefined,
                     "component_models": collectionModelsIndexes,
                     "component_url": collectionUrl

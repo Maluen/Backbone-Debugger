@@ -7,7 +7,8 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
 
         // attributi supportati dal modello
         defaults: {
-            "component_index": null, // intero
+            "component_index": null, // int
+            "component_name": null // string
         },
 
         fetchLogic: function(onComplete) {
@@ -16,8 +17,8 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                 var componentName = appRouterInfo.component.constructor.name;
 
                 var appRouterAttributes = {
-                    "component_name": componentName,
                     "component_index": appRouterInfo.index,
+                    "component_name": componentName
                 };
                 return appRouterAttributes;
             }, [this.get("component_index")], onComplete);

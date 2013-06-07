@@ -10,9 +10,10 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
 
 		// attributi supportati dal modello
 		defaults: {
-			"component_index": null, // intero
-			"component_modelIndex": null, // intero
-			"component_collectionIndex": null // intero
+			"component_index": null, // int
+            "component_name": null, // string
+			"component_modelIndex": null, // int
+			"component_collectionIndex": null // int
 		},
 
 		// Estrae gli attributi dalle info recuperate dall'agent.
@@ -24,9 +25,10 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                 var componentName =
                     appViewInfo.component.constructor.name ||
                     appViewInfo.component.__proto__.constructor.name;
+
                 var appViewAttributes = {
-                    "component_name": componentName,
                     "component_index": appViewInfo.index,
+                    "component_name": componentName,
                     "component_modelIndex": componentModelInfo? componentModelInfo.index : null,
                     "component_collectionIndex": componentCollectionInfo? componentCollectionInfo.index : null
                 };

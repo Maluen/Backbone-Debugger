@@ -6,12 +6,13 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
         category: "Model",
 
 		defaults: {
-			"component_index": null, // intero
+			"component_index": null, // int
+            "component_name": null, // string
             "component_attributes": null, // hash <attributeName, attributeValue>
             "component_id": null,
             "component_cid": null,
-            "component_url": null, // stringa
-            "component_collectionIndex": null // intero
+            "component_url": null, // string
+            "component_collectionIndex": null // int
 		},
 
 		fetchLogic: function(onComplete) {
@@ -59,8 +60,8 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                     );
 
                 var appModelInfo = {
-                    "component_name": componentName,
                     "component_index": appModelInfo.index,
+                    "component_name": componentName,
                     "component_attributes": appModelAttributes,
                     "component_id": appModelInfo.component.id,
                     "component_cid": appModelInfo.component.cid,
