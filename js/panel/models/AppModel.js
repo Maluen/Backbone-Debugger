@@ -54,8 +54,8 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
 
                 // e.g. "MyModel - modelTitle" or "MyModel" or modelTitle"
                 var componentName = appModelInfo.component.constructor.name || null;
-                var componentNameDetails = appModelInfo.component.attributes.name ||
-                                           appModelInfo.component.attributes.title || null;
+                var componentNameDetails = appModelInfo.component.attributes['name'] ||
+                                           appModelInfo.component.attributes['title'] || null;
                 if (componentName && componentNameDetails) {
                     componentName += " - " + componentNameDetails;
                 } else {
