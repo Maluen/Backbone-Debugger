@@ -696,9 +696,10 @@ window.__backboneAgent = new (function() {
                         // (some factories set "this" to Backbone)
                         var BackboneCandidate = module || this;
                         var isBackbone = typeof BackboneCandidate == "object" &&
+                                         typeof BackboneCandidate.View == "function" &&
                                          typeof BackboneCandidate.Model == "function" &&
-                                         typeof BackboneCandidate.Router == "function" &&
-                                         typeof BackboneCandidate.noConflict == "function";
+                                         typeof BackboneCandidate.Collection == "function" &&
+                                         typeof BackboneCandidate.Router == "function";
                         if (isBackbone) {
                             handleBackbone(BackboneCandidate);
                         }
