@@ -1,7 +1,7 @@
 <a class="appComponentToggle btn btn-link"
    data-toggle="collapse" 
    data-target="#view{{component_index}}">
-   View {{component_index}}
+   View {{component_index}} {{#unlessNull component_name}} : {{component_name}} {{/unlessNull}}
 </a>
 
 <div id="view{{component_index}}" class="appComponent collapse {{#if isOpen}}in{{/if}}">

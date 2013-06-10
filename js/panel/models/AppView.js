@@ -3,16 +3,17 @@
 
 define(["backbone", "underscore", "models/AppComponent", "backboneAgentClient"],
 function(Backbone, _, AppComponent, backboneAgentClient) {
-	
+
 	var AppView = AppComponent.extend({
 
         category: "View",
 
 		// attributi supportati dal modello
 		defaults: {
-			"component_index": null, // intero
-			"component_modelIndex": null, // intero
-			"component_collectionIndex": null // intero
+			"component_index": null, // int
+            "component_name": null, // string
+			"component_modelIndex": null, // int
+			"component_collectionIndex": null // int
 		},
 
 		// Estrae gli attributi dalle info recuperate dall'agent.
@@ -21,9 +22,12 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                 var appViewInfo = this.getAppComponentInfoByIndex("View", componentIndex);
                 var componentModelInfo = this.getAppComponentInfo(appViewInfo.component.model);
                 var componentCollectionInfo = this.getAppComponentInfo(appViewInfo.component.collection);
+                                
+                var componentName = appViewInfo.component.constructor.name || null;
 
                 var appViewAttributes = {
                     "component_index": appViewInfo.index,
+                    "component_name": componentName,
                     "component_modelIndex": componentModelInfo? componentModelInfo.index : null,
                     "component_collectionIndex": componentCollectionInfo? componentCollectionInfo.index : null
                 };
