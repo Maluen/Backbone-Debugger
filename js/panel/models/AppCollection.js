@@ -38,7 +38,8 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                     }
                 }
 
-                var componentName = appCollectionInfo.component.constructor.name || null;
+                var componentName = appCollectionInfo.component.constructor.name || 
+                                    collectionUrl || null;
 
                 var appCollectionAttributes = {
                     "component_index": appCollectionInfo.index,
