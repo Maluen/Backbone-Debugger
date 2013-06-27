@@ -10,11 +10,11 @@
  * https://github.com/melanke/Watch.JS
  */
 
-// Modifiche: 
-// - righe 281-282 (rimosso JSON.stringify), issue https://github.com/melanke/Watch.JS/issues/37
-// - righe 191,241,274-276 (aggiunto parametro level), issue https://github.com/melanke/Watch.JS/issues/30
-// - modificati "for in" in for standard per gli array, aggiunto il check hasOwnProperty altrimenti,
-//   issue https://github.com/melanke/Watch.JS/issues/45
+// Edits: 
+// - rows 281-282 (removed JSON.stringify), issue https://github.com/melanke/Watch.JS/issues/37
+// - rows 191,241,274-276 (added level parameter), issue https://github.com/melanke/Watch.JS/issues/30
+// - replaced "for in" with standard for when iterating over arrays, 
+//   added the hasOwnProperty check otherwise, issue https://github.com/melanke/Watch.JS/issues/45
 
 "use strict";
 (function (factory) {

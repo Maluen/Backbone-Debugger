@@ -14,7 +14,7 @@ define(["underscore", "jquery"], function(_, $) {
                 requestObj.cache = false;
             }
 
-            $.ajax(requestObj).always(callback); // callback viene chiamata anche se la richiesta fallisce
+            $.ajax(requestObj).always(callback); // the callback is called also if the request fails
         }
 
         this.initialize();

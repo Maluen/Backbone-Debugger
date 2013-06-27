@@ -1,9 +1,9 @@
 define([], function() {
-    // Stabilisce una connessione bidirezionale con il background
+	// Establish a bidiretional communication port with the background
     var tabId = chrome.devtools.inspectedWindow.tabId;
     var panelPort = chrome.extension.connect({name: "devtoolspanel"});
     panelPort.postMessage({
-        name: 'identification',
+        name: "identification",
         data: tabId
     });
 

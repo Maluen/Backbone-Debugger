@@ -1,4 +1,4 @@
-// recupera l'url dell'estensione dai dati passati in fase di inject
+// retrieve the extension url from the data passed in the inject process
 var extensionUrl = injectionData["extensionUrl"];
 
 // Configuration

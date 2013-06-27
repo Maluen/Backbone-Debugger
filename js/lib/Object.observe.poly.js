@@ -15,8 +15,8 @@
     Built using polling... Will update again with polling/getter&setters to make things better at some point
 */
 
-// Modifiche:
-// - righe 249-250
+// Edits:
+// - rows 249-250
 
 "use strict";
 if(!Object.observe){

@@ -64,7 +64,7 @@ Handlebars.registerHelper('hash', function(context, options) {
     return ret;
 });
 
-// Converts context to string exporting it as {{value}}
+// Stringify context exporting it as {{value}}
 Handlebars.registerHelper('stringify', function(context, options) {
 	return options.fn({value: JSON.stringify(context)});
 });

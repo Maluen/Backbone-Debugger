@@ -1,4 +1,4 @@
-// Script caricato ogni volta che si aprono i devtools, quando si clicca per la prima volta sul pannello
+// Script loaded every time the devtools are started, the first time the panel is opened.
 
 require.config({
     // paths configuration
@@ -13,7 +13,7 @@ require.config({
         handlebars_original: '../lib/handlebars',
         handlebars: '../lib/handlebars-blocks'
     },
-    // libraries loaders
+    // non-amd library loaders
     shim: {
         'jquery': {
             exports: '$'
@@ -32,10 +32,10 @@ require.config({
             deps: ['jquery']
         },
         'handlebars_original': {
-            deps: ['bootstrap'], // evita di dover includere bootstrap manualmente prima di ogni template
+            deps: ['bootstrap'], // automatically require bootstrap when requiring an handlebars template
             exports: 'Handlebars'
         },
-        'handlebars': { // handlebars con custom block helpers
+        'handlebars': { // handlebars with custom block helpers
             deps: ['handlebars_original'],
             exports: 'Handlebars'
         }
@@ -43,8 +43,9 @@ require.config({
 });
 
 require(["jquery", "routers/Router", "backbone"], function($, Router, Backbone) {
-    // Non usare window.onload in quanto la pagina del panel potrebbe esser già stata caricata
-    // (require è asincrono) e la callback non verrebbe mai chiamata
+    // Don't use window.onload because the panel page may be already ready
+    // (require is asynchronous) and the callback would never be called, while the jQuery version
+    // calls it immediately in that situation.
     $(document).ready(function() {
         var router = new Router();
         Backbone.history.start();
