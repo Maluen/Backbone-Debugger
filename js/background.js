@@ -1,17 +1,13 @@
-/**
- * Permette la comunicazione in tempo reale dalla pagina al panel
- * rigirando a quest'ultimo i messaggi inviati tramite il content script.
- * 
- * N.B: il background è unico per tutte le schede del browser e quindi per le
- * istanze dell'estensione, per questo le varie porte di comunicazione 
- * sono indicizzate dall'id della scheda a cui si riferiscono.
- */
+/*
+ Note: the background is shared between the browser tabs, therefore it
+ identifies the various panel communication ports by using the id of the
+ tab they belong to.
+*/
 
-// Hash che ha per chiave l'id del tab e per valore la porta di comunicazione con
-// il pannello di devtools.
+// Hash <panel tab id, panel commmunication port>
 var panelPorts = {};
 
-// Registrazione dei panel
+// Panel registration
 chrome.extension.onConnect.addListener(function(port) {
 	if (port.name !== "devtoolspanel") return;
 	
@@ -23,7 +19,8 @@ chrome.extension.onConnect.addListener(function(port) {
 	});
 });
 
-// Messaggio dalla pagina (tramite il content script), lo invia al panel
+// Receives messages from the content scripts and redirects them to the respective panels,
+// completing the communication between the backbone agent and the panel.
 chrome.extension.onMessage.addListener(function(message, sender, sendResponse) {
 	if (sender.tab) {
 		var port = panelPorts[sender.tab.id];
@@ -33,10 +30,11 @@ chrome.extension.onMessage.addListener(function(message, sender, sendResponse) {
 	}
 });
 
-// Avvisa il panel quando viene aggiornata la pagina (refresh, cambio sito, etc.)
-// (tipicamente utilizzato dal panel per fare il refresh)
+// Sends a message to the panels when the respective tabs are updated (refresh, url change, etc.)
+// (tipically used by the panel to reload itself)
 chrome.tabs.onUpdated.addListener(function(updatedTabId, changeInfo) {
-	if (changeInfo.status == "loading") { // (l'evento viene emesso anche una seconda volta al complete dell'operazione)
+	// the event is emitted a second time when the update is complete, but we only need the first one.
+	if (changeInfo.status == "loading") {
 		var port = panelPorts[updatedTabId];
 		if (port) {
 			port.postMessage({
