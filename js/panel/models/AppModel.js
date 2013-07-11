@@ -25,6 +25,7 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                 // tramite l'apposito metodo, in questo modo si evitano problemi di serializzazione
                 // con gli oggetti circolari)
                 var appModelAttributes = {};
+                var numAttributes = 0;
                 var realAttributes = appModelInfo.component.attributes;
                 for (var attributeName in realAttributes) {
                     if (realAttributes.hasOwnProperty(attributeName)) {
@@ -38,9 +39,10 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                             }
                         }
                         appModelAttributes[attributeName] = attributeValue;
+                        numAttributes++;
                     }
                 }
-                if (_.isEmpty(appModelAttributes)) {
+                if (numAttributes == 0) {
                     appModelAttributes = null;
                 }
 
