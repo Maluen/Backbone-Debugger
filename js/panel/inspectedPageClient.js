@@ -5,10 +5,8 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
         this.initialize = function() {
         	_.bindAll(this);
 
-		    // Trasforma i messaggi riguardanti la pagina ispezionata
-		    // in eventi Backbone, in modo che gli utilizzatori
-		    // possano usare metodi come la listenTo
-		    // (che permette di rimuovere automaticamente gli handler quando non servono più)
+            // Turn inspected page messages into Backbone events,
+            // so that Backbone.Events methods like the useful "listenTo" can be used
 			panelPort.onMessage.addListener(_.bind(function(message) {
 				if (message && message.target == "page") {
 					this.trigger(message.name, message.data);
@@ -16,9 +14,11 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
 			}, this));
         }
 
-        // Esegue la funzione func sulla pagina ispezionata
-        // passandogli gli argomenti specificati nell'array args (che deve essere JSON-compatibile)
-        // Utilizza la devtools.inspectedWindow.eval.
+        // Execute the "func" function in the inspected page,
+        // passing to it the arguments specified in the "args" array (that must be JSON-compatible),
+        // a more specific context can be setted by using the "context" parameter.
+        // The callback "onExecuted" is called with the function return value.
+        // The method is implemented by using devtools.inspectedWindow.eval.
         this.execFunction = function(func, args, onExecuted, context) {
             if (context === undefined) { context = "this"; }
 
@@ -32,8 +32,8 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
             });
         }
 
-        // Chiama la callback quando la pagina diventa pronta.
-        // (se la pagina è già pronta viene chiamata subito)
+        // Call the callback when the inspected page DOM is fully loaded
+        // or immediately if that is already true.
         this.ready = function(onReady) {
         	this.execFunction(function() {
         		var readyState = document.readyState;
@@ -47,44 +47,48 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
         	}, this));
         }
 
-        // Ricarica la pagina iniettando gli script specificati nell'array, i quali
-        // verranno eseguiti nell'ordine in cui sono specificati.
-        // injectionData è un hash opzionale a cui gli script avranno accesso tramite una variabile omonima,
-        // deve essere JSON-compatibile, tipicamente è usata per passare dati non direttamente accessibili
-        // agli script iniettati, come ad esempio l'url dell'estensione.
+        // Reload the inspected page injecting at the beginning of it the scripts
+        // whose url are specified in the "scripts" array,
+        // "injectionData" is an optional JSON-compatible hash accessible to the injected scripts,
+        // tipically used to pass special data not directly accessible from the page, such as the
+        // extension url.
         this.reloadInjecting = function(scripts, injectionData) {
-            var scriptsContents = []; // array con il contenuto dei vari script
+            var scriptsContents = []; // array with the content of each script
             var scriptsLoaded = 0;
 
-            for (var i=0,l=scripts.length; i<l; i++) {(function (i) { // ogni iterazione ha la sua closure con il suo i
-                // scarica i vari script in modo asincrono (l'ordine di completamento dei download è casuale)
+            for (var i=0,l=scripts.length; i<l; i++) {(function (i) { // each iteration has its closure with its own "i"
+                // download the scripts asynchronously (the downloads completion order is random)
                 utils.httpRequest("get", scripts[i], function(data) {
-                    // script numero i caricato
+                    // script number i downloaded.
 
-                    // eseguendo lo script tramite eval invece che direttamente, è possibile specificare
-                    // il suo url tramite il commento speciale sourceURL, 
-                    // in modo da poter debuggare e distinguere i vari file iniettati.
+                    // by executing the script with eval instead that directly, it's possible to specify
+                    // its url with the "sourceURL" special comment, making possible to debug it,
+                    // not having to deal with a single mass of code containing all the injected scripts.
                     scriptsContents[i] = "eval("+JSON.stringify("//@ sourceURL="+scripts[i]+"\n"+data)+");";
 
                     scriptsLoaded++;
                     if (scriptsLoaded == scripts.length) {
-                        // script caricati
+                        // all the scripts have been downloaded
 
-                        // unisce i vari script separandoli con un ritorno a capo
-                        var toInject = scriptsContents.join('\n')+"\n"; // last "\n" prevents EOF error when injecting a single file with no newline at the end
+                        // join the scripts separating them with a carriage return.
+                        var toInject = scriptsContents.join('\n')+"\n"; // last "\n" prevents EOF error 
+                                                                        // when injecting a single file with 
+                                                                        // no newline at the end
 
-                        // inserisce all'inizio gli injectionData
+                        // prepend the injectionData
                         injectionData = (injectionData !== undefined) ? injectionData : {};
                         var injectionDataCode = "var injectionData = "+JSON.stringify(injectionData)+";\n";
                         toInject = injectionDataCode + toInject;
 
-                        // Ricarica la pagina con gli script iniettati in cima
+                        // Reload the inspected page with the scripts injected at the beginning of it
                         chrome.devtools.inspectedWindow.reload({
-                            ignoreCache: true, // altrimenti potrebbe esser caricata la vecchia versione in cache della pagina
+                            ignoreCache: true, // avoid to load the old and possibly different 
+                                               // cached version of the inspected page
                             injectedScript: toInject
                         });
                     }
-                }, true); // disabilita caching richieste (altrimenti se si modificano gli script iniettati verrebbero ottenute comunque le vecchie versioni)
+                }, true); // disable request caching (avoid to load the old and possibly different cached
+                          // version of the injected scripts), not needed in production.
             })(i);}
         }
 
