@@ -57,6 +57,11 @@ body {
     text-align: left;
 }
 
+.removed {
+    text-decoration: line-through;
+    color: grey;
+}
+
 @-webkit-keyframes highlight {
     0%  { background-color: #57A0FF; 
           color: black; }

@@ -1,4 +1,4 @@
-<a class="appComponentToggle btn btn-link"
+<a class="appComponentToggle btn btn-link {{#compare component_status 'delete (success)'}}removed{{/compare}}"
    data-toggle="collapse" 
    data-target="#collection{{component_index}}">
    Collection {{component_index}} {{#unlessNull component_name}} : {{component_name}} {{/unlessNull}}

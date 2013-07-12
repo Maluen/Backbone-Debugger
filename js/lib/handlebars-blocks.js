@@ -14,15 +14,15 @@ Handlebars.registerHelper('unlessIsObject', function(conditionals, options) {
 	}
 });
 
-// {{compare unicorns ponies operator="<"}}
+// {{#compare unicorns ponies operator="<"}}
 // 	I knew it, unicorns are just low-quality ponies!
 // {{/compare}}
 // 
 // (defaults to == if operator omitted)
 //
-// {{equal unicorns ponies }}
+// {{#compare unicorns ponies }}
 // 	That's amazing, unicorns are actually undercover ponies
-// {{/equal}}
+// {{/compare}}
 // (from http://doginthehat.com.au/2012/02/comparison-block-helper-for-handlebars-templates/)
 Handlebars.registerHelper('compare', function(lvalue, rvalue, options) {
 	if (arguments.length < 3)
