@@ -2,7 +2,7 @@
 
 define(["backbone", "underscore", "jquery", "views/containers/AppComponentActionsView"],
 function(Backbone, _, $, AppComponentActionsView) {
-    
+
     var AppComponentView = Backbone.View.extend({
 
         template: undefined,
@@ -69,7 +69,7 @@ function(Backbone, _, $, AppComponentActionsView) {
                 if ($(event.target).is(appComponent)) { // don't handle if fired by child collapsable elements
                     appComponent.css("display", "none");
                 }
-                
+
             });
             appComponent.on('show', function(event) { // fired just before the show animation starts
                 if ($(event.target).is(appComponent)) { // don't handle if fired by child collapsable elements
@@ -102,7 +102,7 @@ function(Backbone, _, $, AppComponentActionsView) {
 
         highlightAnimation: function() {
             var animatedEl = this.$(".appComponentToggle");
-            
+
             animatedEl.addClass("highlight");
             animatedEl.one("webkitAnimationEnd", _.bind(function() {
                 animatedEl.removeClass("highlight");

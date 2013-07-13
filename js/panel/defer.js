@@ -8,7 +8,7 @@ define(["underscore"], function(_) {
             _.bindAll(this);
 
             this.queue = [];
-        }
+        };
 
         this.add = function(func) {
             this.queue.push(func);
@@ -16,16 +16,16 @@ define(["underscore"], function(_) {
                 // do first
                 setTimeout(this.doNext, 0);
             }
-        }
+        };
 
         this.doNext = function() {
             var next = this.queue.shift();
             next();
-            if (this.queue.length != 0) {
+            if (this.queue.length !== 0) {
                 // do next
                 setTimeout(this.doNext, 0);
             }
-        }
+        };
 
         this.initialize();
     })();

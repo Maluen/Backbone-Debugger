@@ -8,19 +8,19 @@ window.__backboneAgent = new (function() {
     var bind = function(func, scope) {
         return function() {
             return func.apply(scope, arguments);
-        }
-    }
+        };
+    };
 
     // @private
     // Nota: null non è considerato un oggetto.
     var isObject = function(target) {
         return typeof target == "object" && target !== null;
-    }
+    };
 
     // @private
     var isArray = function(object) {
         return Object.prototype.toString.call(object) == '[object Array]';
-    }
+    };
 
     // @private
     // Restituisce un clone dell'oggetto passato.
@@ -34,7 +34,7 @@ window.__backboneAgent = new (function() {
           newObject[prop] = object[prop];
         }
         return newObject;
-    }
+    };
 
     // @private
     var watchOnce = function(object, property, callback) {
@@ -44,9 +44,9 @@ window.__backboneAgent = new (function() {
             // senza incorrere in un loop infinito.
             unwatch(object, property, onceHandler);
 
-            callback(prop, action, newValue, oldValue);     
+            callback(prop, action, newValue, oldValue);
         });
-    }
+    };
 
     // @private
     // Esegue la callback ogni volta che viene settata la proprietà property sull'oggetto object.
@@ -55,7 +55,7 @@ window.__backboneAgent = new (function() {
         watch(object, property, function(prop, action, newValue, oldValue) {
             if (action == "set") { callback(newValue); }
         }, 0);
-    }
+    };
 
     // @private
     // Come la onSetted, ma la callback viene chiamata solo LA PRIMA VOLTA che la proprietà è settata.
@@ -63,7 +63,7 @@ window.__backboneAgent = new (function() {
         watchOnce(object, property, function(prop, action, newValue, oldValue) {
             if (action == "set") { callback(newValue); }
         }, 0);
-    }
+    };
 
     // @private
     // Utilizza le librerie watch.js e Object.observe.poly.js per monitorare i set
@@ -96,22 +96,22 @@ window.__backboneAgent = new (function() {
 
                             onChange();
                         }
-                    } 
+                    }
                 });
             }
-        }
+        };
 
         // monitora i set della property
         onSetted(object, property, function() {
             // monitora i set per le sottoproprietà del nuovo (eventuale) oggetto settato
             handleSubProperties(object[property]);
-            
-            onChange(); 
+
+            onChange();
         });
 
         // monitora i set delle sottoproprietà
         handleSubProperties(object[property]);
-    }
+    };
 
     // @private
     // Like onSetted, but calls the callback every time object[property] is setted to a non
@@ -121,7 +121,7 @@ window.__backboneAgent = new (function() {
         onSetted(object, property, function(newValue) {
             if (newValue !== undefined) callback(newValue);
         });
-    }
+    };
 
     // @private
     // Like onDefined, but calls the callback just once.
@@ -134,7 +134,7 @@ window.__backboneAgent = new (function() {
                 callback(newValue);
             }
         });
-    }
+    };
 
     // @private
     // Sostituisce la funzione functionName di object con quella restituita dalla funzione patcher.
@@ -142,7 +142,7 @@ window.__backboneAgent = new (function() {
     var patchFunction = function(object, functionName, patcher) {
         var originalFunction = object[functionName];
         object[functionName] = patcher(originalFunction);
-    }
+    };
 
     // @private
     // Come patchFunction, ma aspetta che il metodo sia definito se questo è undefined al momento
@@ -155,26 +155,26 @@ window.__backboneAgent = new (function() {
         } else {
             patchFunction(object, functionName, patcher);
         }
-    }
+    };
 
     ////
 
     // @private
     // Azione di un componente dell'app.
     var AppComponentAction = function(type, name, target, targetKind) {
-        
+
         this.timestamp = Date.now();
         this.type = type; // stringa
         this.name = name; // stringa
         this.target = target; // oggetto
         this.targetKind = targetKind || "Other"; // può essere "AppComponent", "jQuery Event" o "Other"
-        
+
         //// Metodi di utilità ////
-         
+
         // stampa nella console le informazioni sull'azione
         this.printDetailsInConsole = function() {
-        }
-    }
+        };
+    };
 
     // @private
     var AppComponentInfo = function(category, index, component, actions) {
@@ -187,8 +187,8 @@ window.__backboneAgent = new (function() {
 
         this.component = component; // oggetto
         this.actions = actions || []; // array di oggetti AppComponentAction
-    } 
-        
+    };
+
     // @private
     // All'atto dell'istanziazione di un componente, l'agent gli assegna
     // un indice che lo identifica all'interno dei vari array
@@ -203,7 +203,7 @@ window.__backboneAgent = new (function() {
     };
 
     //// API PUBBLICA ////
-    
+
     // Informazioni sui componenti dell'applicazione.
     // Hash <"componentCategory", [AppComponentInfo]>.
     // (Gli indici degli array sono quelli dei componenti.)
@@ -227,7 +227,7 @@ window.__backboneAgent = new (function() {
         }
         return appComponentsIndexes;
     }, this);
-    
+
     // Restituisce l'oggetto di tipo AppComponentInfo con le informazioni sul componente dell'app passato
     // o undefined se l'oggetto passato non è un componente valido.
     this.getAppComponentInfo = bind(function(appComponent) {
@@ -250,10 +250,10 @@ window.__backboneAgent = new (function() {
             var ofParent = of.parentNode;
             if (target === ofParent) return true;
             return isAscendant(target, ofParent);
-        }
+        };
 
         // cerca il miglior candidato
-        var candidateViewInfo = undefined;
+        var candidateViewInfo;
         var viewsIndexes = this.getAppComponentsIndexes("View");
         for (var i=0,l=viewsIndexes.length; i<l; i++) {
             var currentViewInfo = this.getAppComponentInfoByIndex("View", viewsIndexes[i]);
@@ -330,7 +330,7 @@ window.__backboneAgent = new (function() {
                         return originalInitialize.apply(this, arguments);
                     }
                 };
-            }
+            };
 
             // i set/get della initialize vengono modificati in modo da patchare al volo eventuali
             // override della proprietà da parte dei sottotipi e in modo da restituire tale 
@@ -339,7 +339,7 @@ window.__backboneAgent = new (function() {
 
             // la proprietà sarà ereditata anche dai sottotipi e finirà nelle varie istanze,
             // contiene la versione patchata della initialize
-            setHiddenProperty(BackboneComponent.prototype, "patchedInitialize", 
+            setHiddenProperty(BackboneComponent.prototype, "patchedInitialize",
                               patchInitialize(BackboneComponent.prototype.initialize));
 
             Object.defineProperty(BackboneComponent.prototype, "initialize", {
@@ -372,7 +372,7 @@ window.__backboneAgent = new (function() {
     var sendMessage = function(message) {
         message.target = "page"; // il messaggio riguarda la pagina
         window.postMessage(message, "*");
-    }
+    };
 
     // @private
     var sendAppComponentReport = function(report) {
@@ -383,7 +383,7 @@ window.__backboneAgent = new (function() {
             name: "backboneAgent:report",
             data: report
         });
-    }
+    };
 
     // @private
     // Aggiunge il componente dell'app passato a quelli conosciuti creando l'oggetto con le info
@@ -393,8 +393,8 @@ window.__backboneAgent = new (function() {
         // calcola l'indice del nuovo componente
         var appComponentIndex = ++lastAppComponentsIndex[appComponentCategory];
 
-        var appComponentInfo = new AppComponentInfo(appComponentCategory, 
-                                                    appComponentIndex, 
+        var appComponentInfo = new AppComponentInfo(appComponentCategory,
+                                                    appComponentIndex,
                                                     appComponent);
         setAppComponentInfo(appComponent, appComponentInfo);
 
@@ -469,7 +469,7 @@ window.__backboneAgent = new (function() {
             ));
 
             return result;
-        }});
+        };});
     }, this);
 
     // @private
@@ -483,7 +483,7 @@ window.__backboneAgent = new (function() {
     // Patcha il metodo sync del componente dell'app (presente in modelli e collezioni).
     var patchAppComponentSync = bind(function(appComponent) {
         patchFunctionLater(appComponent, "sync", function(originalFunction) { return function() {
-            
+
             var method = arguments[0]; // es. "create", "read", etc.
             var toSync = arguments[1]; // componente dell'app da sincronizzare
 
@@ -494,7 +494,7 @@ window.__backboneAgent = new (function() {
                 addAppComponentAction(toSync, new AppComponentAction(
                     "Sync", actionName, toSync, "AppComponent"
                 ));
-            }
+            };
 
             // arguments[2] è un hash con le opzioni
             // lo modifica al volo per essere informato sull'esito della sync
@@ -507,16 +507,16 @@ window.__backboneAgent = new (function() {
                 if (originalFunction) { // la proprietà è opzionale
                     return originalFunction.apply(this, arguments);
                 }
-            }});
+            };});
             patchFunction(argumentsArray[2], "failure", function(originalFunction) { return function() {
                 syncCompleted(false);
                 if (originalFunction) { // la proprietà è opzionale
                     return originalFunction.apply(this, arguments);
                 }
-            }});
+            };});
             var result = originalFunction.apply(this, argumentsArray);
             return result;
-        }});
+        };});
     }, this);
 
     // @private

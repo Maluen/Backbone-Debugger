@@ -1,9 +1,9 @@
 /* View for AppView model */
 
-define(["backbone", "underscore", "jquery", "views/AppComponentView", 
+define(["backbone", "underscore", "jquery", "views/AppComponentView",
         "handlebars", "text!templates/appView.html"],
 function(Backbone, _, $, AppComponentView, Handlebars, template) {
-    
+
     var AppViewView = AppComponentView.extend({
 
         template: Handlebars.compile(template),
@@ -27,7 +27,7 @@ function(Backbone, _, $, AppComponentView, Handlebars, template) {
         templateData: function() {
             var templateData = AppComponentView.prototype.templateData.apply(this, arguments);
             templateData["component_status"] = this.componentStatus;
-            
+
             return templateData;
         },
 

@@ -4,7 +4,7 @@
 // the backbone agent is active
 var isBackboneAgentActive = function() {
     return window.__backboneAgent !== undefined;
-}
+};
 
 // Function executed in the context of the inspected page, the function has access
 // to the $0 variable containing the selected element in the devtools elements panel.
@@ -13,7 +13,7 @@ var isBackboneAgentActive = function() {
 var getViewIndex = function() {
     var viewInfo = window.__backboneAgent.getAppViewInfoFromElement($0);
     return viewInfo? viewInfo.index : undefined;
-}
+};
 
 window.onload = function() {
     // check if the backbone agent is active
@@ -36,4 +36,4 @@ window.onload = function() {
             viewIndexContainer.style.display = "block";
         });
     });
-}
+};

@@ -22,7 +22,7 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                 var appViewInfo = this.getAppComponentInfoByIndex("View", componentIndex);
                 var componentModelInfo = this.getAppComponentInfo(appViewInfo.component.model);
                 var componentCollectionInfo = this.getAppComponentInfo(appViewInfo.component.collection);
-                                
+
                 var componentName = appViewInfo.component.constructor.name || null;
 
                 var appViewAttributes = {

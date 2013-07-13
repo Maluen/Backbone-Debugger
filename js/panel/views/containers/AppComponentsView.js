@@ -1,7 +1,7 @@
-define(["backbone", "underscore", "jquery", "handlebars", "views/containers/CollectionView", 
+define(["backbone", "underscore", "jquery", "handlebars", "views/containers/CollectionView",
         "text!templates/appComponents.html"],
 function(Backbone, _, $, Handlebars, CollectionView, template) {
-    
+
     var AppComponentsView = CollectionView.extend({
 
         template: Handlebars.compile(template),

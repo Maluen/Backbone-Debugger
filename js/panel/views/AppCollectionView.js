@@ -1,7 +1,7 @@
 define(["backbone", "underscore", "jquery", "views/AppComponentView",
         "handlebars", "text!templates/appCollection.html"],
 function(Backbone, _, $, AppComponentView, Handlebars, template) {
-    
+
     var AppCollectionView = AppComponentView.extend({
 
         template: Handlebars.compile(template),
@@ -23,14 +23,14 @@ function(Backbone, _, $, AppComponentView, Handlebars, template) {
             templateData["isModelsOpen"] = this.$(".models").hasClass("in");
             // status
             templateData["component_status"] = this.componentStatus;
-            
+
             return templateData;
         },
 
         events: $.extend({
-            
+
         }, AppComponentView.prototype.events)
-        
+
     });
     return AppCollectionView;
 });

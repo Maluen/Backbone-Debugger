@@ -1,4 +1,4 @@
-define(["backbone", "inspectedPageClient", "backboneAgentClient", 
+define(["backbone", "inspectedPageClient", "backboneAgentClient",
         "views/main/WaitingView", "views/main/DebuggerView", "views/main/DebugDisabledView"],
 function(Backbone, inspectedPageClient, backboneAgentClient, WaitingView, DebuggerView, DebugDisabledView) {
 

@@ -12,9 +12,9 @@ var load = function(modulePath) {
         if (xmlhttp.status == 200 && xmlhttp.readyState == 4) {
             eval("//@ sourceURL="+sourceUrl+"\n"+xmlhttp.responseText);
         }
-    }
+    };
     xmlhttp.send();
-}
+};
 // export function globally
 window.__bdLoad = load;
 

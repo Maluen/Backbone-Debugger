@@ -2,7 +2,7 @@
 
 define(["backbone", "underscore", "jquery", "handlebars", "text!templates/waiting.html"],
 function(Backbone, _, $, Handlebars, template) {
-    
+
     var WaitingView = Backbone.View.extend({
 
         template: Handlebars.compile(template),

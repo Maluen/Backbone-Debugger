@@ -12,7 +12,7 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
                     this.trigger(message.name, message.data);
                 }
             }, this));
-        }
+        };
 
         // Execute the "func" function in the inspected page,
         // passing to it the arguments specified in the "args" array (that must be JSON-compatible),
@@ -30,7 +30,7 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
                     onExecuted(result);
                 }
             });
-        }
+        };
 
         // Call the callback when the inspected page DOM is fully loaded
         // or immediately if that is already true.
@@ -45,7 +45,7 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
                     this.once("ready", onReady);
                 }
             }, this));
-        }
+        };
 
         // Reload the inspected page injecting at the beginning of it the scripts
         // whose url are specified in the "scripts" array,
@@ -90,7 +90,7 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
                 }, true); // disable request caching (avoid to load the old and possibly different cached
                           // version of the injected scripts), not needed in production.
             })(i);}
-        }
+        };
 
         this.initialize();
     })();

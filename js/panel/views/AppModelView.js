@@ -1,7 +1,7 @@
-define(["backbone", "underscore", "jquery", "views/AppComponentView", 
+define(["backbone", "underscore", "jquery", "views/AppComponentView",
         "handlebars", "text!templates/appModel.html"],
 function(Backbone, _, $, AppComponentView, Handlebars, template) {
-    
+
     var AppModelView = AppComponentView.extend({
 
         template: Handlebars.compile(template),
@@ -23,14 +23,14 @@ function(Backbone, _, $, AppComponentView, Handlebars, template) {
             templateData["isAttributesOpen"] = this.$(".attributes").hasClass("in");
             // status
             templateData["component_status"] = this.componentStatus;
-            
+
             return templateData;
         },
 
         events: $.extend({
             "click .printAppModelAttribute": "printAppModelAttribute"
         }, AppComponentView.prototype.events),
-        
+
         printAppModelAttribute: function(event) {
             var button = $(event.target);
             var attributeName = button.attr("data-attribute-name");

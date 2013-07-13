@@ -2,7 +2,7 @@
 
 define(["backbone", "underscore", "defer", "backboneAgentClient", "inspectedPageClient"],
 function(Backbone, _, defer, backboneAgentClient, inspectedPageClient) {
-    
+
     var AppComponent = Backbone.Model.extend({
 
         category: undefined, // categoria del componente (es. "View", "Model", etc.)
@@ -40,7 +40,7 @@ function(Backbone, _, defer, backboneAgentClient, inspectedPageClient) {
 
             defer.add(_.bind(function() { // binding many consecutive events freezes the ui (happens if there are a lot of app components)
                 this.listenTo(inspectedPageClient, "backboneAgent:report", _.bind(function(report) {
-                    var componentChanged = report.name == "change" && 
+                    var componentChanged = report.name == "change" &&
                                            report.componentCategory == this.category &&
                                            report.componentIndex === this.get("component_index");
                     if (componentChanged) {
@@ -68,7 +68,7 @@ function(Backbone, _, defer, backboneAgentClient, inspectedPageClient) {
             }, [this.category, this.get("component_index")], _.bind(function() { // on executed
                 // do nothing
             }, this));
-        }   
+        }
     });
     return AppComponent;
 });

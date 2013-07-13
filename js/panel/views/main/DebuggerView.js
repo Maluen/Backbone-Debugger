@@ -1,11 +1,11 @@
 /* View activated when the application is in debug mode. */
 
-define(["backbone", "underscore", "jquery", "handlebars", "text!templates/debugger.html", 
-        "views/containers/AppViewsView", "views/containers/AppModelsView", 
+define(["backbone", "underscore", "jquery", "handlebars", "text!templates/debugger.html",
+        "views/containers/AppViewsView", "views/containers/AppModelsView",
         "views/containers/AppCollectionsView", "views/containers/AppRoutersView"],
-function(Backbone, _, $, Handlebars, template, 
+function(Backbone, _, $, Handlebars, template,
          AppViewsView, AppModelsView, AppCollectionsView, AppRoutersView) {
-    
+
     var DebuggerView = Backbone.View.extend({
 
         template: Handlebars.compile(template),
@@ -56,7 +56,7 @@ function(Backbone, _, $, Handlebars, template,
             var inspectButton = $(event.target);
             var componentCategory = inspectButton.attr("data-component-category");
             var componentIndex = parseInt(inspectButton.attr("data-component-index"), 10);
-            
+
             var componentsView = this.appComponentsViews[componentCategory];
             var componentView = componentsView.getComponentView(componentIndex);
             if (componentView) {

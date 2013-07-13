@@ -4,7 +4,7 @@ define(["backbone", "underscore", "inspectedPageClient"], function(Backbone, _, 
 
         this.initialize = function() {
             _.bindAll(this);
-        }
+        };
 
         // Call the callback when the inspected page is ready, passing to it a boolean
         // indicating if the Backbone Agent is active.
@@ -16,7 +16,7 @@ define(["backbone", "underscore", "inspectedPageClient"], function(Backbone, _, 
                     return (window.__backboneAgent !== undefined);
                 }, [], callback);
             });
-        }
+        };
 
         // Activate the Backbone Agent by reloading the inspected page and injecting it at
         // the beginning.
@@ -33,12 +33,12 @@ define(["backbone", "underscore", "inspectedPageClient"], function(Backbone, _, 
             ], {
                 "extensionUrl": chrome.extension.getURL("")
             });
-        }
+        };
 
         // Execute the passed function in the inspected page using the Backbone Agent as context.
         this.execFunction = function(func, args, onExecuted) {
             inspectedPageClient.execFunction(func, args, onExecuted, "window.__backboneAgent");
-        }
+        };
 
         this.initialize();
     })();

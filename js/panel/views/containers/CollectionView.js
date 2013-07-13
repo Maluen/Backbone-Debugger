@@ -8,7 +8,7 @@
 
 define(["backbone", "underscore", "jquery", "handlebars"],
 function(Backbone, _, $, Handlebars) {
-    
+
     var AppComponentsView = Backbone.View.extend({
 
         template: undefined,

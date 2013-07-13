@@ -35,7 +35,7 @@ function(Backbone, _) {
             this.fetchModelsIndexes(_.bind(function(modelsIndexes) { // on complete
                 this.lastFetchTimestamp = Date.now();
 
-                if (modelsIndexes.length == 0) {
+                if (modelsIndexes.length === 0) {
                     // no models
                     fetchComplete([]);
                     return;

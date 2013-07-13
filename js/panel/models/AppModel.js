@@ -24,7 +24,7 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                 // (il vero valore può essere stampato sulla console
                 // tramite l'apposito metodo, in questo modo si evitano problemi di serializzazione
                 // con gli oggetti circolari)
-                var appModelAttributes = {};
+                var componentAttributes = {};
                 var numAttributes = 0;
                 var realAttributes = appModelInfo.component.attributes;
                 for (var attributeName in realAttributes) {
@@ -38,12 +38,12 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                                 attributeValue = {};
                             }
                         }
-                        appModelAttributes[attributeName] = attributeValue;
+                        componentAttributes[attributeName] = attributeValue;
                         numAttributes++;
                     }
                 }
-                if (numAttributes == 0) {
-                    appModelAttributes = null;
+                if (numAttributes === 0) {
+                    componentAttributes = null;
                 }
 
                 var appModelUrl;
@@ -64,16 +64,16 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                     componentName = componentName || componentNameDetails;
                 }
 
-                var appModelInfo = {
+                var appModelAttributes = {
                     "component_index": appModelInfo.index,
                     "component_name": componentName,
-                    "component_attributes": appModelAttributes,
+                    "component_attributes": componentAttributes,
                     "component_id": appModelInfo.component.id,
                     "component_cid": appModelInfo.component.cid,
                     "component_url": appModelUrl,
                     "component_collectionIndex": componentCollectionInfo? componentCollectionInfo.index : null
                 };
-                return appModelInfo;
+                return appModelAttributes;
             }, [this.get("component_index")], onComplete);
         },
 

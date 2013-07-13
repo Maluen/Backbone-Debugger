@@ -1,6 +1,6 @@
 define(["backbone", "underscore", "backboneAgentClient"],
 function(Backbone, _, backboneAgentClient) {
-    
+
     var AppComponentAction = Backbone.Model.extend({
 
         component: undefined, // oggetto sottotipo di AppComponent
@@ -42,10 +42,10 @@ function(Backbone, _, backboneAgentClient) {
                     "name": appComponentAction.name,
                     "targetKind": appComponentAction.targetKind,
                     "targetAppComponentCategory": targetInfo? targetInfo.category : null,
-                    "targetAppComponentIndex": targetInfo? targetInfo.index : null,
+                    "targetAppComponentIndex": targetInfo? targetInfo.index : null
                 };
                 return appComponentActionAttributes;
-            }, [this.component.category, this.component.get("component_index"), index], 
+            }, [this.component.category, this.component.get("component_index"), index],
             _.bind(function(appComponentActionAttributes) { // on executed
                 // resetta gli attributi
                 this.clear({silent: true});
@@ -61,7 +61,7 @@ function(Backbone, _, backboneAgentClient) {
                 var appComponentInfo = this.getAppComponentInfoByIndex(componentCategory, componentIndex);
                 var appComponentAction = appComponentInfo.actions[index];
                 console.log(appComponentAction.target);
-            }, [this.component.category, this.component.get("component_index"), this.get("index")], 
+            }, [this.component.category, this.component.get("component_index"), this.get("index")],
             _.bind(function(result) { // on executed
                 // do nothing
             }, this));

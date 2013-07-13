@@ -2,7 +2,7 @@
 
 define(["backbone", "underscore", "jquery", "handlebars", "text!templates/debugDisabled.html"],
 function(Backbone, _, $, Handlebars, template) {
-    
+
     var DebugDisabledView = Backbone.View.extend({
 
         template: Handlebars.compile(template),

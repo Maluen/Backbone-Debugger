@@ -3,7 +3,7 @@
 
    L'aggiornamento in tempo reale viene attivato automaticamente in fase di inizializzazione. */
 
-define(["backbone", "underscore", "backboneAgentClient", "inspectedPageClient", 
+define(["backbone", "underscore", "backboneAgentClient", "inspectedPageClient",
         "collections/Collection", "collections/AppComponentActions"],
 function(Backbone, _, backboneAgentClient, inspectedPageClient, Collection, AppComponentActions) {
 
@@ -29,7 +29,7 @@ function(Backbone, _, backboneAgentClient, inspectedPageClient, Collection, AppC
         },
 
         realTimeUpdateLogic: function(onNew) {
-            this.listenTo(inspectedPageClient, "backboneAgent:report", _.bind(function(report) {        
+            this.listenTo(inspectedPageClient, "backboneAgent:report", _.bind(function(report) {
                 if (report.componentCategory == this.componentCategory) {
                     if (report.name == "new") {
                         onNew(report.componentIndex, report.timestamp);

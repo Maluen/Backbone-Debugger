@@ -11,7 +11,7 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
             "component_hasModel": null, // bool, true se la collezione ha la proprietà model settata
                                         // (che mantiene il tipo dei modelli)
             "component_models": null, // array con gli indici dei modelli contenuti dalla collezione
-            "component_url": null, // string
+            "component_url": null // string
         },
 
         fetchLogic: function(onComplete) {
@@ -38,7 +38,7 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                     }
                 }
 
-                var componentName = appCollectionInfo.component.constructor.name || 
+                var componentName = appCollectionInfo.component.constructor.name ||
                                     collectionUrl || null;
 
                 var appCollectionAttributes = {

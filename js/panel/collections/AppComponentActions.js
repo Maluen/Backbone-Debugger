@@ -1,7 +1,7 @@
-define(["backbone", "underscore", "backboneAgentClient", "inspectedPageClient", 
+define(["backbone", "underscore", "backboneAgentClient", "inspectedPageClient",
         "collections/Collection", "models/AppComponentAction"],
 function(Backbone, _, backboneAgentClient, inspectedPageClient, Collection, AppComponentAction) {
-    
+
     var AppComponentActions = Collection.extend({
 
         component: undefined, // oggetto sottotipo di AppComponent
@@ -37,8 +37,8 @@ function(Backbone, _, backboneAgentClient, inspectedPageClient, Collection, AppC
 
         realTimeUpdateLogic: function(onNew) {
             this.listenTo(inspectedPageClient, "backboneAgent:report", _.bind(function(report) {
-                if (report.name == "action" && report.componentCategory == this.component.category 
-                    && report.componentIndex === this.component.get("component_index")) 
+                if (report.name == "action" && report.componentCategory == this.component.category &&
+                    report.componentIndex === this.component.get("component_index"))
                 {
                     onNew(report.componentActionIndex, report.timestamp);
                 }
