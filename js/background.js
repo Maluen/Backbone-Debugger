@@ -9,38 +9,38 @@ var panelPorts = {};
 
 // Panel registration
 chrome.extension.onConnect.addListener(function(port) {
-	if (port.name !== "devtoolspanel") return;
-	
-	port.onMessage.addListener(function(message) {
-		if (message.name == "identification") {
-			var tabId = message.data;
-			panelPorts[tabId] = port;
-		}
-	});
+    if (port.name !== "devtoolspanel") return;
+
+    port.onMessage.addListener(function(message) {
+        if (message.name == "identification") {
+            var tabId = message.data;
+            panelPorts[tabId] = port;
+        }
+    });
 });
 
 // Receives messages from the content scripts and redirects them to the respective panels,
 // completing the communication between the backbone agent and the panel.
 chrome.extension.onMessage.addListener(function(message, sender, sendResponse) {
-	if (sender.tab) {
-		var port = panelPorts[sender.tab.id];
-		if (port) {
-			port.postMessage(message);
-		}
-	}
+    if (sender.tab) {
+        var port = panelPorts[sender.tab.id];
+        if (port) {
+            port.postMessage(message);
+        }
+    }
 });
 
 // Sends a message to the panels when the respective tabs are updated (refresh, url change, etc.)
 // (tipically used by the panel to reload itself)
 chrome.tabs.onUpdated.addListener(function(updatedTabId, changeInfo) {
-	// the event is emitted a second time when the update is complete, but we only need the first one.
-	if (changeInfo.status == "loading") {
-		var port = panelPorts[updatedTabId];
-		if (port) {
-			port.postMessage({
-				target: 'page',
-				name: 'updated'
-			});
-		}
-	}
+    // the event is emitted a second time when the update is complete, but we only need the first one.
+    if (changeInfo.status == "loading") {
+        var port = panelPorts[updatedTabId];
+        if (port) {
+            port.postMessage({
+                target: 'page',
+                name: 'updated'
+            });
+        }
+    }
 });

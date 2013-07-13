@@ -1,20 +1,20 @@
 define(["backbone", "underscore", "models/AppComponent", "backboneAgentClient"],
 function(Backbone, _, AppComponent, backboneAgentClient) {
 
-	var AppCollection = AppComponent.extend({
+    var AppCollection = AppComponent.extend({
 
         category: "Collection",
 
-		defaults: {
-			"component_index": null, // int
+        defaults: {
+            "component_index": null, // int
             "component_name": null, // string
             "component_hasModel": null, // bool, true se la collezione ha la proprietà model settata
                                         // (che mantiene il tipo dei modelli)
             "component_models": null, // array con gli indici dei modelli contenuti dalla collezione
             "component_url": null, // string
-		},
+        },
 
-		fetchLogic: function(onComplete) {
+        fetchLogic: function(onComplete) {
             backboneAgentClient.execFunction(function(componentIndex) {
                 var appCollectionInfo = this.getAppComponentInfoByIndex("Collection", componentIndex);
                 var collectionModels = appCollectionInfo.component.models;
@@ -50,7 +50,7 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                 };
                 return appCollectionAttributes;
             }, [this.get("component_index")], onComplete);
-		}
+        }
     });
     return AppCollection;
 });

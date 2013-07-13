@@ -2,21 +2,21 @@
 
 define(["backbone", "underscore", "jquery", "handlebars", "text!templates/debugDisabled.html"],
 function(Backbone, _, $, Handlebars, template) {
-	
-	var DebugDisabledView = Backbone.View.extend({
+    
+    var DebugDisabledView = Backbone.View.extend({
 
-		template: Handlebars.compile(template),
+        template: Handlebars.compile(template),
 
-		initialize: function(options) {
-			_.bindAll(this);
+        initialize: function(options) {
+            _.bindAll(this);
 
-			this.render();
-		},
+            this.render();
+        },
 
-		render: function() {
-			this.el.innerHTML = this.template(); // DON'T use this.$el.html() because it removes the jQuery event handlers of existing sub-views
-			return this;
-		}
+        render: function() {
+            this.el.innerHTML = this.template(); // DON'T use this.$el.html() because it removes the jQuery event handlers of existing sub-views
+            return this;
+        }
     });
     return DebugDisabledView;
 });

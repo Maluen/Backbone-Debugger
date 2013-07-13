@@ -2,44 +2,44 @@
 
 define(["backbone", "underscore", "jquery", "handlebars", "text!templates/appComponentAction.html"],
 function(Backbone, _, $, Handlebars, template) {
-	
-	var AppComponentActionView = Backbone.View.extend({
+    
+    var AppComponentActionView = Backbone.View.extend({
 
-		template: Handlebars.compile(template),
-		tagName: "tr",
+        template: Handlebars.compile(template),
+        tagName: "tr",
 
-		initialize: function(options) {
-			_.bindAll(this);
+        initialize: function(options) {
+            _.bindAll(this);
 
-			this.listenTo(this.model, "change", this.render);
+            this.listenTo(this.model, "change", this.render);
 
-			this.render();
-		},
+            this.render();
+        },
 
-		render: function() {
-			var templateData = this.model.toJSON();
-			// format timestamp in "hh:mm:ss"
-			var date = new Date(this.model.get("timestamp"));
-			var hours = date.getHours();
-			var minutes = date.getMinutes();
-			var seconds = date.getSeconds();
-			if (hours < 10) hours = "0"+hours;
-			if (minutes < 10) minutes = "0"+minutes;
-			if (seconds < 10) seconds = "0"+seconds;
-			templateData["time"] = hours + ":"+ minutes + ":"+ seconds;
+        render: function() {
+            var templateData = this.model.toJSON();
+            // format timestamp in "hh:mm:ss"
+            var date = new Date(this.model.get("timestamp"));
+            var hours = date.getHours();
+            var minutes = date.getMinutes();
+            var seconds = date.getSeconds();
+            if (hours < 10) hours = "0"+hours;
+            if (minutes < 10) minutes = "0"+minutes;
+            if (seconds < 10) seconds = "0"+seconds;
+            templateData["time"] = hours + ":"+ minutes + ":"+ seconds;
 
-			this.el.innerHTML = this.template(templateData); // DON'T use this.$el.html() because it removes the jQuery event handlers of existing sub-views
+            this.el.innerHTML = this.template(templateData); // DON'T use this.$el.html() because it removes the jQuery event handlers of existing sub-views
 
-			return this;
-		},
+            return this;
+        },
 
-		events: {
-			"click .printTarget": "printTarget"
-		},
+        events: {
+            "click .printTarget": "printTarget"
+        },
 
-		printTarget: function() {
-			this.model.printTarget();
-		}
+        printTarget: function() {
+            this.model.printTarget();
+        }
 
     });
     return AppComponentActionView;

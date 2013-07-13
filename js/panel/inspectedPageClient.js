@@ -3,15 +3,15 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
         _.extend(this, Backbone.Events);
 
         this.initialize = function() {
-        	_.bindAll(this);
+            _.bindAll(this);
 
             // Turn inspected page messages into Backbone events,
             // so that Backbone.Events methods like the useful "listenTo" can be used
-			panelPort.onMessage.addListener(_.bind(function(message) {
-				if (message && message.target == "page") {
-					this.trigger(message.name, message.data);
-				}
-			}, this));
+            panelPort.onMessage.addListener(_.bind(function(message) {
+                if (message && message.target == "page") {
+                    this.trigger(message.name, message.data);
+                }
+            }, this));
         }
 
         // Execute the "func" function in the inspected page,
@@ -23,7 +23,7 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
             if (context === undefined) { context = "this"; }
 
             var evalCode = "("+func.toString()+").apply("+context+", "+JSON.stringify(args)+");";
-        	chrome.devtools.inspectedWindow.eval(evalCode, function(result, isException) {
+            chrome.devtools.inspectedWindow.eval(evalCode, function(result, isException) {
                 if (isException) {
                     throw result;
                 } else {
@@ -35,16 +35,16 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
         // Call the callback when the inspected page DOM is fully loaded
         // or immediately if that is already true.
         this.ready = function(onReady) {
-        	this.execFunction(function() {
-        		var readyState = document.readyState;
-        		return (readyState != "uninitialized" && readyState != "loading");
-        	}, [], _.bind(function(hasLoaded) { // on executed
-        		if (hasLoaded) {
-        			onReady();
-        		} else {
-        			this.once("ready", onReady);
-        		}
-        	}, this));
+            this.execFunction(function() {
+                var readyState = document.readyState;
+                return (readyState != "uninitialized" && readyState != "loading");
+            }, [], _.bind(function(hasLoaded) { // on executed
+                if (hasLoaded) {
+                    onReady();
+                } else {
+                    this.once("ready", onReady);
+                }
+            }, this));
         }
 
         // Reload the inspected page injecting at the beginning of it the scripts

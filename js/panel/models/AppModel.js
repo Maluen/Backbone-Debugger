@@ -1,21 +1,21 @@
 define(["backbone", "underscore", "models/AppComponent", "backboneAgentClient"],
 function(Backbone, _, AppComponent, backboneAgentClient) {
 
-	var AppModel = AppComponent.extend({
+    var AppModel = AppComponent.extend({
 
         category: "Model",
 
-		defaults: {
-			"component_index": null, // int
+        defaults: {
+            "component_index": null, // int
             "component_name": null, // string
             "component_attributes": null, // hash <attributeName, attributeValue>
             "component_id": null,
             "component_cid": null,
             "component_url": null, // string
             "component_collectionIndex": null // int
-		},
+        },
 
-		fetchLogic: function(onComplete) {
+        fetchLogic: function(onComplete) {
             backboneAgentClient.execFunction(function(componentIndex) {
                 var appModelInfo = this.getAppComponentInfoByIndex("Model", componentIndex);
                 var componentCollectionInfo = this.getAppComponentInfo(appModelInfo.component.collection);
@@ -75,7 +75,7 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                 };
                 return appModelInfo;
             }, [this.get("component_index")], onComplete);
-		},
+        },
 
         // stampa il valore dell'attributo nella console
         printAttribute: function(attributeName) {

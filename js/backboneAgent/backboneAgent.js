@@ -308,7 +308,7 @@ window.__backboneAgent = new (function() {
     // I componenti Backbone validi sono Backbone.View, Backbone.Model, Backbone.Collection e Backbone.Router
     // N.B: suppone che il componente backbone sia stato settato solo inizialmente.
     var patchBackboneComponent = bind(function(BackboneComponent, instancePatcher) {
-    	onceDefined(BackboneComponent, "extend", function() {
+        onceDefined(BackboneComponent, "extend", function() {
             // (l'extend è l'ultimo metodo impostato, quindi ora il componente è pronto)
 
             // Patcha la initialize del componente (e dei suoi sottotipi) per intercettare
@@ -355,7 +355,7 @@ window.__backboneAgent = new (function() {
                     setHiddenProperty(this, "patchedInitialize", patchInitialize(newInitialize));
                 }
             });
-    	});
+        });
     }, this);
 
     // @private
@@ -521,7 +521,7 @@ window.__backboneAgent = new (function() {
 
     // @private
     var patchBackboneView = bind(function(BackboneView) {
-    	patchBackboneComponent(BackboneView, bind(function(view) { // on new instance
+        patchBackboneComponent(BackboneView, bind(function(view) { // on new instance
             // registra il nuovo componente dell'app
             var viewIndex = registerAppComponent("View", view);
 
@@ -607,7 +607,7 @@ window.__backboneAgent = new (function() {
 
                 return result;
             }});
-    	}, this));
+        }, this));
     }, this);
 
     // @private

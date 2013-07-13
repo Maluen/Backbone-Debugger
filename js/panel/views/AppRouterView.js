@@ -1,14 +1,14 @@
 define(["backbone", "underscore", "jquery", "views/AppComponentView", 
-		"handlebars", "text!templates/appRouter.html"],
+        "handlebars", "text!templates/appRouter.html"],
 function(Backbone, _, $, AppComponentView, Handlebars, template) {
-	
-	var AppRouterView = AppComponentView.extend({
+    
+    var AppRouterView = AppComponentView.extend({
 
-		template: Handlebars.compile(template),
+        template: Handlebars.compile(template),
 
-		events: $.extend({
+        events: $.extend({
 
-		}, AppComponentView.prototype.events)
+        }, AppComponentView.prototype.events)
 
     });
     return AppRouterView;

@@ -4,20 +4,20 @@
 define(["backbone", "underscore", "models/AppComponent", "backboneAgentClient"],
 function(Backbone, _, AppComponent, backboneAgentClient) {
 
-	var AppView = AppComponent.extend({
+    var AppView = AppComponent.extend({
 
         category: "View",
 
-		// attributi supportati dal modello
-		defaults: {
-			"component_index": null, // int
+        // attributi supportati dal modello
+        defaults: {
+            "component_index": null, // int
             "component_name": null, // string
-			"component_modelIndex": null, // int
-			"component_collectionIndex": null // int
-		},
+            "component_modelIndex": null, // int
+            "component_collectionIndex": null // int
+        },
 
-		// Estrae gli attributi dalle info recuperate dall'agent.
-		fetchLogic: function(onComplete) {
+        // Estrae gli attributi dalle info recuperate dall'agent.
+        fetchLogic: function(onComplete) {
             backboneAgentClient.execFunction(function(componentIndex) {
                 var appViewInfo = this.getAppComponentInfoByIndex("View", componentIndex);
                 var componentModelInfo = this.getAppComponentInfo(appViewInfo.component.model);
@@ -33,7 +33,7 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                 };
                 return appViewAttributes;
             }, [this.get("component_index")], onComplete);
-		},
+        },
 
         // stampa l'elemento html della vista sulla console
         printElement: function() {

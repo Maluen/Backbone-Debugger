@@ -1,32 +1,32 @@
 define(["backbone", "underscore", "backboneAgentClient"],
 function(Backbone, _, backboneAgentClient) {
-	
-	var AppComponentAction = Backbone.Model.extend({
+    
+    var AppComponentAction = Backbone.Model.extend({
 
         component: undefined, // oggetto sottotipo di AppComponent
 
-		// attributi supportati dal modello
-		defaults: {
-			"index": null,
+        // attributi supportati dal modello
+        defaults: {
+            "index": null,
             "timestamp": null, // numero
-			"type": null, // stringa
-			"name": null, // stringa
+            "type": null, // stringa
+            "name": null, // stringa
             "targetKind": null, // può essere "AppComponent", "jQuery Event" o "Other"
             // i seguenti attributi saranno settati solo se il target è un componente dell'app
             // (cioè targetKind è impostato a "AppComponent")
             "targetAppComponentCategory": null, // stringa
             "targetAppComponentIndex": null
-		},
+        },
 
-		initialize: function(attributes, options) {
-			_.bindAll(this);
-		},
+        initialize: function(attributes, options) {
+            _.bindAll(this);
+        },
 
-		fetch: function(onComplete) {
-			var index = this.get("index");
-			if (index === undefined) {
-				throw "The index attribute is undefined.";
-			}
+        fetch: function(onComplete) {
+            var index = this.get("index");
+            if (index === undefined) {
+                throw "The index attribute is undefined.";
+            }
 
             backboneAgentClient.execFunction(function(componentCategory, componentIndex, index) {
                 var appComponentInfo = this.getAppComponentInfoByIndex(componentCategory, componentIndex);
@@ -47,13 +47,13 @@ function(Backbone, _, backboneAgentClient) {
                 return appComponentActionAttributes;
             }, [this.component.category, this.component.get("component_index"), index], 
             _.bind(function(appComponentActionAttributes) { // on executed
-            	// resetta gli attributi
+                // resetta gli attributi
                 this.clear({silent: true});
                 this.set(appComponentActionAttributes);
 
                 if (onComplete !== undefined) onComplete();
             }, this));
-		},
+        },
 
         // stampa il target sulla console
         printTarget: function() {
