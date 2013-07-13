@@ -1,4 +1,4 @@
-/* NOTA BENE: il modello passato deve esser già stato fetchato / con dati validi. */
+/* NOTE: the passed model must have already been fetched or have valid attributes. */
 
 define(["backbone", "underscore", "jquery", "views/containers/AppComponentActionsView"],
 function(Backbone, _, $, AppComponentActionsView) {
@@ -8,28 +8,28 @@ function(Backbone, _, $, AppComponentActionsView) {
 		template: undefined,
 		tagName: "li",
 
-		appComponentActionsView: undefined, // oggetto di tipo AppComponentActionsView
+		appComponentActionsView: undefined, // AppComponentActionsView for the component actions
 
 		initialize: function(options) {
 			_.bindAll(this);
 
-			// crea la vista per le azioni del componente
+			// create sub-view for the component actions
 			this.appComponentActionsView = new AppComponentActionsView({
 				collection: this.model.actions
 			});
 
 			this.listenTo(this.model, "change", this.render);
 
-			// permette al componente di reagire ogni volta che viene aggiunta una sua nuova azione
-			// (ad es. per calcolare un cambiamento di stato del componente)
-			this.handleActions(); // per le azioni già esistenti
+			// allow the view to react each time the component performs a new action
+			// (for example to calculate the new component status)
+			this.handleActions(); // needed for processing the already existing actions
 			this.listenTo(this.model.actions, "reset", this.handleActions);
 			this.listenTo(this.model.actions, "add", this.handleAction);
 
 			this.render();
 		},
 
-		// agisce sulle azioni correnti
+		// Process the existing actions
 		handleActions: function() {
 			var actions = this.model.actions.models;
 			for (var i=0,l=actions.length; i<l; i++) {
@@ -38,36 +38,29 @@ function(Backbone, _, $, AppComponentActionsView) {
 		},
 
 		handleAction: function(action) {
-			// il default è nessuna operazione, i sottotipi possono sovrascrivere il metodo con la propria logica
+			// default is no-op, but subtypes can override the method with custom logic
 		},
 
-		// restituisce i dati per il template, può essere sovrascritta dai sottotipi
-		// per aumentarne / modificarne i dati restituiti.
+		// Return the template data, can be overridden by subtypes to augment / alter the returned data.
 		templateData: function() {
 			var templateData = this.model.toJSON();
-			// mantiene aperta la vista se lo era
-			var isOpen = false;
-			var appComponentEl = this.$(".appComponent");
-			if (appComponentEl.length > 0) { // la vista è già stata renderizzata precedentemente
-				isOpen = appComponentEl.hasClass("in");
-			}
-			templateData["isOpen"] = isOpen;
+			// don't close the component content it it was open
+			templateData["isOpen"] = this.$(".appComponent").hasClass("in");
 
 			return templateData;
 		},
 
 		render: function() {
-			// remove .appComponent handlers to prevent memory leaks
-			var appComponent = this.$('.appComponent');
-			if (appComponent.length > 0) { appComponent.off(); }
+			// before render, remove .appComponent handlers to prevent memory leaks
+			this.$('.appComponent').off();
 
 			var templateData = this.templateData();
-			this.el.innerHTML = this.template(templateData); // NON usare this.$el.html() che disattiva gli event handler jquery delle sottoviste esistenti
-			// inserisce la vista con le azioni del componente
+			this.el.innerHTML = this.template(templateData); // DON'T use this.$el.html() because it removes the jQuery event handlers of existing sub-views
+			// insert the sub-view with the component actions
 			this.$(".appComponentActions").append(this.appComponentActionsView.el);
 
-			// evita di renderizzare l'html collassato per diminuire fortemente i tempi di rendering
-			// quando l'app ha molti componenti
+			// prevents the browser from rendering the component content when it is collapsed (closed), 
+			// drastically decreasing the rendering time when the application has lots of components
 			var appComponent = this.$('.appComponent');
 			if (!templateData['isOpen']) {
 				appComponent.css("display", "none");

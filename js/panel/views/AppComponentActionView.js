@@ -1,7 +1,6 @@
-/* NOTA BENE: il metodo passato deve esser già stato fetchato / con dati validi. */
+/* NOTE: the passed model must have already been fetched or have valid attributes. */
 
-define(["backbone", "underscore", "jquery", 
-		"handlebars", "text!templates/appComponentAction.html"],
+define(["backbone", "underscore", "jquery", "handlebars", "text!templates/appComponentAction.html"],
 function(Backbone, _, $, Handlebars, template) {
 	
 	var AppComponentActionView = Backbone.View.extend({
@@ -19,7 +18,7 @@ function(Backbone, _, $, Handlebars, template) {
 
 		render: function() {
 			var templateData = this.model.toJSON();
-			// formatta il timestamp in "hh:mm:ss"
+			// format timestamp in "hh:mm:ss"
 			var date = new Date(this.model.get("timestamp"));
 			var hours = date.getHours();
 			var minutes = date.getMinutes();
@@ -29,7 +28,7 @@ function(Backbone, _, $, Handlebars, template) {
 			if (seconds < 10) seconds = "0"+seconds;
 			templateData["time"] = hours + ":"+ minutes + ":"+ seconds;
 
-			this.el.innerHTML = this.template(templateData); // NON usare this.$el.html() che disattiva gli event handler jquery delle sottoviste esistenti
+			this.el.innerHTML = this.template(templateData); // DON'T use this.$el.html() because it removes the jQuery event handlers of existing sub-views
 
 			return this;
 		},

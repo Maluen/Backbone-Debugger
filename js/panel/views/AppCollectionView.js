@@ -1,15 +1,14 @@
-define(["backbone", "underscore", "jquery", "views/AppComponentView", "utils",
+define(["backbone", "underscore", "jquery", "views/AppComponentView",
 		"handlebars", "text!templates/appCollection.html"],
-function(Backbone, _, $, AppComponentView, utils, Handlebars, template) {
+function(Backbone, _, $, AppComponentView, Handlebars, template) {
 	
 	var AppCollectionView = AppComponentView.extend({
 
 		template: Handlebars.compile(template),
 
-		componentStatus: "instantiated", // è l'ultimo stato di sincronizzazione, es. "read (success)"
+		componentStatus: "instantiated", // last sync status, e.g. "read (success)"
 
-		// rileva i cambiamenti di status della collezione dell'app
-		// a seconda della sua sincronizzazione
+		// Change the component status by analyzing its "Sync" actions.
 		handleAction: function(action) {
 			if (action.get("type") == "Sync") {
 				var syncStatus = action.get("name");
@@ -20,13 +19,8 @@ function(Backbone, _, $, AppComponentView, utils, Handlebars, template) {
 
 		templateData: function() {
 			var templateData = AppComponentView.prototype.templateData.apply(this, arguments);
-			// mantiene aperta la lista dei modelli se lo era
-			var isModelsOpen = false;
-			var appCollectionModelsEl = this.$(".models");
-			if (appCollectionModelsEl.length > 0) { // la vista è già stata renderizzata precedentemente
-				isModelsOpen = appCollectionModelsEl.hasClass("in");
-			}
-			templateData["isModelsOpen"] = isModelsOpen;
+			// don't close the models list if it was open
+			templateData["isModelsOpen"] = this.$(".models").hasClass("in");
 			// status
 			templateData["component_status"] = this.componentStatus;
 			

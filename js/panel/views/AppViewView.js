@@ -1,4 +1,4 @@
-/* Vista per un modello di tipo AppView */
+/* View for AppView model */
 
 define(["backbone", "underscore", "jquery", "views/AppComponentView", 
 		"handlebars", "text!templates/appView.html"],
@@ -8,10 +8,9 @@ function(Backbone, _, $, AppComponentView, Handlebars, template) {
 
 		template: Handlebars.compile(template),
 
-		componentStatus: "Created", // può essere "Created", "Rendered" o "Removed"
+		componentStatus: "Created", // can be "Created", "Rendered" or "Removed"
 
-		// rileva i cambiamenti di status della vista dell'app
-		// a seconda delle operazioni effettuate su di essa
+		// Change the component status by analyzing its "Operation" actions.
 		handleAction: function(action) {
 			if (action.get("type") == "Operation") {
 				var operationName = action.get("name");
@@ -24,7 +23,7 @@ function(Backbone, _, $, AppComponentView, Handlebars, template) {
 			}
 		},
 
-		// aumenta i dati del template con lo status
+		// Augment template data with the component status
 		templateData: function() {
 			var templateData = AppComponentView.prototype.templateData.apply(this, arguments);
 			templateData["component_status"] = this.componentStatus;
