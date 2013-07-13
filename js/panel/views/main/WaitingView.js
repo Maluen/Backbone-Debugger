@@ -1,9 +1,6 @@
-/**
-Vista attivata durante l'attesa per il caricamento della pagina ispezionata.
-**/
+/* View activated while waiting for the inspected page loading. */
 
-define(["backbone", "underscore", "jquery", 
-		"handlebars", "text!templates/waiting.html"],
+define(["backbone", "underscore", "jquery", "handlebars", "text!templates/waiting.html"],
 function(Backbone, _, $, Handlebars, template) {
 	
 	var WaitingView = Backbone.View.extend({
@@ -17,7 +14,7 @@ function(Backbone, _, $, Handlebars, template) {
 		},
 
 		render: function() {
-			this.el.innerHTML = this.template(); // NON usare this.$el.html() che disattiva gli event handler jquery delle sottoviste esistenti
+			this.el.innerHTML = this.template(); // DON'T use this.$el.html() because it removes the jQuery event handlers of existing sub-views
 			return this;
 		}
     });

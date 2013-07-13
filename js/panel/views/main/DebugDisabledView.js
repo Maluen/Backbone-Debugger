@@ -1,9 +1,6 @@
-/**
-Vista attivata nel caso in cui la modalità debug non è attiva.
-**/
+/* View activated when the application isn't in debug mode, allowing to activate it. */
 
-define(["backbone", "underscore", "jquery", 
-		"handlebars", "text!templates/debugDisabled.html"],
+define(["backbone", "underscore", "jquery", "handlebars", "text!templates/debugDisabled.html"],
 function(Backbone, _, $, Handlebars, template) {
 	
 	var DebugDisabledView = Backbone.View.extend({
@@ -17,7 +14,7 @@ function(Backbone, _, $, Handlebars, template) {
 		},
 
 		render: function() {
-			this.el.innerHTML = this.template(); // NON usare this.$el.html() che disattiva gli event handler jquery delle sottoviste esistenti
+			this.el.innerHTML = this.template(); // DON'T use this.$el.html() because it removes the jQuery event handlers of existing sub-views
 			return this;
 		}
     });

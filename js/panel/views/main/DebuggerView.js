@@ -1,6 +1,4 @@
-/**
-Vista attivata nel caso in cui la modalità debug E' attiva.
-**/
+/* View activated when the application is in debug mode. */
 
 define(["backbone", "underscore", "jquery", "handlebars", "text!templates/debugger.html", 
 		"views/containers/AppViewsView", "views/containers/AppModelsView", 
@@ -11,13 +9,14 @@ function(Backbone, _, $, Handlebars, template,
 	var DebuggerView = Backbone.View.extend({
 
 		template: Handlebars.compile(template),
-		className: "fill",
+		className: "fill", // needed for 100% height layout
 
 		appComponentsViews: {}, // hash <componentsCategory, componentsView>
 
 		initialize: function(options) {
 			_.bindAll(this);
 
+			// create sub-views for app components
 			this.appComponentsViews["View"] = new AppViewsView();
 			this.appComponentsViews["Model"] = new AppModelsView();
 			this.appComponentsViews["Collection"] = new AppCollectionsView();
@@ -27,8 +26,8 @@ function(Backbone, _, $, Handlebars, template,
 		},
 
 		render: function() {
-			this.el.innerHTML = this.template();  // NON usare this.$el.html() che disattiva gli event handler jquery delle sottoviste esistenti
-			// inserisce le viste per i componenti dell'app
+			this.el.innerHTML = this.template();  // DON'T use this.$el.html() because it removes the jQuery event handlers of existing sub-views
+			// insert sub-views for app components
 			for (var componentsCategory in this.appComponentsViews) {
 				if (this.appComponentsViews.hasOwnProperty(componentsCategory)) {
 					var componentsView = this.appComponentsViews[componentsCategory];
@@ -61,14 +60,14 @@ function(Backbone, _, $, Handlebars, template,
 			var componentsView = this.appComponentsViews[componentCategory];
 			var componentView = componentsView.getComponentView(componentIndex);
 			if (componentView) {
-				// open tab
+				// open the tab that shows the component
 				var tabElement = this.$("#app"+componentCategory+"sTab");
 				var tabContentElement = this.$("#app"+componentCategory+"s");
 				this.openTab(tabElement, tabContentElement);
-				// open the element and scroll to it
+				// open the component and scroll to it
 				componentView.open();
 				tabContentElement.scrollTop(tabContentElement.scrollTop() + componentView.$el.position().top);
-				// highlight the element
+				// highlight the component
 				componentView.highlightAnimation();
 			}
 		}

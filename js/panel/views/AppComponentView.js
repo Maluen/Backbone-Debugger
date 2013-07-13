@@ -56,7 +56,7 @@ function(Backbone, _, $, AppComponentActionsView) {
 
 			var templateData = this.templateData();
 			this.el.innerHTML = this.template(templateData); // DON'T use this.$el.html() because it removes the jQuery event handlers of existing sub-views
-			// insert the sub-view with the component actions
+			// insert the sub-view for the component actions
 			this.$(".appComponentActions").append(this.appComponentActionsView.el);
 
 			// prevents the browser from rendering the component content when it is collapsed (closed), 
