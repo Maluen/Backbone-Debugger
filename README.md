@@ -30,8 +30,8 @@ However, constant efforts are taken in this direction to address the most possib
 
 Development status
 --------
-**Version**: 0.1  
-**Main activity**: stabilizing
+**Next release**: v0.1.5  
+**Current release**: v0.1
 
 Screenshots
 --------
