@@ -28,7 +28,7 @@ body {
     padding: 15px;
 }
 
-.nav-tabs {
+.mainTabs {
     height: 100%;
     margin-right: 0 !important;
 }
@@ -43,10 +43,12 @@ body {
     -webkit-transform: rotate(270deg);
 }
 
-.tab-pane {
+.mainTabsContent>.tab-pane {
     height: 100%;
     overflow-y: auto;
     padding: 0 15px;
+    margin-top: 5px;
+    display: block !important; /* prevents render on tab change */
 }
 
 .appComponentList>li {
@@ -59,7 +61,7 @@ body {
 
 .removed {
     text-decoration: line-through;
-    color: grey;
+    color: #808080; /* grey */
 }
 
 @-webkit-keyframes highlight {

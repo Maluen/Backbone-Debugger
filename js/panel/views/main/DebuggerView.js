@@ -39,17 +39,32 @@ function(Backbone, _, $, Handlebars, template,
         },
 
         openTab: function(tabElement, tabContentElement) {
-            var currentTabElement = this.$(".nav-tabs .active");
-            var currentTabContentElement = this.$(".tab-content .active");
+            var currentTabElement = this.$(".mainTabs>.active");
 
+            // change highlighted tab
             currentTabElement.removeClass("active");
-            currentTabContentElement.removeClass("active");
             tabElement.addClass("active");
-            tabContentElement.addClass("active");
+
+            // display tab content
+            var tabsContentContainer = this.$('.mainTabsContent');
+            tabsContentContainer.scrollTop(tabsContentContainer.scrollTop() +
+                                           tabContentElement.position().top);
         },
 
         events: {
+            "click .mainTabs>li": "onTabClicked",
             "click .inspectComponent": "inspectComponent"
+        },
+
+        onTabClicked: function(event) {
+            var tabElementAnchor = $(event.target);
+            if (tabElementAnchor.attr("data-toggle") == "tab") { // avoid dropdowns and other tab types
+                var tabElement = tabElementAnchor.parents('li');
+                var tabContentElement = this.$(tabElementAnchor.attr("href"));
+                this.openTab(tabElement, tabContentElement);
+
+                return false;
+            }
         },
 
         inspectComponent: function(event) {
