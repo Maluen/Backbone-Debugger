@@ -24,29 +24,43 @@ function(Backbone, _, $, Handlebars) {
 
             // recupera item correnti
             this.collection.fetch(_.bind(function() { // on complete
-                // crea le viste per i nuovi item
-                this.clearItems();
-                for (var i=0,l=this.collection.length; i<l; i++) {
-                    var collectionItem = this.collection.at(i);
-                    this.addItem(collectionItem);
-                }
-                this.render(); // la render è fatta prima in modo da aver accesso al collectionEl se ci sono item!
-                // popola il collectionEl
-                var collectionEl = this.$(this.collectionElSelector);
-                if (collectionEl.length > 0) {
-                    this.forEachItemView(_.bind(function(collectionItemView) {
-                        collectionEl.append(collectionItemView.el);
-                    }, this));
-                }
+                _.defer(_.bind(function() { // needed to handle the fetch after pending deferred adds
+                    // gestisce i nuovi item
+                    this.clearItems();
+                    this.render();
+                    for (var i=0,l=this.collection.length; i<l; i++) {
+                        var collectionItem = this.collection.at(i);
+                        this.handleNewItem(collectionItem);
+                    }
+                }, this));
             }, this));
 
             // si mette in ascolto per i nuovi item creati
-            this.listenTo(this.collection, "add", _.bind(function(collectionItem) {
+            this.listenTo(this.collection, "add", this.handleNewItem);
+
+            this.render();
+        },
+
+        // Resetta l'array delle viste degli item
+        // N.B: la render NON verrà chiamata!
+        clearItems: function() {
+            this.forEachItemView(_.bind(function(collectionItemView) {
+                collectionItemView.remove();
+            }, this));
+            this.collectionItemViews = [];
+        },
+
+        // Aggiunge l'elemento e lo visualizza nel DOM
+        handleNewItem: function(collectionItem) {
+            _.defer(_.bind(function() { // prevents UI blocking
                 // nuovo item!
                 var newCollectionItemView = this.addItem(collectionItem);
-                // la render è fatta prima in modo da aver accesso al collectionEl 
-                // (e aggiornare eventuali altre infomazioni del template, ad es. uno span con il numero di item)
-                this.render();
+                // quando si passa da 0 elementi ad un 1 elemento bisogna fare la render in modo
+                // che il template inserisca il collectionEl, per poterlo poi gestire manualmente;
+                // inoltre evitando di rifare la render ogni volta si impedisce l'effetto "sfarfallio" che
+                // non permette di aprire i componenti durante l'aggiunta continuativa di questi, a causa
+                // dell'animazione Bootstrap che viene interrotta.
+                if (this.collectionItemViews.length == 1) this.render();
                 // aggiunge al collectionEl l'el per la vista del nuovo item alla posizione corretta
                 var collectionEl = this.$(this.collectionElSelector);
                 if (collectionEl.length > 0) {
@@ -67,17 +81,6 @@ function(Backbone, _, $, Handlebars) {
                     }, this));
                 }
             }, this));
-
-            this.render();
-        },
-
-        // Resetta l'array delle viste degli item
-        // N.B: la render NON verrà chiamata!
-        clearItems: function() {
-            this.forEachItemView(_.bind(function(collectionItemView) {
-                collectionItemView.remove();
-            }, this));
-            this.collectionItemViews = [];
         },
 
         // Crea un nuova vista per l'item e la restituisce.

@@ -1,6 +1,6 @@
-define(["backbone", "underscore", "defer", "backboneAgentClient", "inspectedPageClient",
+define(["backbone", "underscore", "backboneAgentClient", "inspectedPageClient",
         "collections/Collection", "models/AppComponentAction"],
-function(Backbone, _, defer, backboneAgentClient, inspectedPageClient, Collection, AppComponentAction) {
+function(Backbone, _, backboneAgentClient, inspectedPageClient, Collection, AppComponentAction) {
 
     var AppComponentActions = Collection.extend({
 

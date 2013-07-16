@@ -1,7 +1,7 @@
 /* L'aggiornamento in tempo reale viene attivato automaticamente al termine della fetch. */
 
-define(["backbone", "underscore", "defer", "backboneAgentClient", "inspectedPageClient"],
-function(Backbone, _, defer, backboneAgentClient, inspectedPageClient) {
+define(["backbone", "underscore", "backboneAgentClient", "inspectedPageClient"],
+function(Backbone, _, backboneAgentClient, inspectedPageClient) {
 
     var AppComponent = Backbone.Model.extend({
 
@@ -38,7 +38,7 @@ function(Backbone, _, defer, backboneAgentClient, inspectedPageClient) {
             // (per evitare che la logica venga eseguita più di una volta)
             if (this.isRealTimeUpdateActive) return;
 
-            defer.add(_.bind(function() { // binding many consecutive events freezes the ui (happens if there are a lot of app components)
+            _.defer(_.bind(function() { // binding many consecutive events freezes the ui (happens if there are a lot of app components)
                 this.listenTo(inspectedPageClient, "backboneAgent:report", _.bind(function(report) {
                     var componentChanged = report.name == "change" &&
                                            report.componentCategory == this.category &&
