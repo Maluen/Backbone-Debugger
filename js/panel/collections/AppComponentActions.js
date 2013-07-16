@@ -1,6 +1,6 @@
-define(["backbone", "underscore", "backboneAgentClient", "inspectedPageClient",
+define(["backbone", "underscore", "defer", "backboneAgentClient", "inspectedPageClient",
         "collections/Collection", "models/AppComponentAction"],
-function(Backbone, _, backboneAgentClient, inspectedPageClient, Collection, AppComponentAction) {
+function(Backbone, _, defer, backboneAgentClient, inspectedPageClient, Collection, AppComponentAction) {
 
     var AppComponentActions = Collection.extend({
 
@@ -36,12 +36,21 @@ function(Backbone, _, backboneAgentClient, inspectedPageClient, Collection, AppC
         },
 
         realTimeUpdateLogic: function(onNew) {
-            this.listenTo(inspectedPageClient, "backboneAgent:report", _.bind(function(report) {
-                if (report.name == "action" && report.componentCategory == this.component.category &&
-                    report.componentIndex === this.component.get("component_index"))
-                {
-                    onNew(report.componentActionIndex, report.timestamp);
-                }
+
+            _.defer(_.bind(function() { // binding many consecutive events freezes the ui (happens if there are a lot of app components)
+                this.listenTo(inspectedPageClient, "backboneAgent:report", _.bind(function(report) {
+                    if (report.name == "action" && report.componentCategory == this.component.category &&
+                        report.componentIndex === this.component.get("component_index"))
+                    {
+                        onNew(report.componentActionIndex, report.timestamp);
+                    }
+                }, this));
+
+                // l'avvio della realTimeUpdate è rimandato con la defer, per cui eventuali report
+                // inviati tra l'esecuzione e l'effettivo avvio di questa non sono stati gestiti,
+                // facendo la fetch adesso si ottiene allora lo stato comprensivo degli eventuali cambiamenti,
+                // dopodichè i prossimi report saranno gestiti.
+                this.fetch();
             }, this));
         }
 
