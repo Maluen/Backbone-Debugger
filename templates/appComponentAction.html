@@ -1,16 +1,9 @@
 <td>{{time}}</td>
 <td>{{type}}</td>
-<td>{{name}}</td>
 <td>
-    {{#compare targetKind "AppComponent"}}
-    <!-- the target is an app component in this case -->
-    <a class="inspectComponent btn btn-link" 
-       data-component-category="{{targetAppComponentCategory}}"
-       data-component-index="{{targetAppComponentIndex}}"
-       title="Inspect">
-       {{targetAppComponentCategory}} {{targetAppComponentIndex}}
-    </a>
+    {{#unlessNull dataKind}}
+        <a class="printData btn btn-link" title="Print {{dataKind}} in console">{{name}}</a>
     {{else}}
-        <a class="printTarget btn btn-link" title="Print in console">{{targetKind}}</a>
-    {{/compare}}
+        {{name}}
+    {{/unlessNull}}
 </td>

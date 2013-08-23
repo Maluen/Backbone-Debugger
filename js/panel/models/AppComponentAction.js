@@ -11,11 +11,7 @@ function(Backbone, _, backboneAgentClient) {
             "timestamp": null, // numero
             "type": null, // stringa
             "name": null, // stringa
-            "targetKind": null, // può essere "AppComponent", "jQuery Event" o "Other"
-            // i seguenti attributi saranno settati solo se il target è un componente dell'app
-            // (cioè targetKind è impostato a "AppComponent")
-            "targetAppComponentCategory": null, // stringa
-            "targetAppComponentIndex": null
+            "dataKind": null // può essere "jQuery Event"
         },
 
         initialize: function(attributes, options) {
@@ -31,18 +27,13 @@ function(Backbone, _, backboneAgentClient) {
             backboneAgentClient.execFunction(function(componentCategory, componentIndex, index) {
                 var appComponentInfo = this.getAppComponentInfoByIndex(componentCategory, componentIndex);
                 var appComponentAction = appComponentInfo.actions[index];
-                // targetInfo è valido se il target è un componente
-                var targetInfo = this.getAppComponentInfo(appComponentAction.target);
-
 
                 var appComponentActionAttributes = {
                     "index": index,
                     "timestamp": appComponentAction.timestamp,
                     "type": appComponentAction.type,
                     "name": appComponentAction.name,
-                    "targetKind": appComponentAction.targetKind,
-                    "targetAppComponentCategory": targetInfo? targetInfo.category : null,
-                    "targetAppComponentIndex": targetInfo? targetInfo.index : null
+                    "dataKind": appComponentAction.dataKind
                 };
                 return appComponentActionAttributes;
             }, [this.component.category, this.component.get("component_index"), index],
@@ -55,12 +46,12 @@ function(Backbone, _, backboneAgentClient) {
             }, this));
         },
 
-        // stampa il target sulla console
-        printTarget: function() {
+        // stampa l'action data sulla console
+        printData: function() {
             backboneAgentClient.execFunction(function(componentCategory, componentIndex, index) {
                 var appComponentInfo = this.getAppComponentInfoByIndex(componentCategory, componentIndex);
                 var appComponentAction = appComponentInfo.actions[index];
-                console.log(appComponentAction.target);
+                console.log(appComponentAction.data);
             }, [this.component.category, this.component.get("component_index"), this.get("index")],
             _.bind(function(result) { // on executed
                 // do nothing

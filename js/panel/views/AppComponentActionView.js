@@ -34,11 +34,12 @@ function(Backbone, _, $, Handlebars, template) {
         },
 
         events: {
-            "click .printTarget": "printTarget"
+            "click .printData": "printData"
         },
 
-        printTarget: function() {
-            this.model.printTarget();
+        // Print action data in console
+        printData: function() {
+            this.model.printData();
         }
 
     });

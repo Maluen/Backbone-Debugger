@@ -161,13 +161,13 @@ window.__backboneAgent = new (function() {
 
     // @private
     // Azione di un componente dell'app.
-    var AppComponentAction = function(type, name, target, targetKind) {
+    var AppComponentAction = function(type, name, data, dataKind) {
 
         this.timestamp = Date.now();
         this.type = type; // stringa
         this.name = name; // stringa
-        this.target = target; // oggetto
-        this.targetKind = targetKind || "Other"; // può essere "AppComponent", "jQuery Event" o "Other"
+        this.data = data; // oggetto
+        this.dataKind = dataKind; // obbligatorio se data è definito, può essere "jQuery Event"
 
         //// Metodi di utilità ////
 
@@ -465,7 +465,7 @@ window.__backboneAgent = new (function() {
 
             var eventName = arguments[0];
             addAppComponentAction(this, new AppComponentAction(
-                "Trigger", eventName, this, "AppComponent"
+                "Trigger", eventName
             ));
 
             return result;
@@ -492,7 +492,7 @@ window.__backboneAgent = new (function() {
                 var actionName = method + " ("+syncStatus+")"; // es. "fetch (failure)"
 
                 addAppComponentAction(toSync, new AppComponentAction(
-                    "Sync", actionName, toSync, "AppComponent"
+                    "Sync", actionName
                 ));
             };
 
@@ -592,7 +592,7 @@ window.__backboneAgent = new (function() {
                 var result = originalFunction.apply(this, arguments);
 
                 addAppComponentAction(this, new AppComponentAction(
-                    "Operation", "render", this, "AppComponent"
+                    "Operation", "render"
                 ));
 
                 return result;
@@ -602,7 +602,7 @@ window.__backboneAgent = new (function() {
                 var result = originalFunction.apply(this, arguments);
 
                 addAppComponentAction(this, new AppComponentAction(
-                    "Operation", "remove", this, "AppComponent"
+                    "Operation", "remove"
                 ));
 
                 return result;
