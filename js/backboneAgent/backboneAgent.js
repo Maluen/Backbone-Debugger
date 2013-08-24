@@ -485,13 +485,12 @@ window.__backboneAgent = new (function() {
         patchFunctionLater(appComponent, "sync", function(originalFunction) { return function() {
 
             var method = arguments[0]; // es. "create", "read", etc.
-            var toSync = arguments[1]; // componente dell'app da sincronizzare
 
             var syncCompleted = function(isSuccess) {
                 var syncStatus = isSuccess? "success" : "failure";
                 var actionName = method + " ("+syncStatus+")"; // es. "fetch (failure)"
 
-                addAppComponentAction(toSync, new AppComponentAction(
+                addAppComponentAction(appComponent, new AppComponentAction(
                     "Sync", actionName
                 ));
             };

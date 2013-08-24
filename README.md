@@ -28,11 +28,6 @@ Support for apps that modify the standard Backbone behavior, e.g. apps that patc
 delegateEvents, or that replace part of Backbone functions with custom code, is uncertain.
 However, constant efforts are taken in this direction to address the most possible use cases, so even if your application falls into this category you may still give it a try or wait for newer versions.
 
-Development status
---------
-**Next release**: v0.1.5  
-**Current release**: v0.1
-
 Screenshots
 --------
 **Views**:
