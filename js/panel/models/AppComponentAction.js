@@ -11,7 +11,8 @@ function(Backbone, _, backboneAgentClient) {
             "timestamp": null, // numero
             "type": null, // stringa
             "name": null, // stringa
-            "dataKind": null // può essere "jQuery Event"
+            "dataKind": null // string, see AppComponentAction dataKind definition 
+                             // in backboneAgent for possible values
         },
 
         initialize: function(attributes, options) {

@@ -167,7 +167,10 @@ window.__backboneAgent = new (function() {
         this.type = type; // stringa
         this.name = name; // stringa
         this.data = data; // oggetto
-        this.dataKind = dataKind; // obbligatorio se data è definito, può essere "jQuery Event"
+        // obbligatorio se data è definito, può essere
+        // - "jQuery Event": data è l'oggetto relativo ad un evento jQuery
+        // - "event arguments": data è un array di argomenti di un evento Backbone
+        this.dataKind = dataKind;
 
         //// Metodi di utilità ////
 
@@ -463,9 +466,19 @@ window.__backboneAgent = new (function() {
         patchFunctionLater(appComponent, "trigger", function(originalFunction) { return function() {
             var result = originalFunction.apply(this, arguments);
 
+            // function signature: trigger(eventName, arg1, arg2, ...) 
             var eventName = arguments[0];
+            var eventArguments = undefined;
+            if (arguments.length > 1) { // the event has arguments
+                // get the event arguments by skipping the first function argument (i.e the event name)
+                eventArguments = Array.prototype.slice.call(arguments, 1);
+            }
+            // send data only if there is actual data to send
+            var data = eventArguments;
+            var dataKind = (data === undefined) ? undefined : "event arguments";
+
             addAppComponentAction(this, new AppComponentAction(
-                "Trigger", eventName
+                "Trigger", eventName, data, dataKind
             ));
 
             return result;
