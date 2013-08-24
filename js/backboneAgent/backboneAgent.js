@@ -473,7 +473,7 @@ window.__backboneAgent = new (function() {
                 // get the event arguments by skipping the first function argument (i.e the event name)
                 eventArguments = Array.prototype.slice.call(arguments, 1);
             }
-            // send data only if there is actual data to send
+            // save data only if there is
             var data = eventArguments;
             var dataKind = (data === undefined) ? undefined : "event arguments";
 

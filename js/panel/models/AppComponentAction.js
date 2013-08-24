@@ -52,7 +52,7 @@ function(Backbone, _, backboneAgentClient) {
             backboneAgentClient.execFunction(function(componentCategory, componentIndex, index) {
                 var appComponentInfo = this.getAppComponentInfoByIndex(componentCategory, componentIndex);
                 var appComponentAction = appComponentInfo.actions[index];
-                console.log(appComponentAction.data);
+                console.log(appComponentAction.name+":", appComponentAction.data);
             }, [this.component.category, this.component.get("component_index"), this.get("index")],
             _.bind(function(result) { // on executed
                 // do nothing
