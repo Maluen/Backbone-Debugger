@@ -82,7 +82,7 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
             backboneAgentClient.execFunction(function(componentIndex, attributeName) {
                 var appModelInfo = this.getAppComponentInfoByIndex("Model", componentIndex);
                 var attributeValue = appModelInfo.component.attributes[attributeName];
-                console.log(attributeValue);
+                console.log(attributeName+":", attributeValue);
             }, [this.get("component_index"), attributeName], _.bind(function(result) { // on executed
                 // do nothing
             }, this));
