@@ -28,10 +28,20 @@ function(Backbone, _, $, Handlebars, template,
         render: function() {
             this.el.innerHTML = this.template();  // DON'T use this.$el.html() because it removes the jQuery event handlers of existing sub-views
             // insert sub-views for app components
+            var tabIndex = 0;
             for (var componentsCategory in this.appComponentsViews) {
                 if (this.appComponentsViews.hasOwnProperty(componentsCategory)) {
                     var componentsView = this.appComponentsViews[componentsCategory];
-                    this.$("#app"+componentsCategory+"s").append(componentsView.el);
+                    var componentsViewElWrapper = this.$("#app"+componentsCategory+"s");
+                    componentsViewElWrapper.append(componentsView.el);
+
+                    // Fix scroll alignment bug on devtools resizing:
+                    // by absolute positioning the tab contents, the contents size change
+                    // doesn't affect the position of those below them.
+                    // NOTE: the distance between the contents should be greater than the maximum
+                    // devtools height (i.e. the screen height) or the contents may overlap
+                    componentsViewElWrapper.css("top", tabIndex*1000+"em");
+                    tabIndex++;
                 }
             }
 

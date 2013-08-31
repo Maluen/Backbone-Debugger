@@ -43,12 +43,20 @@ body {
     -webkit-transform: rotate(270deg);
 }
 
+.mainTabsContent {
+    position: relative; /* required for .tab-pane absolute positioning */
+}
+
 .mainTabsContent>.tab-pane {
     height: 100%;
-    overflow-y: auto;
-    padding: 0 15px;
-    margin-top: 5px;
+    overflow-y: auto;    
     display: block !important; /* prevents render on tab change */
+    position: absolute;
+    width: 100%;
+}
+.mainTabsContent>.tab-pane>div { /* the actual tab content */
+    /* By setting the padding here, the increasing of .tab-pane size is avoided */
+    padding: 5px 15px 0 15px;
 }
 
 .appComponentList>li {
