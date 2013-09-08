@@ -1,16 +1,21 @@
 <a class="appComponentToggle btn btn-link"
    data-toggle="collapse" 
    data-target="#router{{component_index}}">
-   Router {{component_index}} {{#unlessNull component_name}} : {{component_name}} {{/unlessNull}}
+   <span>Router {{component_index}} {{#unlessNull component_name}} : {{component_name}} {{/unlessNull}}</span>
 </a>
 
 <div id="router{{component_index}}" class="appComponent collapse {{#if isOpen}}in{{/if}}">
     
     <ul>
         <!--
-        <li><b>Type</b>: <a class="printType btn btn-link" title="Print in console">[object Object]</a></li>
+        <li>
+            <b>Type</b>: 
+            <a class="printType btn btn-link" title="Print in console">[object Object]</a>
+        </li>
         -->
-        <li><b>this</b>: 
+
+        <li>
+            <b>this</b>: 
             <a class="printAppComponent btn btn-link" title="Print in console">[object Object]</a>
         </li>
 

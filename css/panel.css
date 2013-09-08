@@ -10,6 +10,7 @@ html, body {
 body {
     background-color: #F5F5F5;
     padding: 0;
+    -webkit-user-select: none; /* disable text selection */
 }
 
 .btn-link {
@@ -66,6 +67,9 @@ body {
 .appComponentToggle {
     text-align: left;
 }
+.appComponentToggle span {
+    -webkit-user-select: text;
+}
 
 .removed {
     text-decoration: line-through;
@@ -86,6 +90,7 @@ body {
     border-color: rgb(221, 221, 221);
     border-width: 1px;
     border-collapse: collapse;
+    -webkit-user-select: text;
 }
 
 .appComponent ul {

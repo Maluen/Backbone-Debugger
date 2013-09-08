@@ -1,21 +1,29 @@
 <a class="appComponentToggle btn btn-link {{#compare component_status 'delete (success)'}}removed{{/compare}}"
    data-toggle="collapse" 
    data-target="#collection{{component_index}}">
-   Collection {{component_index}} {{#unlessNull component_name}} : {{component_name}} {{/unlessNull}}
+   <span>
+    Collection {{component_index}} {{#unlessNull component_name}} : {{component_name}} {{/unlessNull}}
+   </span>
 </a>
 
 <div id="collection{{component_index}}" class="appComponent collapse {{#if isOpen}}in{{/if}}">
     
     <ul>
         <!--
-        <li><b>Type</b>: <a class="printType btn btn-link" title="Print in console">[object Object]</a></li>
+        <li>
+            <b>Type</b>: 
+            <a class="printType btn btn-link" title="Print in console">[object Object]</a>
+        </li>
         -->
+
         <li>
             <b>this</b>: 
             <a class="printAppComponent btn btn-link" title="Print in console">[object Object]</a>
         </li>
 
-        <li><b>Status</b>: {{component_status}}</li>
+        <li>
+            <b>Status</b>: {{component_status}}
+        </li>
 
         <!--
         {{#if component_hasModel}}
