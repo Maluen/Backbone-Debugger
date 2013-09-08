@@ -32,6 +32,7 @@ body {
 .mainTabs {
     height: 100%;
     margin-right: 0 !important;
+    margin-bottom: 0;
 }
 
 /* Turns dropdown into dropright for left-aligned nav-tabs */
@@ -50,14 +51,18 @@ body {
 
 .mainTabsContent>.tab-pane {
     height: 100%;
-    overflow-y: auto;    
+    overflow-y: auto;
     display: block !important; /* prevents render on tab change */
     position: absolute;
     width: 100%;
 }
 .mainTabsContent>.tab-pane>div { /* the actual tab content */
     /* By setting the padding here, the increasing of .tab-pane size is avoided */
-    padding: 5px 15px 0 15px;
+    padding: 5px 15px 15px 15px;
+}
+
+.appComponentList {
+    margin: 0;
 }
 
 .appComponentList>li {

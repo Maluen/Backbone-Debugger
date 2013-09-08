@@ -37,10 +37,10 @@ function(Backbone, _, $, Handlebars, template,
 
                     // Fix scroll alignment bug on devtools resizing:
                     // by absolute positioning the tab contents, the contents size change
-                    // doesn't affect the position of those below them.
+                    // doesn't affect the position of the siblings.
                     // NOTE: the distance between the contents should be greater than the maximum
-                    // devtools height (i.e. the screen height) or the contents may overlap
-                    componentsViewElWrapper.css("top", tabIndex*1000+"em");
+                    // devtools width (i.e. the screen width) or the contents may overlap
+                    componentsViewElWrapper.css("left", tabIndex*1000+"em");
                     tabIndex++;
                 }
             }
@@ -57,8 +57,8 @@ function(Backbone, _, $, Handlebars, template,
 
             // display tab content
             var tabsContentContainer = this.$('.mainTabsContent');
-            tabsContentContainer.scrollTop(tabsContentContainer.scrollTop() +
-                                           tabContentElement.position().top);
+            tabsContentContainer.scrollLeft(tabsContentContainer.scrollLeft() +
+                                           tabContentElement.position().left);
         },
 
         events: {
