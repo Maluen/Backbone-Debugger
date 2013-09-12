@@ -22,6 +22,12 @@ Using Google Chrome:
 * Select the extracted folder.
 * Enjoy!
 
+Install from Chrome Web Store
+--------
+* Go to the [extension page](https://chrome.google.com/webstore/detail/backbone-debugger/bhljhndlimiafopmmhjlgfpnnchjjbhd?hl=it) and follow the instructions. Leave a review if you can!    
+
+Follow this method if you want the latest stable release, it will also update automatically.
+
 Known Limitations
 --------
 Support for apps that modify the standard Backbone behavior, e.g. apps that patch core methods like extend or 
