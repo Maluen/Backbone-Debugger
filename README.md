@@ -44,7 +44,7 @@ Screenshots
 
 **Routers**:
 
-![Routers](http://img23.imageshack.us/img23/7677/routerse.jpg "Routers")
+![Routers](http://img89.imageshack.us/img89/4051/e07s.png "Routers")
 
 **Elements sidebar extension**:
 
