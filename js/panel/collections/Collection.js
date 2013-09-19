@@ -33,7 +33,7 @@ function(Backbone, _) {
             }, this);
 
             this.fetchModelsIndexes(_.bind(function(modelsIndexes) { // on complete
-                this.lastFetchTimestamp = Date.now();
+                this.lastFetchTimestamp = new Date().getTime();
 
                 if (modelsIndexes.length === 0) {
                     // no models

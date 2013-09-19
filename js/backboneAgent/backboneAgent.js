@@ -163,7 +163,7 @@ window.__backboneAgent = new (function() {
     // Azione di un componente dell'app.
     var AppComponentAction = function(type, name, data, dataKind) {
 
-        this.timestamp = Date.now();
+        this.timestamp = new Date().getTime();
         this.type = type; // stringa
         this.name = name; // stringa
         this.data = data; // oggetto
@@ -380,7 +380,7 @@ window.__backboneAgent = new (function() {
     // @private
     var sendAppComponentReport = function(report) {
         // the timestamp is tipicaly used by the panel to exclude old reports
-        report.timestamp = Date.now();
+        report.timestamp = new Date().getTime();
 
         sendMessage({
             name: "backboneAgent:report",
