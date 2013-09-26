@@ -1,28 +1,27 @@
-define(["backbone", "views/HomeView"],
-function(Backbone, HomeView) {
+define(["backbone", "views/LayoutView", "views/HomeView", "views/NotFoundView"],
+function(Backbone, LayoutView, HomeView, NotFoundView) {
 
     var Router = Backbone.Router.extend({
 
         initialize: function() {
-            this.contentEl = document.getElementById("content");
-            this.currentView = undefined;
+            this.layoutView = new LayoutView();
+            
+            // show layout
+            document.body.appendChild(this.layoutView.el);
         },
 
         routes: {
-            "": "home"
+            "": "home",
+            
+            '*notFound': 'notFound' // 404
         },
 
         home: function() {
-            this.showView(HomeView);
+            this.layoutView.setCurrentView(HomeView);
         },
         
-        showView: function(View) {
-            if (this.currentView) {
-                this.currentView.remove();
-            }
-            
-            this.currentView = new View();
-            this.contentEl.appendChild(this.currentView.el);
+        notFound: function() {
+            this.layoutView.setCurrentView(NotFoundView);
         }
 
     });
