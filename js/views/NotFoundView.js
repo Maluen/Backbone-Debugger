@@ -3,6 +3,7 @@ function(Backbone, $, Handlebars, template) {
 
     var HomeView = Backbone.View.extend({
 
+        className: "notFound",
         template: Handlebars.compile(template),
 
         initialize: function(options) {

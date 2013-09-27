@@ -22,6 +22,10 @@ function(Backbone, $, Handlebars, template) {
             }
             this.currentView = new View();
             this.$(".content").append(this.currentView.el);
+            
+            // set active nav link
+            this.$(".navbar-nav .active").removeClass("active");
+            this.$(".navbar-nav ."+this.currentView.className).addClass("active");
         }
     });
     return LayoutView;
