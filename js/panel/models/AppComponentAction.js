@@ -39,11 +39,13 @@ function(Backbone, _, backboneAgentClient) {
                 return appComponentActionAttributes;
             }, [this.component.category, this.component.get("component_index"), index],
             _.bind(function(appComponentActionAttributes) { // on executed
-                // resetta gli attributi
-                this.clear({silent: true});
-                this.set(appComponentActionAttributes);
+                _.defer(_.bind(function() { // prevent UI blocking
+                    // resetta gli attributi
+                    this.clear({silent: true});
+                    this.set(appComponentActionAttributes);
 
-                if (onComplete !== undefined) onComplete();
+                    if (onComplete !== undefined) onComplete();
+                }, this));
             }, this));
         },
 

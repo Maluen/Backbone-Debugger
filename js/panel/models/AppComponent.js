@@ -25,11 +25,13 @@ function(Backbone, _, backboneAgentClient, inspectedPageClient) {
             }
 
             this.fetchLogic(_.bind(function(appComponentAttributes) { // on executed
-                // resetta gli attributi
-                this.clear({silent: true});
-                this.set(appComponentAttributes);
-                this.realTimeUpdate();
-                if (onComplete !== undefined) onComplete();
+                _.defer(_.bind(function() { // prevent UI blocking
+                    // resetta gli attributi
+                    this.clear({silent: true});
+                    this.set(appComponentAttributes);
+                    this.realTimeUpdate();
+                    if (onComplete !== undefined) onComplete();
+                }, this));
             }, this));
         },
 
