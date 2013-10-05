@@ -1,9 +1,18 @@
-//console.log("Running backbone agent");
-
 window.__backboneAgent = new (function() {
 
     //// METODI DI UTILITÀ ////
 
+    // @private
+    // backbone agent debugging library
+    var debug = {
+        active: false, // set to true to activate debugging
+        log: function() {
+            if (!this.active) return;
+            console.log.apply(console, arguments);
+        }
+    }
+
+    // @private
     // Imposta il this nella funzione func pari all'oggetto scope.
     var bind = function(func, scope) {
         return function() {
@@ -407,7 +416,7 @@ window.__backboneAgent = new (function() {
             componentIndex: appComponentIndex,
             name: "new"
         });
-        console.log("New " + appComponentCategory, appComponent);
+        debug.log("New " + appComponentCategory, appComponent);
 
         return appComponentIndex;
     }, this);
@@ -433,7 +442,7 @@ window.__backboneAgent = new (function() {
                 componentProperty: property
             });
 
-            //console.log("Property " + property + " of a " + appComponentInfo.category + " has changed: ", appComponent[property]);
+            //debug.log("Property " + property + " of a " + appComponentInfo.category + " has changed: ", appComponent[property]);
         }, this);
 
         if (appComponent[property] !== undefined) { propertyChanged(); }
@@ -455,7 +464,7 @@ window.__backboneAgent = new (function() {
             name: "action",
             componentActionIndex: actionIndex
         });
-        //console.log("New action: ", appComponentAction);
+        //debug.log("New action: ", appComponentAction);
 
         return actionIndex;
     }, this);
@@ -533,6 +542,8 @@ window.__backboneAgent = new (function() {
 
     // @private
     var patchBackboneView = bind(function(BackboneView) {
+        debug.log("Backbone.View detected");
+
         patchBackboneComponent(BackboneView, bind(function(view) { // on new instance
             // registra il nuovo componente dell'app
             var viewIndex = registerAppComponent("View", view);
@@ -624,6 +635,8 @@ window.__backboneAgent = new (function() {
 
     // @private
     var patchBackboneModel = bind(function(BackboneModel) {
+        debug.log("Backbone.Model detected");
+
         patchBackboneComponent(BackboneModel, bind(function(model) { // on new instance
             // registra il nuovo componente dell'app
             var modelIndex = registerAppComponent("Model", model);
@@ -645,6 +658,8 @@ window.__backboneAgent = new (function() {
 
     // @private
     var patchBackboneCollection = bind(function(BackboneCollection) {
+        debug.log("Backbone.Collection detected");
+
         patchBackboneComponent(BackboneCollection, bind(function(collection) { // on new instance
             // registra il nuovo componente dell'app
             var collectionIndex = registerAppComponent("Collection", collection);
@@ -664,6 +679,8 @@ window.__backboneAgent = new (function() {
 
     // @private
     var patchBackboneRouter = bind(function(BackboneRouter) {
+        debug.log("Backbone.Router detected");
+
         patchBackboneComponent(BackboneRouter, bind(function(router) { // on new instance
             // registra il nuovo componente dell'app
             var routerIndex = registerAppComponent("Router", router);
@@ -729,7 +746,10 @@ window.__backboneAgent = new (function() {
     // @private
     // Metodo eseguito automaticamente all'atto della creazione dell'oggetto.
     var initialize = function() {
+        debug.log("Backbone agent is starting...");
+
         onBackboneDetected(function(Backbone) {
+            debug.log("Backbone detected: ", Backbone);
             // note: the Backbone object might be only partially defined.
             onceDefined(Backbone, "View", patchBackboneView);
             onceDefined(Backbone, "Model", patchBackboneModel);
