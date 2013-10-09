@@ -25,3 +25,23 @@ body {
     height: 100%;
     margin-bottom: 20px;
 }
+
+.content-header {
+    background-color: #eee;
+    padding: 5px 15px 25px 0;
+}
+
+.sidebar {
+    margin-top: 25px;
+}
+
+.content .nav > li > a {
+    padding: 5px 20px 5px 0;
+}
+
+/* Sub level nav links */
+.content .nav .nav > li > a {
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 15px;
+}
