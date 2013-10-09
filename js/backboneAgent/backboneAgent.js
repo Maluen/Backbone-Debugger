@@ -3,7 +3,7 @@ window.__backboneAgent = new (function() {
     //// METODI DI UTILITÀ ////
 
     // @private
-    // backbone agent debugging library
+    // backbone agent debugging utils
     var debug = {
         active: false, // set to true to activate debugging
         log: function() {
