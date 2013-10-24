@@ -5,6 +5,10 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
         this.initialize = function() {
             _.bindAll(this);
 
+            // true when the injection process is being executed, tipically used by the router
+            // to decide whether to reload the panel or not.
+            this.isInjecting = false;
+
             // Turn inspected page messages into Backbone events,
             // so that Backbone.Events methods like the useful "listenTo" can be used
             panelPort.onMessage.addListener(_.bind(function(message) {
@@ -56,6 +60,8 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
             var scriptsContents = []; // array with the content of each script
             var scriptsLoaded = 0;
 
+            var realThis = this;
+
             for (var i=0,l=scripts.length; i<l; i++) {(function (i) { // each iteration has its closure with its own "i"
                 // download the scripts asynchronously (the downloads completion order is random)
                 utils.httpRequest("get", scripts[i], function(data) {
@@ -81,6 +87,7 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
                         toInject = injectionDataCode + toInject;
 
                         // Reload the inspected page with the scripts injected at the beginning of it
+                        realThis.isInjecting = true;
                         chrome.devtools.inspectedWindow.reload({
                             ignoreCache: true, // avoid to load the old and possibly different 
                                                // cached version of the inspected page

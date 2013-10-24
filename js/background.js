@@ -39,7 +39,10 @@ chrome.tabs.onUpdated.addListener(function(updatedTabId, changeInfo) {
         if (port) {
             port.postMessage({
                 target: 'page',
-                name: 'updated'
+                name: 'updated',
+                data: {
+                    urlChanged: changeInfo.url !== undefined
+                }
             });
         }
     }

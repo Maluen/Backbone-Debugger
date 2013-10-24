@@ -6,16 +6,11 @@ define(["backbone", "underscore", "inspectedPageClient"], function(Backbone, _, 
             _.bindAll(this);
         };
 
-        // Call the callback when the inspected page is ready, passing to it a boolean
-        // indicating if the Backbone Agent is active.
+        // Call the callback passing to it a boolean indicating if the Backbone Agent is active.
         this.isActive = function(callback) {
-            // Wait until the inspected page is ready, in order to wait the completion of 
-            // an eventual Backbone Agent in-progress activation.
-            inspectedPageClient.ready(function() {
-                inspectedPageClient.execFunction(function() {
-                    return (window.__backboneAgent !== undefined);
-                }, [], callback);
-            });
+            inspectedPageClient.execFunction(function() {
+                return (window.__backboneAgent !== undefined);
+            }, [], callback);
         };
 
         // Activate the Backbone Agent by reloading the inspected page and injecting it at
