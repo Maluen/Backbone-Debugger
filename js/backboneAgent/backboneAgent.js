@@ -151,6 +151,16 @@ window.__backboneAgent = new (function() {
     var patchFunction = function(object, functionName, patcher) {
         var originalFunction = object[functionName];
         object[functionName] = patcher(originalFunction);
+
+        // When calling onString on the patched function, call the originalFunction onString.
+        // This is needed to allow an user of the originalFunction to manipulate its 
+        // original string representation and not that of the patcher function.
+        // NOTE: if the original function is undefined, use the string representation of the empty function.
+        var emptyFunction = function(){};
+        object[functionName].toString = function() {
+            return originalFunction ? originalFunction.toString.apply(originalFunction, arguments) 
+                                    : emptyFunction.toString.apply(emptyFunction, arguments);
+        }
     };
 
     // @private
@@ -512,9 +522,7 @@ window.__backboneAgent = new (function() {
                 var syncStatus = isSuccess? "success" : "failure";
                 var actionName = method + " ("+syncStatus+")"; // es. "fetch (failure)"
 
-                addAppComponentAction(appComponent, new AppComponentAction(
-                    "Sync", actionName
-                ));
+                addAppComponentAction(appComponent, new AppComponentAction("Sync", actionName));
             };
 
             // arguments[2] è un hash con le opzioni
@@ -717,8 +725,13 @@ window.__backboneAgent = new (function() {
             // find the factory function to patch it
             for (var i=0,l=argumentsArray.length; i<l; i++) {
                 if (typeof argumentsArray[i] == "function") {
-                    // factory function found
-                    patchFunction(argumentsArray, i, function(originalFunction) { return function() {
+                    // factory function found, patch it.
+                    // NOTE: in the patcher function, specify the parameters for the
+                    // default modules, or in case of a module with no dependencies but
+                    // that uses the default modules internally, the original define would see a 0-arity
+                    // function and would call it without them (see define() in the AMD API)
+                    patchFunction(argumentsArray, i, function(originalFunction) {
+                    return function(require, exports, modules) {
                         var module = originalFunction.apply(this, arguments);
 
                         // check if Backbone has been defined by the factory fuction
