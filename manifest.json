@@ -3,7 +3,7 @@
   "version": "0.2",
   "description": "Developer Tools extension for debugging Backbone.js applications.",
   "author": "Manuel Dell'Elce and contributors",
-  "minimum_chrome_version": "20.0",
+  "minimum_chrome_version": "22.0",
   "icons": {
     "16": "img/extension16.png",
     "48": "img/extension48.png",

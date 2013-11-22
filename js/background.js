@@ -47,3 +47,10 @@ chrome.tabs.onUpdated.addListener(function(updatedTabId, changeInfo) {
         }
     }
 });
+
+// Open a notification page when the extension gets updated
+chrome.runtime.onInstalled.addListener(function(details) {
+    if (details.reason == "update") {
+        chrome.tabs.create({url: chrome.extension.getURL("updated.html")});
+    }
+});
