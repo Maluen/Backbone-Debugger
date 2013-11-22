@@ -75,51 +75,16 @@ window.__backboneAgent = new (function() {
     };
 
     // @private
-    // Utilizza le librerie watch.js e Object.observe.poly.js per monitorare i set
-    // della proprietà property di object e delle sue sottoproprietà, comprese quelle che
-    // non sono presenti all'avvio del watching in quanto aggiunte successivamente.
+    // Monitora i set di object[property] e delle sue sottoproprietà, comprese quelle aggiunte successivamente.
+    // Rileva inoltre anche le cancellazioni tramite delete delle sottoproprietà.
     // Il livello di profondità del watching è specificato da recursionLevel (come in watch.js):
     // undefined => ricorsione completa, 0 => no ricorsione (solo il livello 0), n>0 => dal livello 0 al livello n)
     var onSettedDeep = function(object, property, onChange, recursionLevel) {
-
-        // funzione per monitorare le sottoproprietà, esistenti e aggiunte successivamente
-        var handleSubProperties = function(parentObject) {
-            if (recursionLevel !== 0 && isObject(parentObject)) {
-                var subRecursionLevel = (recursionLevel===undefined)? recursionLevel : recursionLevel-1;
-
-                // monitora le sottoproprietà esistenti
-                for (var subProperty in parentObject) {
-                    if (parentObject.hasOwnProperty(subProperty)) {
-                        onSettedDeep(parentObject, subProperty, onChange, subRecursionLevel);
-                    }
-                }
-
-                // monitora le sottoproprietà aggiunte successivamente
-                Object.observe(object[property], function(updates) {
-                    for (var i=0,l=updates.length; i<l; i++) {
-                        var update = updates[i];
-                        var subProperty = update.name;
-
-                        if (update.type == "new") { // nuova sottoproprietà
-                            onSettedDeep(parentObject, subProperty, onChange, subRecursionLevel);
-
-                            onChange();
-                        }
-                    }
-                });
+        watch(object, property, function(prop, action, change, oldValue) {
+            if (action == "set" || action == "differentattr") {
+                onChange();
             }
-        };
-
-        // monitora i set della property
-        onSetted(object, property, function() {
-            // monitora i set per le sottoproprietà del nuovo (eventuale) oggetto settato
-            handleSubProperties(object[property]);
-
-            onChange();
-        });
-
-        // monitora i set delle sottoproprietà
-        handleSubProperties(object[property]);
+        }, recursionLevel, true);
     };
 
     // @private

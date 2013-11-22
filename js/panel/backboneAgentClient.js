@@ -19,7 +19,6 @@ define(["backbone", "underscore", "inspectedPageClient"], function(Backbone, _, 
             /*
             inspectedPageClient.reloadInjecting([
                 chrome.extension.getURL("js/lib/watch.js"),
-                chrome.extension.getURL("js/lib/Object.observe.poly.js"),
                 chrome.extension.getURL("js/backboneAgent.js")
             ]);
             */

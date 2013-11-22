@@ -20,7 +20,6 @@ window.__bdLoad = load;
 
 // main
 load("../lib/watch");
-load("../lib/Object.observe.poly");
 load("backboneAgent");
 
 // In questo modo funziona il debug delle chiamate asincrone!!!!!!
