@@ -1,3 +1,5 @@
+/* This collection is sorted in reverse order (latest first) */
+
 define(["backbone", "underscore", "backboneAgentClient", "inspectedPageClient",
         "collections/Collection", "models/AppComponentAction"],
 function(Backbone, _, backboneAgentClient, inspectedPageClient, Collection, AppComponentAction) {
@@ -19,6 +21,11 @@ function(Backbone, _, backboneAgentClient, inspectedPageClient, Collection, AppC
             });
             model.component = this.component;
             return model;
+        },
+
+        // Define the sorting logic: reverse order
+        comparator: function(action) {
+            return -action.get("index");
         },
 
         fetchModelsIndexes: function(onComplete) {

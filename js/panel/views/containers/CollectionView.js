@@ -35,7 +35,7 @@ function(Backbone, _, $, Handlebars) {
                 }, this));
             }, this));
 
-            // si mette in ascolto per i nuovi item creati
+            // handle new items
             this.listenTo(this.collection, "add", this.handleNewItem);
 
             this.render();
@@ -44,17 +44,20 @@ function(Backbone, _, $, Handlebars) {
         // Resetta l'array delle viste degli item
         // N.B: la render NON verrà chiamata!
         clearItems: function() {
-            this.forEachItemView(_.bind(function(collectionItemView) {
+            for (var i=0; i<this.collectionItemViews.length; i++) {
+                var collectionItemView = this.collectionItemViews[i];
                 collectionItemView.remove();
-            }, this));
+            };
             this.collectionItemViews = [];
         },
 
         // Aggiunge l'elemento e lo visualizza nel DOM
         handleNewItem: function(collectionItem) {
+            // don't move the indexOf calculation inside the defer or we'll have an invalid value if
+            // other new items are prepended during the waiting time
+            var collectionItemIndex = this.collection.indexOf(collectionItem);
             _.defer(_.bind(function() { // prevents UI blocking
-                // nuovo item!
-                var newCollectionItemView = this.addItem(collectionItem);
+                var newCollectionItemView = this.addItem(collectionItem, collectionItemIndex);
                 // quando si passa da 0 elementi ad un 1 elemento bisogna fare la render in modo
                 // che il template inserisca il collectionEl, per poterlo poi gestire manualmente;
                 // inoltre evitando di rifare la render ogni volta si impedisce l'effetto "sfarfallio" che
@@ -63,43 +66,30 @@ function(Backbone, _, $, Handlebars) {
                 if (this.collectionItemViews.length == 1) this.render();
                 // aggiunge al collectionEl l'el per la vista del nuovo item alla posizione corretta
                 var collectionEl = this.$(this.collectionElSelector);
-                if (collectionEl.length > 0) {
-                    var collectionItemViewLeftSibling;
-                    this.forEachItemView(_.bind(function(collectionItemView) {
-                        if (collectionItemView === newCollectionItemView) {
-                            if (collectionItemViewLeftSibling) {
-                                // inserisce l'el dopo il vicino sinistro
-                                newCollectionItemView.$el.insertAfter(collectionItemViewLeftSibling.$el);
-                            } else {
-                                // non ha un vicino sinistro => primo el
-                                collectionEl.prepend(collectionItemView.el);
-                            }
-                        } else {
-                            // nuovo candidato a vicino sinistro
-                            collectionItemViewLeftSibling = collectionItemView;
-                        }
-                    }, this));
+                if (collectionItemIndex == 0) {
+                    // primo el
+                    collectionEl.prepend(newCollectionItemView.el);
+                } else {
+                    // inserisce l'el dopo il vicino sinistro
+                    var collectionItemViewLeftSibling = this.collectionItemViews[collectionItemIndex-1];
+                    newCollectionItemView.$el.insertAfter(collectionItemViewLeftSibling.$el);
                 }
             }, this));
         },
 
         // Crea un nuova vista per l'item e la restituisce.
         // N.B: la render NON verrà chiamata!
-        addItem: function(collectionItem) {
+        addItem: function(collectionItem, collectionItemIndex) {
             var collectionItemView = new this.CollectionItemView({
                 model: collectionItem
             });
-            this.collectionItemViews.push(collectionItemView);
+            this.collectionItemViews.splice(collectionItemIndex, 0, collectionItemView);
             return collectionItemView;
         },
 
         // N.B: il metodo è sincrono!
-        // handleItemView viene chiamata per ogni item view passandoglela insieme al suo indice
+        // handleItemView viene chiamata per ogni item view passandoglielo insieme al suo indice
         // e all'array con tutte le viste degli item.
-        // L'iterazione di default è dal primo all'ultimo item, ma i sottotipi possono sovrascrivere
-        // il metodo per modificarne il funzionamento.
-        // Il metodo è stato creato principalmente per rendere flessibile l'ordine di visualizzazione 
-        // delle viste nella render.
         forEachItemView: function(handleItemView) {
             for (var i=0,l=this.collectionItemViews.length; i<l; i++) {
                 var collectionItemView = this.collectionItemViews[i];

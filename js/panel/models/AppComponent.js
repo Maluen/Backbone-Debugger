@@ -24,7 +24,8 @@ function(Backbone, _, AppComponentActions, backboneAgentClient, inspectedPageCli
 
         // Process the existing actions
         handleActions: function() {
-            for (var i=0; i<this.actions.length; i++) {
+            // actions are sorted in reverse order, process them from oldest to newest
+            for (var i=this.actions.length-1; i>=0; i--) {
                 this.handleAction(this.actions.at(i));
             }
         },

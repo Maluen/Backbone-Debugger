@@ -78,7 +78,7 @@ function(Backbone, _) {
                 // nuovo modello! lo aggiunge alla collezione solo dopo averne fatto il fetch
                 var model = this.createModel(modelIndex);
                 model.fetch(_.bind(function() { // on complete
-                    this.push(model);
+                    this.add(model);
                 }, this));
             }, this));
 
