@@ -31,7 +31,7 @@ window.onload = function() {
             var viewIndex = result;
             // show the view index in the sidebar pane
             var backboneView = document.getElementById("backboneView");
-            backboneView.innerHTML = (viewIndex !== undefined) ? "View "+viewIndex : "none";
+            backboneView.innerHTML = (viewIndex !== undefined) ? viewIndex : "none";
             var viewIndexContainer = document.getElementById("backboneViewContainer");
             viewIndexContainer.style.display = "block";
         });
