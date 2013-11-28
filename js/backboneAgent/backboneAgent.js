@@ -362,12 +362,14 @@ window.__backboneAgent = new (function() {
     };
 
     // @private
-    var sendAppComponentReport = function(report) {
+    // Note: name is prefixed by "backboneAgent:" and can't contain spaces
+    //       (because it's transformed in a Backbone event in the Panel)
+    var sendAppComponentReport = function(name, report) {
         // the timestamp is tipicaly used by the panel to exclude old reports
         report.timestamp = new Date().getTime();
 
         sendMessage({
-            name: "backboneAgent:report",
+            name: "backboneAgent:"+name,
             data: report
         });
     };
@@ -386,11 +388,7 @@ window.__backboneAgent = new (function() {
         setAppComponentInfo(appComponent, appComponentInfo);
 
         // invia un report riguardante il nuovo componente dell'app
-        sendAppComponentReport({
-            componentCategory: appComponentCategory,
-            componentIndex: appComponentIndex,
-            name: "new"
-        });
+        sendAppComponentReport(appComponentCategory+":new", { componentIndex: appComponentIndex });
         debug.log("New " + appComponentCategory, appComponent);
 
         return appComponentIndex;
@@ -410,10 +408,7 @@ window.__backboneAgent = new (function() {
         var propertyChanged = bind(function() {
             // invia un report riguardante il cambiamento della proprietà
             var appComponentInfo = this.getAppComponentInfo(appComponent);
-            sendAppComponentReport({
-                componentCategory: appComponentInfo.category,
-                componentIndex: appComponentInfo.index,
-                name: "change",
+            sendAppComponentReport(appComponentInfo.category+":"+appComponentInfo.index+":change", {
                 componentProperty: property
             });
 
@@ -433,10 +428,7 @@ window.__backboneAgent = new (function() {
         var actionIndex = appComponentInfo.actions.length-1;
 
         // invia un report riguardante la nuova azione
-        sendAppComponentReport({
-            componentCategory: appComponentInfo.category,
-            componentIndex: appComponentInfo.index,
-            name: "action",
+        sendAppComponentReport(appComponentInfo.category+":"+appComponentInfo.index+":action", {
             componentActionIndex: actionIndex
         });
         //debug.log("New action: ", appComponentAction);

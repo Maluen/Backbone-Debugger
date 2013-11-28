@@ -11,11 +11,20 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
             "component_hasModel": null, // bool, true se la collezione ha la proprietà model settata
                                         // (che mantiene il tipo dei modelli)
             "component_models": null, // array con gli indici dei modelli contenuti dalla collezione
-            "component_url": null // string
+            "component_url": null, // string
+            "component_status": "instantiated" // last sync status, e.g. "read (success)"
+        },
+
+        // Change the component status by analyzing its "Sync" actions.
+        handleAction: function(action) {
+            if (action.get("type") == "Sync") {
+                var syncStatus = action.get("name");
+                this.set("component_status", syncStatus);
+            }
         },
 
         fetchLogic: function(onComplete) {
-            backboneAgentClient.execFunction(function(componentIndex) {
+            backboneAgentClient.execFunction(function(componentIndex, componentStatus) {
                 var appCollectionInfo = this.getAppComponentInfoByIndex("Collection", componentIndex);
                 var collectionModels = appCollectionInfo.component.models;
 
@@ -46,10 +55,11 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                     "component_name": componentName,
                     "component_hasModel": appCollectionInfo.component.model !== undefined,
                     "component_models": collectionModelsIndexes,
-                    "component_url": collectionUrl
+                    "component_url": collectionUrl,
+                    "component_status": componentStatus
                 };
                 return appCollectionAttributes;
-            }, [this.get("component_index")], onComplete);
+            }, [this.get("component_index"), this.get("component_status")], onComplete);
         }
     });
     return AppCollection;

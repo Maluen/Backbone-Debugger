@@ -15,9 +15,6 @@ function(Backbone, _, backboneAgentClient, inspectedPageClient, Collection, AppC
             var model = new this.model({
                 "component_index": componentIndex
             });
-            model.actions = new AppComponentActions(undefined, {
-                component: model
-            });
             return model;
         },
 
@@ -29,12 +26,9 @@ function(Backbone, _, backboneAgentClient, inspectedPageClient, Collection, AppC
         },
 
         realTimeUpdateLogic: function(onNew) {
-            this.listenTo(inspectedPageClient, "backboneAgent:report", _.bind(function(report) {
-                if (report.componentCategory == this.componentCategory) {
-                    if (report.name == "new") {
-                        onNew(report.componentIndex, report.timestamp);
-                    }
-                }
+            var reportName = "backboneAgent:"+this.componentCategory+":new";
+            this.listenTo(inspectedPageClient, reportName, _.bind(function(report) {
+                onNew(report.componentIndex, report.timestamp);
             }, this));
         }
     });

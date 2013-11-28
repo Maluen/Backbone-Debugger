@@ -20,25 +20,7 @@ function(Backbone, _, $, AppComponentActionsView) {
 
             this.listenTo(this.model, "change", this.render);
 
-            // allow the view to react each time the component performs a new action
-            // (for example to calculate the new component status)
-            this.handleActions(); // needed for processing the already existing actions
-            this.listenTo(this.model.actions, "reset", this.handleActions);
-            this.listenTo(this.model.actions, "add", this.handleAction);
-
             this.render();
-        },
-
-        // Process the existing actions
-        handleActions: function() {
-            var actions = this.model.actions.models;
-            for (var i=0,l=actions.length; i<l; i++) {
-                this.handleAction(actions[i]);
-            }
-        },
-
-        handleAction: function(action) {
-            // default is no-op, but subtypes can override the method with custom logic
         },
 
         // Return the template data, can be overridden by subtypes to augment / alter the returned data.

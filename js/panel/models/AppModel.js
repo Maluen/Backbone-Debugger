@@ -12,11 +12,20 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
             "component_id": null,
             "component_cid": null,
             "component_url": null, // string
-            "component_collectionIndex": null // int
+            "component_collectionIndex": null, // int
+            "component_status": "instantiated" // last sync status, e.g. "read (success)"
+        },
+
+        // Change the component status by analyzing its "Sync" actions.
+        handleAction: function(action) {
+            if (action.get("type") == "Sync") {
+                var syncStatus = action.get("name");
+                this.set("component_status", syncStatus);
+            }
         },
 
         fetchLogic: function(onComplete) {
-            backboneAgentClient.execFunction(function(componentIndex) {
+            backboneAgentClient.execFunction(function(componentIndex, componentStatus) {
                 var appModelInfo = this.getAppComponentInfoByIndex("Model", componentIndex);
                 var componentCollectionInfo = this.getAppComponentInfo(appModelInfo.component.collection);
 
@@ -71,10 +80,11 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                     "component_id": appModelInfo.component.id,
                     "component_cid": appModelInfo.component.cid,
                     "component_url": appModelUrl,
-                    "component_collectionIndex": componentCollectionInfo? componentCollectionInfo.index : null
+                    "component_collectionIndex": componentCollectionInfo? componentCollectionInfo.index : null,
+                    "component_status": componentStatus
                 };
                 return appModelAttributes;
-            }, [this.get("component_index")], onComplete);
+            }, [this.get("component_index"), this.get("component_status")], onComplete);
         },
 
         // stampa il valore dell'attributo nella console

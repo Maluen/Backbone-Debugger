@@ -38,12 +38,10 @@ function(Backbone, _, backboneAgentClient, inspectedPageClient, Collection, AppC
         realTimeUpdateLogic: function(onNew) {
 
             _.defer(_.bind(function() { // binding many consecutive events freezes the ui (happens if there are a lot of app components)
-                this.listenTo(inspectedPageClient, "backboneAgent:report", _.bind(function(report) {
-                    if (report.name == "action" && report.componentCategory == this.component.category &&
-                        report.componentIndex === this.component.get("component_index"))
-                    {
-                        onNew(report.componentActionIndex, report.timestamp);
-                    }
+                var reportName = "backboneAgent:"+this.component.category+":"
+                               + this.component.get("component_index")+":action";
+                this.listenTo(inspectedPageClient, reportName, _.bind(function(report) {
+                    onNew(report.componentActionIndex, report.timestamp);
                 }, this));
 
                 // l'avvio della realTimeUpdate è rimandato con la defer, per cui eventuali report

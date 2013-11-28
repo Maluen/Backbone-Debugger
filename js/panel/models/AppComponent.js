@@ -1,7 +1,7 @@
 /* L'aggiornamento in tempo reale viene attivato automaticamente al termine della fetch. */
 
-define(["backbone", "underscore", "backboneAgentClient", "inspectedPageClient"],
-function(Backbone, _, backboneAgentClient, inspectedPageClient) {
+define(["backbone", "underscore", "collections/AppComponentActions", "backboneAgentClient", "inspectedPageClient"],
+function(Backbone, _, AppComponentActions, backboneAgentClient, inspectedPageClient) {
 
     var AppComponent = Backbone.Model.extend({
 
@@ -12,6 +12,25 @@ function(Backbone, _, backboneAgentClient, inspectedPageClient) {
 
         initialize: function(attributes, options) {
             _.bindAll(this);
+
+            this.actions = new AppComponentActions(undefined, {
+                component: this
+            });
+
+            // handle the component actions (useful for example to calcuate its status)
+            this.listenTo(this.actions, "reset", this.handleActions);
+            this.listenTo(this.actions, "add", this.handleAction);
+        },
+
+        // Process the existing actions
+        handleActions: function() {
+            for (var i=0; i<this.actions.length; i++) {
+                this.handleAction(this.actions.at(i));
+            }
+        },
+
+        handleAction: function(action) {
+            // default is no-op, but subtypes can override the method with custom logic
         },
 
         // funzione che chiama onComplete passandogli un hash con gli attributi del modello.
@@ -41,14 +60,10 @@ function(Backbone, _, backboneAgentClient, inspectedPageClient) {
             if (this.isRealTimeUpdateActive) return;
 
             _.defer(_.bind(function() { // binding many consecutive events freezes the ui (happens if there are a lot of app components)
-                this.listenTo(inspectedPageClient, "backboneAgent:report", _.bind(function(report) {
-                    var componentChanged = report.name == "change" &&
-                                           report.componentCategory == this.category &&
-                                           report.componentIndex === this.get("component_index");
-                    if (componentChanged) {
-                        // recupera attributi aggiornati
-                        this.fetch();
-                    }
+                var reportName = "backboneAgent:"+this.category+":"+this.get("component_index")+":change";
+                this.listenTo(inspectedPageClient, reportName, _.bind(function(report) {
+                    // recupera attributi aggiornati
+                    this.fetch();
                 }, this));
 
                 // l'avvio della realTimeUpdate è rimandato con la defer, per cui eventuali report
