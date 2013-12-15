@@ -73,6 +73,9 @@ body {
     box-shadow: none;
     background-image: -webkit-linear-gradient(rgb(243,243,243), rgb(235,235,235));
 }
+.appComponentsOptions li {
+    height: 40px;
+}
 
 .icon-chevron-bottom {
     -webkit-transform: rotate(90deg);
