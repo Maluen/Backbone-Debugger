@@ -6,15 +6,17 @@
             ciò è necessario per il funzionamento della gestione separata di tale collectionEl
             (vedi metodo render). */
 
-define(["backbone", "underscore", "jquery", "handlebars"],
-function(Backbone, _, $, Handlebars) {
+define(["backbone", "underscore", "jquery", "views/View", "handlebars"],
+function(Backbone, _, $, View, Handlebars) {
 
-    var AppComponentsView = Backbone.View.extend({
+    var AppComponentsView = View.extend({
 
         template: undefined,
 
         CollectionItemView: undefined, // tipo vista di un item
         collectionElSelector: undefined, // selettore per l'elemento html che contiene gli el delle viste degli item
+
+        filter: undefined,
 
         initialize: function(options) {
             _.bindAll(this);
@@ -22,9 +24,9 @@ function(Backbone, _, $, Handlebars) {
             // array con una vista per ogni item
             this.collectionItemViews = [];
 
-            // recupera item correnti
-            this.collection.fetch(_.bind(function() { // on complete
-                _.defer(_.bind(function() { // needed to handle the fetch after pending deferred adds
+            // handle new items
+            this.listenTo(this.collection, "reset", _.bind(function() {
+                _.defer(_.bind(function() { // needed to handle the reset after pending deferred adds
                     // gestisce i nuovi item
                     this.clearItems();
                     this.render();
@@ -34,9 +36,10 @@ function(Backbone, _, $, Handlebars) {
                     }
                 }, this));
             }, this));
-
-            // handle new items
             this.listenTo(this.collection, "add", this.handleNewItem);
+
+            // recupera item correnti
+            this.collection.fetch();
 
             this.render();
         },
@@ -46,6 +49,11 @@ function(Backbone, _, $, Handlebars) {
         clearItems: function() {
             for (var i=0; i<this.collectionItemViews.length; i++) {
                 var collectionItemView = this.collectionItemViews[i];
+                if (this.filter) {
+                    // disable the live filter check
+                    // (prevents the calling of the expired callback on the 'dead' model)
+                    this.filter.liveMatch(collectionItemView.model, false);
+                }
                 collectionItemView.remove();
             };
             this.collectionItemViews = [];
@@ -58,6 +66,13 @@ function(Backbone, _, $, Handlebars) {
             var collectionItemIndex = this.collection.indexOf(collectionItem);
             _.defer(_.bind(function() { // prevents UI blocking
                 var newCollectionItemView = this.addItem(collectionItem, collectionItemIndex);
+                // apply the filter in order to immediately hide the view if its model doesn't pass the filter.
+                // in this way, when added, the view will already have the correct visibility.
+                if (this.filter) {
+                    this.filter.liveMatch(newCollectionItemView.model, true, function(model, newMatchResult) {
+                        newCollectionItemView.visible(newMatchResult); // hide or show the view
+                    });
+                }
                 // quando si passa da 0 elementi ad un 1 elemento bisogna fare la render in modo
                 // che il template inserisca il collectionEl, per poterlo poi gestire manualmente;
                 // inoltre evitando di rifare la render ogni volta si impedisce l'effetto "sfarfallio" che
@@ -94,6 +109,32 @@ function(Backbone, _, $, Handlebars) {
             for (var i=0,l=this.collectionItemViews.length; i<l; i++) {
                 var collectionItemView = this.collectionItemViews[i];
                 handleItemView(collectionItemView, i, this.collectionItemViews);
+            }
+        },
+
+        // Set filter as the active filter, removing the old one if exists.
+        // Note: if filter is undefined, then the method will just remove the existing filter.
+        resetFilter: function(filter) {
+            // remove existing filter
+            if (this.filter) {
+                this.filter.remove();
+                this.filter = undefined;
+                // restore views visibility
+                for (var i=0,l=this.collectionItemViews.length; i<l; i++) {
+                    this.collectionItemViews[i].visible(true);
+                }
+            }
+
+            // set new filter
+            if (filter) {
+                this.filter = filter;
+                // apply filter
+                for (var i=0,l=this.collectionItemViews.length; i<l; i++) {
+                    var collectionItemView = this.collectionItemViews[i];
+                    filter.liveMatch(collectionItemView.model, true, _.bind(function(model, newMatchResult) {
+                        this.visible(newMatchResult); // hide or show the view
+                    }, collectionItemView)); // access via "this"
+                }
             }
         },
 
