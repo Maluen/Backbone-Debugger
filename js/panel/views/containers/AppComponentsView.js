@@ -1,6 +1,6 @@
 define(["backbone", "underscore", "jquery", "handlebars", "views/containers/CollectionView",
-        "text!templates/appComponents.html"],
-function(Backbone, _, $, Handlebars, CollectionView, template) {
+        "text!templates/appComponents.html", "filters/SearchFilter"],
+function(Backbone, _, $, Handlebars, CollectionView, template, SearchFilter) {
 
     var AppComponentsView = CollectionView.extend({
 
@@ -10,7 +10,8 @@ function(Backbone, _, $, Handlebars, CollectionView, template) {
 
         events: {
             "click .openAll": "openAll",
-            "click .closeAll": "closeAll"
+            "click .closeAll": "closeAll",
+            "submit .searchForm": "search"
         },
 
         openAll: function() {
@@ -52,6 +53,19 @@ function(Backbone, _, $, Handlebars, CollectionView, template) {
                     }
                 }, this));
             }, this));
+        },
+
+        search: function(event) {
+            var searchTerm = $(event.target).find('.searchTerm').val();
+            if (searchTerm === "") {
+                // just remove the filter
+                this.resetFilter();
+            } else {
+                // apply the new filter
+                this.resetFilter(new SearchFilter(searchTerm));
+            }
+
+            return false; // prevent real submit of form
         },
 
         getComponentView: function(componentIndex) {
