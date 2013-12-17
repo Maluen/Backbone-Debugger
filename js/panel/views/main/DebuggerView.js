@@ -1,12 +1,12 @@
 /* View activated when the application is in debug mode. */
 
-define(["backbone", "underscore", "jquery", "handlebars", "text!templates/debugger.html",
+define(["backbone", "underscore", "jquery", "views/View", "handlebars", "text!templates/debugger.html",
         "views/containers/AppViewsView", "views/containers/AppModelsView",
         "views/containers/AppCollectionsView", "views/containers/AppRoutersView"],
-function(Backbone, _, $, Handlebars, template,
+function(Backbone, _, $, View, Handlebars, template,
          AppViewsView, AppModelsView, AppCollectionsView, AppRoutersView) {
 
-    var DebuggerView = Backbone.View.extend({
+    var DebuggerView = View.extend({
 
         template: Handlebars.compile(template),
         className: "fill", // needed for 100% height layout

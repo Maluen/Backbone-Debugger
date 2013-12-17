@@ -1,9 +1,9 @@
 /* View activated when the application isn't in debug mode, allowing to activate it. */
 
-define(["backbone", "underscore", "jquery", "handlebars", "text!templates/debugDisabled.html"],
-function(Backbone, _, $, Handlebars, template) {
+define(["backbone", "underscore", "jquery", "views/View", "handlebars", "text!templates/debugDisabled.html"],
+function(Backbone, _, $, View, Handlebars, template) {
 
-    var DebugDisabledView = Backbone.View.extend({
+    var DebugDisabledView = View.extend({
 
         template: Handlebars.compile(template),
 

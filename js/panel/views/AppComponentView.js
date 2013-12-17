@@ -1,9 +1,9 @@
 /* NOTE: the passed model must have already been fetched or have valid attributes. */
 
-define(["backbone", "underscore", "jquery", "views/containers/AppComponentActionsView"],
-function(Backbone, _, $, AppComponentActionsView) {
+define(["backbone", "underscore", "jquery", "views/View", "views/containers/AppComponentActionsView"],
+function(Backbone, _, $, View, AppComponentActionsView) {
 
-    var AppComponentView = Backbone.View.extend({
+    var AppComponentView = View.extend({
 
         template: undefined,
         tagName: "li",
