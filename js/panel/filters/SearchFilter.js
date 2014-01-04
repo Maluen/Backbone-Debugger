@@ -17,6 +17,21 @@ define(["backbone", "underscore", "utils"], function(Backbone, _, utils) {
         // if omitted, the check will be performed on all the model attributes.
         // Return true if the model matches the filter.
         match: function(model, attributeName) {
+            /****************************************
+            TODO:
+            - Passare l'attributeName dal liveMatch (here in liveMatch)
+            - Aggiungere supporto al templating per i dettagli sulla search (AppComponentsView)
+            - Modificare indexOf per cercare solo in parole (here)
+            - Trasformare le property/value in stringhe cercabili, es. "component_status" => "Status" (da vedere)
+            - Fixare la openAll/closeAll che ora come ora apre/chiude anche i componenti nascosti
+            - Controllare cosa succede cliccando l'openAll/closeAll durante la fase di filtering e viceversa
+              (con molti componenti, defer attive, etc.)
+            - Permettere l'inspect di elementi non presenti causa ricerca => li visualizzo cercando
+              "component_index [index]"
+                - Cosa succede se ci sono molti componenti e la ricerca richiede diversi secondi? Bisogna
+                  aspettare che il rendering finisca prima di selezionare il componente.
+            **************************/
+
             // returns true if the term appears in the object property (name or value)
             var searchTermOnObjectProperty = function(object, property, term) {
                 // check into the property name (if it's not an array index)
