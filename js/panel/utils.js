@@ -33,6 +33,21 @@ define(["underscore", "jquery"], function(_, $) {
             // Return the simplified version of target, i.e. a trimmed string with multiple spaces removed
             simplify: function(target) {
                 return this.removeMultipleSpaces(this.trim(target));
+            },
+
+            // Based on http://stackoverflow.com/a/646643
+            startsWith: function(target, str) {
+                return target.slice(0, str.length) == str;
+            },
+            endsWith: function(target, str) {
+                return target.slice(-str.length) == str;
+            },
+
+            // remove first and last char
+            removeBorders: function(target) {
+                target = target.substring(1); // first
+                target = target.substring(0, target.length-1); // last
+                return target;
             }
         }
 
