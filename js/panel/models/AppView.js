@@ -39,10 +39,10 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                 var appViewComponent = appViewInfo.component;
                 var appViewSelector = "";
                 if (appViewComponent.el) {
-                    if (appViewComponent.el.id && appViewComponent.el.id !== "") {
+                    if (typeof appViewComponent.el.id == 'string' && appViewComponent.el.id !== "") {
                         appViewSelector = "#"+appViewComponent.el.id;
                     }
-                    if (appViewComponent.el.className && appViewComponent.el.className !== "") {
+                    if (typeof appViewComponent.el.className == 'string' && appViewComponent.el.className !== "") {
                         appViewSelector += "."+appViewComponent.el.className.replace(/ /g, '.');
                     }
                 }
