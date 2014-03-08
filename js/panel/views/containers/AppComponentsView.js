@@ -11,7 +11,7 @@ function(Backbone, _, $, Handlebars, CollectionView, template, SearchFilter) {
         events: {
             "click .openAll": "openAll",
             "click .closeAll": "closeAll",
-            "submit .searchForm": "search"
+            "submit .searchForm": "onSearchSubmit"
         },
 
         openAll: function() {
@@ -55,8 +55,15 @@ function(Backbone, _, $, Handlebars, CollectionView, template, SearchFilter) {
             }, this));
         },
 
-        search: function(event) {
+        onSearchSubmit: function(event) {
             var searchTerm = $(event.target).find('.searchTerm').val();
+            this.search(searchTerm);
+            return false; // prevent real submit of form
+        },
+
+        search: function(searchTerm) {
+            this.$('.searchForm .searchTerm').val(searchTerm);
+            
             if (searchTerm === "") {
                 // just remove the filter
                 this.resetFilter();
@@ -64,8 +71,6 @@ function(Backbone, _, $, Handlebars, CollectionView, template, SearchFilter) {
                 // apply the new filter
                 this.resetFilter(new SearchFilter(searchTerm));
             }
-
-            return false; // prevent real submit of form
         },
 
         getComponentView: function(componentIndex) {

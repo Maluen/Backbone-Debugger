@@ -89,6 +89,8 @@ function(Backbone, _, $, View, Handlebars, template,
                 var tabElement = this.$("#app"+componentCategory+"sTab");
                 var tabContentElement = this.$("#app"+componentCategory+"s");
                 this.openTab(tabElement, tabContentElement);
+                // filter the components to show the one to inspect (to assurue it is visible)
+                componentsView.search('"component_index '+componentIndex+'"'); // strict search
                 // open the component and scroll to it
                 componentView.open();
                 tabContentElement.scrollTop(tabContentElement.scrollTop() + componentView.$el.position().top);
