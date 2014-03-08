@@ -36,7 +36,23 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                 var componentModelInfo = this.getAppComponentInfo(appViewInfo.component.model);
                 var componentCollectionInfo = this.getAppComponentInfo(appViewInfo.component.collection);
 
-                var componentName = appViewInfo.component.constructor.name || null;
+                var appViewComponent = appViewInfo.component;
+                var appViewSelector = "";
+                if (appViewComponent.el) {
+                    if (appViewComponent.el.id && appViewComponent.el.id !== "") {
+                        appViewSelector = "#"+appViewComponent.el.id;
+                    }
+                    if (appViewComponent.el.className && appViewComponent.el.className !== "") {
+                        appViewSelector += "."+appViewComponent.el.className.replace(/ /g, '.');
+                    }
+                }
+                var componentName = appViewComponent.constructor.name || null;
+                var componentNameDetails = appViewSelector || null;
+                if (componentName && componentNameDetails) {
+                    componentName += " - " + componentNameDetails;
+                } else {
+                    componentName = componentName || componentNameDetails;
+                }
 
                 var appViewAttributes = {
                     "component_index": appViewInfo.index,
