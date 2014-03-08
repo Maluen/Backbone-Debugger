@@ -8,6 +8,13 @@ define(["backbone", "underscore", "utils"], function(Backbone, _, utils) {
         initialize: function(searchTerm) {
             // save the normalized search term
             this.searchTerm = utils.string.simplify(searchTerm);
+            if (utils.string.startsWith(this.searchTerm, '"') && utils.string.endsWith(this.searchTerm, '"')) {
+                this.strictSearch = true;
+                // remove the quotes
+                this.searchTerm = utils.string.removeBorders(this.searchTerm);
+            } else {
+                this.strictSearch = false;
+            }
             // save the list with the search terms
             this.searchTermList = this.searchTerm.split(" ");
         },
@@ -17,29 +24,26 @@ define(["backbone", "underscore", "utils"], function(Backbone, _, utils) {
         // if omitted, the check will be performed on all the model attributes.
         // Return true if the model matches the filter.
         match: function(model, attributeName) {
-            /****************************************
-            TODO:
-            - Passare l'attributeName dal liveMatch (here in liveMatch)
-            - Aggiungere supporto al templating per i dettagli sulla search (AppComponentsView)
-            - Modificare indexOf per cercare solo in parole (here)
-            - Trasformare le property/value in stringhe cercabili, es. "component_status" => "Status" (da vedere)
-            - Fixare la openAll/closeAll che ora come ora apre/chiude anche i componenti nascosti
-            - Controllare cosa succede cliccando l'openAll/closeAll durante la fase di filtering e viceversa
-              (con molti componenti, defer attive, etc.)
-            - Permettere l'inspect di elementi non presenti causa ricerca => li visualizzo cercando
-              "component_index [index]"
-                - Cosa succede se ci sono molti componenti e la ricerca richiede diversi secondi? Bisogna
-                  aspettare che il rendering finisca prima di selezionare il componente.
-            **************************/
+            var searchTermOnObjectPropertyString = _.bind(function(property, term) {
+                if (this.strictSearch) {
+                    // returns true if there exists a 'word' in the property that is equal to the search term
+                    return _.some(property.split(' '), function(propertyTerm) {
+                        return propertyTerm == term;
+                    });
+                } else {
+                    // returns true if the property contains the term
+                    return property.indexOf(term) != -1;
+                }
+            }, this);
 
             // returns true if the term appears in the object property (name or value)
             var searchTermOnObjectProperty = function(object, property, term) {
                 // check into the property name (if it's not an array index)
-                if (!_.isArray(object) && String(property).indexOf(term) != -1) return true;
+                if (!_.isArray(object) && searchTermOnObjectPropertyString(String(property), term)) return true;
                 // check into the property value
                 var value = object[property];
                 if (!_.isObject(value)) {
-                    if (String(value).indexOf(term) != -1) return true;
+                    if (searchTermOnObjectPropertyString(String(value), term)) return true;
                 } else {
                     // recursive check
                     if (searchOnObject(value, [term])) return true;
