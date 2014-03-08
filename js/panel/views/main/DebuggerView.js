@@ -93,7 +93,7 @@ function(Backbone, _, $, View, Handlebars, template,
                 componentsView.search('"component_index '+componentIndex+'"'); // strict search
                 // open the component and scroll to it
                 componentView.open();
-                tabContentElement.scrollTop(tabContentElement.scrollTop() + componentView.$el.position().top);
+                tabContentElement.scrollTop(tabContentElement.scrollTop() + componentView.$el.position().top); // obsolete: the search should return just one component
                 // highlight the component
                 componentView.highlightAnimation();
             }
