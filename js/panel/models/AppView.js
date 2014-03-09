@@ -38,9 +38,12 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
 
                 var appViewComponent = appViewInfo.component;
                 var appViewSelector = "";
-                if (appViewComponent.el) {
+                if (typeof appViewComponent.el == 'object' && appViewComponent.el !== null) {
+                    if (typeof appViewComponent.el.tagName == 'string' && appViewComponent.el.tagName !== "") {
+                        appViewSelector += appViewComponent.el.tagName.toLowerCase();
+                    }
                     if (typeof appViewComponent.el.id == 'string' && appViewComponent.el.id !== "") {
-                        appViewSelector = "#"+appViewComponent.el.id;
+                        appViewSelector += "#"+appViewComponent.el.id;
                     }
                     if (typeof appViewComponent.el.className == 'string' && appViewComponent.el.className !== "") {
                         appViewSelector += "."+appViewComponent.el.className.replace(/ /g, '.');
