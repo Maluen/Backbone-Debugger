@@ -29,7 +29,8 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
             var evalCode = "("+func.toString()+").apply("+context+", "+JSON.stringify(args)+");";
             chrome.devtools.inspectedWindow.eval(evalCode, function(result, isException) {
                 if (isException) {
-                    throw result;
+                    var error = _.isObject(isException) ? isException.value : result;
+                    throw error;
                 } else {
                     onExecuted(result);
                 }
