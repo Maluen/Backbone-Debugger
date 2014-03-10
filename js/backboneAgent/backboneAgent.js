@@ -403,6 +403,8 @@ window.__backboneAgent = new (function() {
     // N.B: non specificare recursionLevel equivale a dire "ricorsione completa",
     // ma attenzione a non usarla per quegli oggetti in cui potrebbero esserci cicli o si incapperà
     // in un loop infinito.
+    // property may also be of the form "prop1.prop2...", stating the path to follow to reach the
+    // sub-property to monitor.
     var monitorAppComponentProperty = bind(function(appComponent, property, recursionLevel) {
         // handler per il cambiamento della proprietà
         var propertyChanged = bind(function() {
@@ -415,8 +417,23 @@ window.__backboneAgent = new (function() {
             //debug.log("Property " + property + " of a " + appComponentInfo.category + " has changed: ", appComponent[property]);
         }, this);
 
-        if (appComponent[property] !== undefined) { propertyChanged(); }
-        onSettedDeep(appComponent, property, propertyChanged, recursionLevel);
+        var monitorFragment = function(object, propertyFragments, index) {
+            var currentProperty = propertyFragments[index];
+            var currentRecursionLevel = (index == propertyFragments.length-1) ? recursionLevel : 0; // used only in last fragment
+            var onFragmentChange = function() {
+                // TODO: remove old sub setters (if any)
+                if (index == propertyFragments.length - 1) {
+                    // our final target has changed
+                    propertyChanged();
+                } else if (isObject(object[currentProperty])) {
+                    // monitor the next fragment
+                    monitorFragment(object[currentProperty], propertyFragments, index+1);
+                }
+            }
+            if (object[currentProperty] !== undefined) { onFragmentChange(); }
+            onSettedDeep(object, currentProperty, onFragmentChange, recursionLevel);
+        }
+        monitorFragment(appComponent, property.split('.'), 0);
     }, this);
 
     // @private
@@ -516,6 +533,9 @@ window.__backboneAgent = new (function() {
             // monitora i cambiamenti alle proprietà d'interesse del componente dell'app
             monitorAppComponentProperty(view, "model", 0);
             monitorAppComponentProperty(view, "collection", 0);
+            monitorAppComponentProperty(view, "el.tagName", 0);
+            monitorAppComponentProperty(view, "el.id", 0);
+            monitorAppComponentProperty(view, "el.className", 0);
 
             // Patcha i metodi del componente dell'app
 
