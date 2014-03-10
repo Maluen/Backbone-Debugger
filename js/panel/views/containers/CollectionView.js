@@ -121,7 +121,7 @@ function(Backbone, _, $, View, Handlebars) {
                 this.filter = undefined;
                 // restore views visibility
                 for (var i=0,l=this.collectionItemViews.length; i<l; i++) {
-                    this.collectionItemViews[i].visible(true);
+                    this.collectionItemViews[i].show(true);
                 }
             }
 
@@ -132,7 +132,7 @@ function(Backbone, _, $, View, Handlebars) {
                 for (var i=0,l=this.collectionItemViews.length; i<l; i++) {
                     var collectionItemView = this.collectionItemViews[i];
                     filter.liveMatch(collectionItemView.model, true, _.bind(function(model, newMatchResult) {
-                        this.visible(newMatchResult); // hide or show the view
+                        this.show(newMatchResult); // hide or show the view based on the search result
                     }, collectionItemView)); // access via "this"
                 }
             }

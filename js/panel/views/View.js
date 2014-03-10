@@ -6,9 +6,14 @@ define(["backbone", "underscore", "jquery"], function(Backbone, _, $) {
             _.bindAll(this);
         },
 
-        visible: function(isVisible) {
-            // TODO: If $el is not in display:block by default, this code could lead to a bug
-            this.$el.css("display", isVisible? "block" : "none");
+        // true to show, false to hide
+        show: function(showOrHide) {
+            this.$el.toggle(showOrHide);
+        },
+
+        isShown: function() {
+            // might be true also if the parent is hidden, differently from jquery ".is(':visible')"
+            return this.$el.css('display') != 'none';
         }
 
     });

@@ -27,7 +27,7 @@ function(Backbone, _, $, Handlebars, CollectionView, template, SearchFilter) {
                 // don't move this outside or the operation will never end if there aren't item views
                 this.openAllInProgress = true;
                 _.defer(_.bind(function() { // smooth page reflow (one component view at a time)
-                    componentView.open();
+                    if (componentView.isShown()) componentView.open();
                     if (i == collectionItemViewsLength-1) {
                         // just opened the last item, operation completed
                         this.openAllInProgress = false;
@@ -46,7 +46,7 @@ function(Backbone, _, $, Handlebars, CollectionView, template, SearchFilter) {
             this.forEachItemView(_.bind(function(componentView, i, collectionItemViews) {
                 this.closeAllInProgress = true;
                 _.defer(_.bind(function() { // smooth page reflow (one component view at a time)
-                    componentView.close();
+                    if (componentView.isShown()) componentView.close();
                     if (i == collectionItemViewsLength-1) {
                         // just closed the last item, operation completed
                         this.closeAllInProgress = false;
