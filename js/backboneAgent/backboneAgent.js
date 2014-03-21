@@ -284,7 +284,12 @@ window.__backboneAgent = new (function() {
     // @private
     var setHiddenProperty = function(object, property, value) {
         if (!isObject(object)) return;
-        object[hiddenPropertyPrefix+property] = value;
+        Object.defineProperty(object, hiddenPropertyPrefix+property, {
+            configurable: false,
+            enumerable: false,
+            value: value,
+            writable: true
+        });
     };
 
     ////
