@@ -61,17 +61,21 @@ window.__backboneAgent = new (function() {
     // Esegue la callback ogni volta che viene settata la proprietà property sull'oggetto object.
     // Nota: alla callback viene passato il valore settato.
     var onSetted = function(object, property, callback) {
-        watch(object, property, function(prop, action, newValue, oldValue) {
+        var handler = function (prop, action, newValue, oldValue) {
             if (action == "set") { callback(newValue); }
-        }, 0);
+        };
+        watch(object, property, handler, 0);
+        return [object, property, handler];
     };
 
     // @private
     // Come la onSetted, ma la callback viene chiamata solo LA PRIMA VOLTA che la proprietà è settata.
     var onceSetted = function(object, property, callback) {
-        watchOnce(object, property, function(prop, action, newValue, oldValue) {
+        var handler = function(prop, action, newValue, oldValue) {
             if (action == "set") { callback(newValue); }
-        }, 0);
+        };
+        watchOnce(object, property, handler, 0);
+        return [object, property, handler];
     };
 
     // @private
@@ -80,11 +84,37 @@ window.__backboneAgent = new (function() {
     // Il livello di profondità del watching è specificato da recursionLevel (come in watch.js):
     // undefined => ricorsione completa, 0 => no ricorsione (solo il livello 0), n>0 => dal livello 0 al livello n)
     var onSettedDeep = function(object, property, onChange, recursionLevel) {
-        watch(object, property, function(prop, action, change, oldValue) {
+        var handler = function(prop, action, change, oldValue) {
             if (action == "set" || action == "differentattr") {
                 onChange();
             }
-        }, recursionLevel, true);
+        };
+        watch(object, property, handler, recursionLevel, true);
+        return [object, property, handler]; // usable to stop watching via stopOnSetted
+    };
+
+    // @private
+    // watcher is an array [object, property, (internal) handler] as returned by the on setted functions
+    var stopOnSetted = function(watcher) {
+        unwatchOne.apply(this, watcher);
+    };
+
+    // @private
+    // Watch set of properties by using timers, without adding getters/setters to the watched object and
+    // thus without causing possible side effects; needed when watching DOM objects properties to prevent
+    // the browser from stopping recognizing the changes.
+    var stealthOnSetted = function(object, property, callback) {
+        var newValue = object[property];
+        return setInterval(function() {
+            var oldValue = newValue;
+            newValue = object[property];
+            if (newValue !== oldValue) callback(newValue);
+        }, 50);
+    };
+
+    // @private
+    var stopStealthOnSetted = function(watcher) {
+        clearInterval(watcher);
     };
 
     // @private
@@ -410,7 +440,10 @@ window.__backboneAgent = new (function() {
     // in un loop infinito.
     // property may also be of the form "prop1.prop2...", stating the path to follow to reach the
     // sub-property to monitor.
-    var monitorAppComponentProperty = bind(function(appComponent, property, recursionLevel) {
+    // Possible options:
+    // - stealth: if true then uses the stealth on setted function to monitor for changes, but this
+    //   will cause the recursionLevel to be 0 since is not supported by the stealth monitoring.
+    var monitorAppComponentProperty = bind(function(appComponent, property, recursionLevel, options) {
         // handler per il cambiamento della proprietà
         var propertyChanged = bind(function() {
             // invia un report riguardante il cambiamento della proprietà
@@ -422,21 +455,31 @@ window.__backboneAgent = new (function() {
             //debug.log("Property " + property + " of a " + appComponentInfo.category + " has changed: ", appComponent[property]);
         }, this);
 
+        options = options || {};
+        var onSettedFunc = options.stealth? stealthOnSetted : onSettedDeep;
+        var stopOnSettedFunc = options.stealth? stopStealthOnSetted : stopOnSetted;
+        var watchers = [];
+
         var monitorFragment = function(object, propertyFragments, index) {
             var currentProperty = propertyFragments[index];
             var currentRecursionLevel = (index == propertyFragments.length-1) ? recursionLevel : 0; // used only in last fragment
             var onFragmentChange = function() {
                 // TODO: remove old sub setters (if any)
                 if (index == propertyFragments.length - 1) {
-                    // our final target has changed
+                    // the final target has changed
                     propertyChanged();
                 } else if (isObject(object[currentProperty])) {
+                    // remove the watchers of the old object and of its subproperties
+                    for (var i=index; i<propertyFragments.length; i++) {
+                        if (watchers[i]) stopOnSettedFunc(watchers[i]);
+                    }
                     // monitor the next fragment
                     monitorFragment(object[currentProperty], propertyFragments, index+1);
                 }
             }
             if (object[currentProperty] !== undefined) { onFragmentChange(); }
-            onSettedDeep(object, currentProperty, onFragmentChange, recursionLevel);
+            // watch current fragment
+            watchers[index] = onSettedFunc(object, currentProperty, onFragmentChange, recursionLevel);
         }
         monitorFragment(appComponent, property.split('.'), 0);
     }, this);
@@ -538,9 +581,9 @@ window.__backboneAgent = new (function() {
             // monitora i cambiamenti alle proprietà d'interesse del componente dell'app
             monitorAppComponentProperty(view, "model", 0);
             monitorAppComponentProperty(view, "collection", 0);
-            monitorAppComponentProperty(view, "el.tagName", 0);
-            monitorAppComponentProperty(view, "el.id", 0);
-            monitorAppComponentProperty(view, "el.className", 0);
+            monitorAppComponentProperty(view, "el.tagName", 0, {stealth: true});
+            monitorAppComponentProperty(view, "el.id", 0, {stealth: true});
+            monitorAppComponentProperty(view, "el.className", 0, {stealth: true});
 
             // Patcha i metodi del componente dell'app
 
