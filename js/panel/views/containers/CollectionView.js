@@ -70,7 +70,7 @@ function(Backbone, _, $, View, Handlebars) {
                 // in this way, when added, the view will already have the correct visibility.
                 if (this.filter) {
                     this.filter.liveMatch(newCollectionItemView.model, true, function(model, newMatchResult) {
-                        newCollectionItemView.visible(newMatchResult); // hide or show the view
+                        newCollectionItemView.show(newMatchResult); // hide or show the view
                     });
                 }
                 // quando si passa da 0 elementi ad un 1 elemento bisogna fare la render in modo
