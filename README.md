@@ -34,6 +34,12 @@ Support for apps that modify the standard Backbone behavior, e.g. apps that patc
 delegateEvents, or that replace part of Backbone functions with custom code, is uncertain.
 However, constant efforts are taken in this direction to address the most possible use cases, so even if your application falls into this category you may still give it a try, [open an issue](https://github.com/Maluen/Backbone-Debugger/issues) or wait for newer versions.
 
+Contribute
+--------
+Want to contribute? You can [report bugs](https://github.com/Maluen/Backbone-Debugger/issues), [suggest features](https://github.com/Maluen/Backbone-Debugger/issues), [write code](https://github.com/Maluen/Backbone-Debugger/pulls) and [write documentation](https://github.com/Maluen/Backbone-Debugger/wiki)!
+
+Searching for other ways? You can also support this project by [donating on Gittip](https://www.gittip.com/Maluen/)
+
 Screenshots
 --------
 **Views**:
