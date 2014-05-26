@@ -108,6 +108,37 @@ define(["backbone", "underscore", "utils"], function(Backbone, _, utils) {
             }
         },
 
+        // not much useful for now, the collection view handles new models manually.
+        liveMatchCollection: function(collection, on, callback) {
+            // start/stop live match on current collection models
+            collection.each(_.bind(function(model) {
+                this.liveMatch(model, on, callback);
+            }, this));
+
+            if (on) {
+                this.listenTo(collection, "add", _.bind(function(model) {
+                    // start live match on new model
+                    this.liveMatch(model, true, callback);
+                }, this));
+                this.listenTo(collection, "remove", _.bind(function(model) {
+                    // stop live match on old model
+                    this.liveMatch(model, false, callback);
+                }, this));
+                this.listenTo(collection, "reset", _.bind(function(collection, options) {
+                    // start live match of new models by resetting the livematch
+                    _.each(options.previousModels, _.bind(function(oldModel) {
+                        this.liveMatch(oldModel, false, callback);
+                    }, this));
+                    collection.each(_.bind(function(model) {
+                        this.liveMatch(model, true, callback);
+                    }, this));
+                }, this));
+            } else { // off
+                // deactivate also collection listening
+                this.stopListening(collection);
+            }
+        },
+
         // Remove the filter, i.e. do unbindings, cleanups, etc.
         remove: function() {
             this.stopListening();
