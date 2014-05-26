@@ -1,7 +1,15 @@
 {{#if thereAreItems}}
-<div class="row-fluid">
-    <div class="span12">
-        <a class="openAll btn btn-link">Open all</a> / <a class="closeAll btn btn-link">Close all</a>
+<div class="navbar appComponentsOptions">
+    <div class="navbar-inner">
+      <ul class="nav">
+        <li><a class="openAll btn-link" title="Open all"><i class="icon-chevron-right icon-chevron-bottom"></i></a></li>
+        <li><a class="closeAll btn-link" title="Close all"><i class="icon-chevron-right icon-chevron-top"></i></a></li>
+        <li>
+            <form class="searchForm navbar-form pull-left">
+                <input class="searchTerm" type="text" placeholder="Search..." />
+            </form>
+        </li>
+      </ul>
     </div>
 </div>
 

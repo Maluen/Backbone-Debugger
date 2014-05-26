@@ -61,6 +61,31 @@ body {
     padding: 5px 15px 15px 15px;
 }
 
+.appComponentsOptions {
+    margin-left: -15px;
+    margin-top: -5px;
+    margin-right: -15px;
+}
+.appComponentsOptions .navbar-inner {
+    border: none;
+    padding-left: 12px;
+    padding-right: 12px;
+    box-shadow: none;
+    background-image: -webkit-linear-gradient(rgb(243,243,243), rgb(235,235,235));
+}
+.appComponentsOptions li {
+    height: 40px;
+}
+
+.icon-chevron-bottom {
+    -webkit-transform: rotate(90deg);
+}
+
+.icon-chevron-top {
+    -webkit-transform: rotate(-90deg);
+    margin-top: 3px;
+}
+
 .appComponentList {
     margin: 0;
 }

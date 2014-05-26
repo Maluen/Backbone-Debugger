@@ -1,12 +1,12 @@
 /* View activated when the application is in debug mode. */
 
-define(["backbone", "underscore", "jquery", "handlebars", "text!templates/debugger.html",
+define(["backbone", "underscore", "jquery", "views/View", "handlebars", "text!templates/debugger.html",
         "views/containers/AppViewsView", "views/containers/AppModelsView",
         "views/containers/AppCollectionsView", "views/containers/AppRoutersView"],
-function(Backbone, _, $, Handlebars, template,
+function(Backbone, _, $, View, Handlebars, template,
          AppViewsView, AppModelsView, AppCollectionsView, AppRoutersView) {
 
-    var DebuggerView = Backbone.View.extend({
+    var DebuggerView = View.extend({
 
         template: Handlebars.compile(template),
         className: "fill", // needed for 100% height layout
@@ -89,9 +89,11 @@ function(Backbone, _, $, Handlebars, template,
                 var tabElement = this.$("#app"+componentCategory+"sTab");
                 var tabContentElement = this.$("#app"+componentCategory+"s");
                 this.openTab(tabElement, tabContentElement);
+                // filter the components to show the one to inspect (to assurue it is visible)
+                componentsView.search('"component_index '+componentIndex+'"'); // strict search
                 // open the component and scroll to it
                 componentView.open();
-                tabContentElement.scrollTop(tabContentElement.scrollTop() + componentView.$el.position().top);
+                tabContentElement.scrollTop(tabContentElement.scrollTop() + componentView.$el.position().top); // obsolete: the search should return just one component
                 // highlight the component
                 componentView.highlightAnimation();
             }

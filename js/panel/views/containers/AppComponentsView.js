@@ -1,6 +1,6 @@
 define(["backbone", "underscore", "jquery", "handlebars", "views/containers/CollectionView",
-        "text!templates/appComponents.html"],
-function(Backbone, _, $, Handlebars, CollectionView, template) {
+        "text!templates/appComponents.html", "filters/SearchFilter"],
+function(Backbone, _, $, Handlebars, CollectionView, template, SearchFilter) {
 
     var AppComponentsView = CollectionView.extend({
 
@@ -10,7 +10,8 @@ function(Backbone, _, $, Handlebars, CollectionView, template) {
 
         events: {
             "click .openAll": "openAll",
-            "click .closeAll": "closeAll"
+            "click .closeAll": "closeAll",
+            "submit .searchForm": "onSearchSubmit"
         },
 
         openAll: function() {
@@ -26,7 +27,7 @@ function(Backbone, _, $, Handlebars, CollectionView, template) {
                 // don't move this outside or the operation will never end if there aren't item views
                 this.openAllInProgress = true;
                 _.defer(_.bind(function() { // smooth page reflow (one component view at a time)
-                    componentView.open();
+                    if (componentView.isShown()) componentView.open();
                     if (i == collectionItemViewsLength-1) {
                         // just opened the last item, operation completed
                         this.openAllInProgress = false;
@@ -45,13 +46,31 @@ function(Backbone, _, $, Handlebars, CollectionView, template) {
             this.forEachItemView(_.bind(function(componentView, i, collectionItemViews) {
                 this.closeAllInProgress = true;
                 _.defer(_.bind(function() { // smooth page reflow (one component view at a time)
-                    componentView.close();
+                    if (componentView.isShown()) componentView.close();
                     if (i == collectionItemViewsLength-1) {
                         // just closed the last item, operation completed
                         this.closeAllInProgress = false;
                     }
                 }, this));
             }, this));
+        },
+
+        onSearchSubmit: function(event) {
+            var searchTerm = $(event.target).find('.searchTerm').val();
+            this.search(searchTerm);
+            return false; // prevent real submit of form
+        },
+
+        search: function(searchTerm) {
+            this.$('.searchForm .searchTerm').val(searchTerm);
+            
+            if (searchTerm === "") {
+                // just remove the filter
+                this.resetFilter();
+            } else {
+                // apply the new filter
+                this.resetFilter(new SearchFilter(searchTerm));
+            }
         },
 
         getComponentView: function(componentIndex) {
