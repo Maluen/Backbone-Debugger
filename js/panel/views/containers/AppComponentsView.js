@@ -62,7 +62,7 @@ function(Backbone, _, $, Handlebars, CollectionView, template, SearchFilter) {
         },
 
         search: function(searchTerm) {
-            this.$('.searchForm .searchTerm').val(searchTerm);
+            this.$('.appComponentsOptions .searchTerm').val(searchTerm);
             
             if (searchTerm === "") {
                 // just remove the filter

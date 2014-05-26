@@ -134,6 +134,14 @@ body {
     margin-bottom: 20px;
 }
 
+.appComponentActions .searchForm {
+    margin-bottom: 10px;
+}
+
+.appComponentActions .searchForm .searchTerm {
+    height: 10px;
+}
+
 .appComponentActions table {
     margin-bottom: 0;
 }
