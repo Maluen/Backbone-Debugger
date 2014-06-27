@@ -74,6 +74,22 @@ module.exports = function(grunt) {
         files: {
           '<%= config.dist %>/': ['<%= config.src %>/templates/pages/*.hbs']
         }
+      },
+    },
+
+    // to deploy the dist site to the gh-pages branch
+    buildcontrol: {
+      options: {
+        dir: 'dist',
+        commit: true,
+        push: true,
+        message: 'Built %sourceName% from commit %sourceCommit% on branch %sourceBranch%'
+      },
+      pages: {
+        options: {
+          remote: 'git@github.com:Maluen/Backbone-Debugger.git',
+          branch: 'gh-pages'
+        }
       }
     },
 
@@ -87,6 +103,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-build-control');
 
   grunt.registerTask('server', [
     'clean',
@@ -98,6 +115,11 @@ module.exports = function(grunt) {
   grunt.registerTask('build', [
     'clean',
     'assemble'
+  ]);
+
+  grunt.registerTask('deploy', [
+    'build',
+    'buildcontrol:pages'
   ]);
 
   grunt.registerTask('default', [
