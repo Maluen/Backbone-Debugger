@@ -17,4 +17,4 @@ node_modules
 
 *.sublime-*
 
-.dist
+dist
