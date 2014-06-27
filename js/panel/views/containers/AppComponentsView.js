@@ -1,17 +1,20 @@
 define(["backbone", "underscore", "jquery", "handlebars", "views/containers/CollectionView",
-        "text!templates/appComponents.html", "filters/SearchFilter"],
-function(Backbone, _, $, Handlebars, CollectionView, template, SearchFilter) {
+        "text!templates/appComponents.html"],
+function(Backbone, _, $, Handlebars, CollectionView, template) {
 
     var AppComponentsView = CollectionView.extend({
 
         template: Handlebars.compile(template),
         CollectionItemView: undefined, // oggetto sottotipo di AppComponentView
         collectionElSelector: ".appComponentList",
+        searchFormElSelector: ".appComponentsOptions .searchForm",
+        searchTermElSelector: ".appComponentsOptions .searchTerm",
 
-        events: {
-            "click .openAll": "openAll",
-            "click .closeAll": "closeAll",
-            "submit .searchForm": "onSearchSubmit"
+        events: function() {
+            return $.extend({
+                "click .openAll": "openAll",
+                "click .closeAll": "closeAll",
+            }, CollectionView.prototype.events.apply(this, arguments));
         },
 
         openAll: function() {
@@ -53,24 +56,6 @@ function(Backbone, _, $, Handlebars, CollectionView, template, SearchFilter) {
                     }
                 }, this));
             }, this));
-        },
-
-        onSearchSubmit: function(event) {
-            var searchTerm = $(event.target).find('.searchTerm').val();
-            this.search(searchTerm);
-            return false; // prevent real submit of form
-        },
-
-        search: function(searchTerm) {
-            this.$('.appComponentsOptions .searchTerm').val(searchTerm);
-            
-            if (searchTerm === "") {
-                // just remove the filter
-                this.resetFilter();
-            } else {
-                // apply the new filter
-                this.resetFilter(new SearchFilter(searchTerm));
-            }
         },
 
         getComponentView: function(componentIndex) {

@@ -6,8 +6,8 @@
             ciò è necessario per il funzionamento della gestione separata di tale collectionEl
             (vedi metodo render). */
 
-define(["backbone", "underscore", "jquery", "views/View", "handlebars"],
-function(Backbone, _, $, View, Handlebars) {
+define(["backbone", "underscore", "jquery", "views/View", "handlebars", "filters/SearchFilter"],
+function(Backbone, _, $, View, Handlebars, SearchFilter) {
 
     var AppComponentsView = View.extend({
 
@@ -17,6 +17,18 @@ function(Backbone, _, $, View, Handlebars) {
         collectionElSelector: undefined, // selettore per l'elemento html che contiene gli el delle viste degli item
 
         filter: undefined,
+
+        searchFormElSelector: undefined, // jquery selector for the search form element (if any)
+        searchTermElSelector: undefined, // jquery selector for the search form term input element (if any)
+        searchTriggerTimeout: 300, // number of ms after search field has changed to automatically trigger the search
+
+        events: function() {
+            var e = {};
+            e["keydown "+this.searchTermElSelector] = "startSearchTriggerTimer";
+            e["change "+this.searchTermElSelector] = "startSearchTriggerTimer";
+            e["submit "+this.searchFormElSelector] = "searchCurrent";
+            return e;
+        },
 
         initialize: function(options) {
             _.bindAll(this);
@@ -135,6 +147,32 @@ function(Backbone, _, $, View, Handlebars) {
                         this.show(newMatchResult); // hide or show the view based on the search result
                     }, collectionItemView)); // access via "this"
                 }
+            }
+        },
+
+        startSearchTriggerTimer: function(event) {
+            if (this.searchTriggerTimer) this.searchTriggerTimer = clearTimeout(this.searchTriggerTimer);
+            this.searchTriggerTimer = setTimeout(_.bind(this.searchCurrent, this), this.searchTriggerTimeout);
+        },
+
+        searchCurrent: function() {
+            var searchTerm = this.$(this.searchTermElSelector).val();
+            this.search(searchTerm);
+            return false; // prevent real submit of form (if any)
+        },
+
+        search: function(searchTerm) {
+            // needed if the user manually started the search and there are pending search triggers
+            if (this.searchTriggerTimer) this.searchTriggerTimer = clearTimeout(this.searchTriggerTimer);
+
+            this.$(this.searchTermElSelector).val(searchTerm);
+
+            if (searchTerm === "") {
+                // just remove the filter
+                this.resetFilter();
+            } else {
+                // apply the new filter
+                this.resetFilter(new SearchFilter(searchTerm));
             }
         },
 
