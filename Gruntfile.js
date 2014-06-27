@@ -62,6 +62,20 @@ module.exports = function(grunt) {
       }
     },
 
+    // Before generating any new files,
+    // remove any previously-created files.
+    clean: ['<%= config.dist %>/assets/**', '<%= config.dist %>/**/*.{html,xml}'],
+
+    copy: {
+      // Copy assets directory from src to dist folder
+      assets: {
+          expand: true, 
+          cwd: '<%= config.src %>',
+          src: ['assets/**'], 
+          dest: '<%= config.dist %>',
+      }
+    },
+
     assemble: {
       pages: {
         options: {
@@ -91,22 +105,19 @@ module.exports = function(grunt) {
           branch: 'gh-pages'
         }
       }
-    },
-
-    // Before generating any new files,
-    // remove any previously-created files.
-    clean: ['<%= config.dist %>/**/*.{html,xml}']
-
+    }
   });
 
   grunt.loadNpmTasks('assemble');
   grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-build-control');
 
   grunt.registerTask('server', [
     'clean',
+    'copy:assets',
     'assemble',
     'connect:livereload',
     'watch'
@@ -114,7 +125,8 @@ module.exports = function(grunt) {
 
   grunt.registerTask('build', [
     'clean',
-    'assemble'
+    'copy:assets',
+    'assemble',
   ]);
 
   grunt.registerTask('deploy', [
