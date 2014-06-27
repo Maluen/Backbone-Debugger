@@ -1,6 +1,18 @@
-# Temp files
-*~
-.directory
-.DS_Store
+lib-cov
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+*.yo-rc.json
 
-# Others
+pids
+logs
+results
+
+npm-debug.log
+node_modules
+
+*.sublime-*

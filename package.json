@@ -1,0 +1,46 @@
+{
+  "name": "backbone-debugger-website",
+ "description": "Backbone Debugger website.",
+  "version": "0.1.0",
+  "homepage": "https://github.com/Maluen/backbone-debugger-website",
+  "author": {
+    "name": "Manuel Dell'Elce",
+    "url": "http://github.com/Maluen/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Maluen/backbone-debugger-website.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Maluen/backbone-debugger-website/issues"
+  },
+  "engines": {
+    "node": ">=0.8"
+  },
+  "scripts": {
+    "test": "grunt assemble"
+  },
+  "devDependencies": {
+    "assemble": "~0.4.37",
+    "grunt": "~0.4.4",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-contrib-connect": "~0.7.1",
+    "grunt-contrib-watch": "~0.6.1",
+    "load-grunt-tasks": "~0.4.0",
+    "time-grunt": "~0.3.1"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/Maluen/backbone-debugger-website/blob/master/LICENSE-MIT"
+    }
+  ],
+  "keywords": [
+    "assemble",
+    "templates",
+    "handlebars",
+    "site generator",
+    "site builder",
+    "grunt"
+  ]
+}
