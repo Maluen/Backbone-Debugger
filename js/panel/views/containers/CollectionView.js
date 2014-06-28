@@ -20,12 +20,11 @@ function(Backbone, _, $, View, Handlebars, SearchFilter) {
 
         searchFormElSelector: undefined, // jquery selector for the search form element (if any)
         searchTermElSelector: undefined, // jquery selector for the search form term input element (if any)
-        searchTriggerTimeout: 300, // number of ms after search field has changed to automatically trigger the search
+        searchTriggerTimeout: 500, // number of ms after search field has changed to automatically trigger the search
 
         events: function() {
             var e = {};
-            e["keydown "+this.searchTermElSelector] = "startSearchTriggerTimer";
-            e["change "+this.searchTermElSelector] = "startSearchTriggerTimer";
+            e["input "+this.searchTermElSelector] = "startSearchTriggerTimer";
             e["submit "+this.searchFormElSelector] = "searchCurrent";
             return e;
         },
@@ -132,9 +131,11 @@ function(Backbone, _, $, View, Handlebars, SearchFilter) {
                 this.filter.remove();
                 this.filter = undefined;
                 // restore views visibility
-                for (var i=0,l=this.collectionItemViews.length; i<l; i++) {
-                    this.collectionItemViews[i].show(true);
-                }
+                _.each(this.collectionItemViews, function(view) {
+                    _.defer(function() { // defer to prevent UI blocking
+                        view.show(true);
+                    });
+                });
             }
 
             // set new filter
@@ -144,7 +145,9 @@ function(Backbone, _, $, View, Handlebars, SearchFilter) {
                 for (var i=0,l=this.collectionItemViews.length; i<l; i++) {
                     var collectionItemView = this.collectionItemViews[i];
                     filter.liveMatch(collectionItemView.model, true, _.bind(function(model, newMatchResult) {
-                        this.show(newMatchResult); // hide or show the view based on the search result
+                        _.defer(_.bind(function() { // defer to prevent UI blocking
+                            this.show(newMatchResult); // hide or show the view based on the search result
+                        }, this));
                     }, collectionItemView)); // access via "this"
                 }
             }

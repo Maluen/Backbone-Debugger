@@ -23,6 +23,20 @@ function(Backbone, _, $, View, AppComponentActionsView) {
             this.render();
         },
 
+        // Override that avoids browser re-rendering of element when showing
+        show: function(showOrHide) {
+            if (showOrHide) { // show
+                this.$el.css({'height': '', 'overflow': ''});
+            } else { // hide
+                this.$el.css({'height': 0, 'overflow': 'hidden'});
+            }
+        },
+        
+        isShown: function() {
+            // might be true also if the parent is hidden, differently from jquery ".is(':visible')"
+            return this.$el.css('height') != 0 || this.$el.css('overflow') != 'hidden';
+        },
+
         // Return the template data, can be overridden by subtypes to augment / alter the returned data.
         templateData: function() {
             var templateData = this.model.toJSON();

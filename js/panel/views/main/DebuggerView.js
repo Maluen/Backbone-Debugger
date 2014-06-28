@@ -62,8 +62,14 @@ function(Backbone, _, $, View, Handlebars, template,
         },
 
         events: {
+            "keydown": "disableTabKey",
             "click .mainTabs>li": "onTabClicked",
             "click .inspectComponent": "inspectComponent"
+        },
+
+        // disable tab key default action, since it causes horizontal scrolling to another tab
+        disableTabKey: function(event) {
+            if (event.keyCode == 9) event.preventDefault();
         },
 
         onTabClicked: function(event) {
