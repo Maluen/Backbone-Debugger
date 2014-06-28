@@ -44,20 +44,20 @@ Screenshots
 --------
 **Views**:
 
-![Views](http://cloud.githubusercontent.com/assets/1434239/3420660/ec70f9d0-feb7-11e3-8639-fdafd1152992.png "Views")
+![Views](http://maluen.github.io/Backbone-Debugger/assets/img/screenshots/views.png "Views")
 
 **Models**:
 
-![Models](http://cloud.githubusercontent.com/assets/1434239/3420661/133eec20-feb8-11e3-9a73-3d69cb9b3b51.png "Models")
+![Models](http://maluen.github.io/Backbone-Debugger/assets/img/screenshots/models.png "Models")
 
 **Collections**:
 
-![Collections](http://cloud.githubusercontent.com/assets/1434239/3420664/25bc273c-feb8-11e3-823b-31f799754ff0.png "Collections")
+![Collections](http://maluen.github.io/Backbone-Debugger/assets/img/screenshots/collections.png "Collections")
 
 **Routers**:
 
-![Routers](http://cloud.githubusercontent.com/assets/1434239/3420665/3000371a-feb8-11e3-8e11-86df8b9dcfdd.png "Routers")
+![Routers](http://maluen.github.io/Backbone-Debugger/assets/img/screenshots/routers.png "Routers")
 
 **Elements sidebar extension**:
 
-![Elements sidebar extension](http://cloud.githubusercontent.com/assets/1434239/3420666/3b8c4d4e-feb8-11e3-9c1a-b764be6beacb.png "Elements sidebar extension")
+![Elements sidebar extension](http://maluen.github.io/Backbone-Debugger/assets/img/screenshots/elements%20sidebar.png "Elements sidebar extension")
