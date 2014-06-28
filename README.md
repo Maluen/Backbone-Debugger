@@ -44,20 +44,20 @@ Screenshots
 --------
 **Views**:
 
-![Views](http://img706.imageshack.us/img706/5843/8tsw.png "Views")
+![Views](http://cloud.githubusercontent.com/assets/1434239/3420660/ec70f9d0-feb7-11e3-8639-fdafd1152992.png "Views")
 
 **Models**:
 
-![Models](http://imageshack.us/a/img856/4706/e4jw.png "Models")
+![Models](http://cloud.githubusercontent.com/assets/1434239/3420661/133eec20-feb8-11e3-9a73-3d69cb9b3b51.png "Models")
 
 **Collections**:
 
-![Collections](http://img199.imageshack.us/img199/1153/ctva.png "Collections")
+![Collections](http://cloud.githubusercontent.com/assets/1434239/3420664/25bc273c-feb8-11e3-823b-31f799754ff0.png "Collections")
 
 **Routers**:
 
-![Routers](http://img89.imageshack.us/img89/4051/e07s.png "Routers")
+![Routers](http://cloud.githubusercontent.com/assets/1434239/3420665/3000371a-feb8-11e3-8e11-86df8b9dcfdd.png "Routers")
 
 **Elements sidebar extension**:
 
-![Elements sidebar extension](http://img716.imageshack.us/img716/2227/dzun.png "Elements sidebar extension")
+![Elements sidebar extension](http://cloud.githubusercontent.com/assets/1434239/3420666/3b8c4d4e-feb8-11e3-9c1a-b764be6beacb.png "Elements sidebar extension")
