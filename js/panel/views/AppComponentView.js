@@ -23,7 +23,7 @@ function(Backbone, _, $, View, AppComponentActionsView) {
             this.render();
         },
 
-        // Override that avoids browser re-rendering of element when showing
+        // Override that speeds up browser re-rendering of element when showing (instead of display none)
         show: function(showOrHide) {
             if (showOrHide) { // show
                 this.$el.css({'height': '', 'overflow': ''});

@@ -126,31 +126,32 @@ function(Backbone, _, $, View, Handlebars, SearchFilter) {
         // Set filter as the active filter, removing the old one if exists.
         // Note: if filter is undefined, then the method will just remove the existing filter.
         resetFilter: function(filter) {
-            // remove existing filter
-            if (this.filter) {
-                this.filter.remove();
-                this.filter = undefined;
-                // restore views visibility
-                _.each(this.collectionItemViews, function(view) {
-                    _.defer(function() { // defer to prevent UI blocking
-                        view.show(true);
-                    });
-                });
-            }
-
-            // set new filter
-            if (filter) {
-                this.filter = filter;
-                // apply filter
-                for (var i=0,l=this.collectionItemViews.length; i<l; i++) {
-                    var collectionItemView = this.collectionItemViews[i];
-                    filter.liveMatch(collectionItemView.model, true, _.bind(function(model, newMatchResult) {
-                        _.defer(_.bind(function() { // defer to prevent UI blocking
-                            this.show(newMatchResult); // hide or show the view based on the search result
-                        }, this));
-                    }, collectionItemView)); // access via "this"
+            _.defer(_.bind(function() { // wait old deferred reset completitions
+                // remove existing filter
+                if (this.filter) {
+                    this.filter.remove();
+                    this.filter = undefined;
                 }
-            }
+
+                if (!filter) {
+                    // restore views visibility (no new filter)
+                    _.each(this.collectionItemViews, function(view) {
+                        _.defer(function() { // defer to prevent UI blocking
+                            view.show(true);
+                        });
+                    }, this);
+                } else {
+                    // set & apply new filter
+                    this.filter = filter;
+                    _.each(this.collectionItemViews, function(view) {
+                        filter.liveMatch(view.model, true, function(model, newMatchResult) {
+                            _.defer(function() { // defer to prevent UI blocking
+                                view.show(newMatchResult); // hide or show the view based on the search result
+                            });
+                        });
+                    }, this);
+                }
+            }, this));
         },
 
         startSearchTriggerTimer: function(event) {

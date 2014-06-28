@@ -92,10 +92,12 @@ body {
 
 .appComponentList>li {
     background-color: #EBEBEB;
+    margin-bottom: 0;
 }
 
 .appComponentToggle {
     text-align: left;
+    margin-top: -1px;
 }
 .appComponentToggle span {
     -webkit-user-select: text;
