@@ -9,11 +9,15 @@ function(Backbone, _, $, AppComponentView, Handlebars, template) {
         template: Handlebars.compile(template),
 
         events: $.extend({
-            "click .printElement": "printElement"
+            "click .printElement": "printElement",
+            "click .inspectElement": "inspectElement"
         }, AppComponentView.prototype.events),
 
         printElement: function() {
             this.model.printElement();
+        },
+        inspectElement: function() {
+            this.model.inspectElement();
         }
 
     });
