@@ -29,4 +29,4 @@ Read further to learn what information are displayed in it and how to use them.
 
 ###Panel###
 
-![Panel](http://localhost:9000/assets/img/screenshots/views.png "Panel")
+![Panel]({{assets}}/img/screenshots/views.png "Panel")
