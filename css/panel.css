@@ -86,6 +86,11 @@ body {
     margin-top: 3px;
 }
 
+/* prevent highlight around button on click */
+.resetSearch:focus {
+    outline: none;
+}
+
 .appComponentList {
     margin: 0;
 }

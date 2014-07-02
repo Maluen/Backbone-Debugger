@@ -25,6 +25,7 @@ function(Backbone, _, $, View, Handlebars, SearchFilter) {
         events: function() {
             var e = {};
             e["input "+this.searchTermElSelector] = "startSearchTriggerTimer";
+            e["reset "+this.searchFormElSelector] = "startSearchTriggerTimer";
             e["submit "+this.searchFormElSelector] = "searchCurrent";
             return e;
         },
