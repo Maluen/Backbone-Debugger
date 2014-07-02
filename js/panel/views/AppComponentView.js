@@ -27,8 +27,10 @@ function(Backbone, _, $, View, AppComponentActionsView) {
         show: function(showOrHide) {
             if (showOrHide) { // show
                 this.$el.css({'height': '', 'overflow': ''});
+                this.trigger('show');
             } else { // hide
                 this.$el.css({'height': 0, 'overflow': 'hidden'});
+                this.trigger('hide');
             }
         },
         

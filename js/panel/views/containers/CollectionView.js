@@ -146,7 +146,7 @@ function(Backbone, _, $, View, Handlebars, SearchFilter) {
                     _.each(this.collectionItemViews, function(view) {
                         filter.liveMatch(view.model, true, function(model, newMatchResult) {
                             _.defer(function() { // defer to prevent UI blocking
-                                view.show(newMatchResult); // hide or show the view based on the search result
+                                view.show(newMatchResult); // hide or show the view based on the filter result
                             });
                         });
                     }, this);

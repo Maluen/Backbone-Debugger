@@ -91,17 +91,19 @@ function(Backbone, _, $, View, Handlebars, template,
             var componentsView = this.appComponentsViews[componentCategory];
             var componentView = componentsView.getComponentView(componentIndex);
             if (componentView) {
-                // open the tab that shows the component
-                var tabElement = this.$("#app"+componentCategory+"sTab");
-                var tabContentElement = this.$("#app"+componentCategory+"s");
-                this.openTab(tabElement, tabContentElement);
-                // filter the components to show the one to inspect (to assurue it is visible)
+                // filter the components to show the one to inspect (to make sure it is visible)
                 componentsView.search('"component_index '+componentIndex+'"'); // strict search
-                // open the component and scroll to it
-                componentView.open();
-                tabContentElement.scrollTop(tabContentElement.scrollTop() + componentView.$el.position().top); // obsolete: the search should return just one component
-                // highlight the component
-                componentView.highlightAnimation();
+                this.listenToOnce(componentView, "show", _.bind(function() { // search ended (component is visible)
+                    // open the tab that shows the component
+                    var tabElement = this.$("#app"+componentCategory+"sTab");
+                    var tabContentElement = this.$("#app"+componentCategory+"s");
+                    this.openTab(tabElement, tabContentElement);
+                    // open the component and scroll to it
+                    componentView.open();
+                    tabContentElement.scrollTop(tabContentElement.scrollTop() + componentView.$el.position().top); // obsolete: the search should return just one component
+                    // highlight the component
+                    componentView.highlightAnimation();
+                }, this));
             }
         }
     });
