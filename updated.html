@@ -29,21 +29,27 @@
 		<div id="wrap"><div class="container">
 			<div class="page-header">
 				<h2><a title="Backbone Debugger on Chrome Web Store" href="https://chrome.google.com/webstore/detail/backbone-debugger/bhljhndlimiafopmmhjlgfpnnchjjbhd">Backbone Debugger</a>
-					has been successfully updated to v0.2</h2>
+					has been successfully updated to v0.2.5!</h2>
 			</div>
 
 			<p class="lead">
-			Changes from previous versions:
+			Changes from last version:
 			<ul>
-				<li>Change the name of Panel and Elements sidebar pane to 'Backbone'. (<a href="https://github.com/Maluen/Backbone-Debugger/issues/12">#12</a>)</li>
-			   	<li>Keep the debug mode running when the user refreshes the page while in that mode. (<a href="https://github.com/Maluen/Backbone-Debugger/issues/10">#10</a>)</li>
-				<li>Don't reload the panel after 'fake updates', i.e. hash changes, push state, etc. This leads to much higher usability when interacting with the page while in debug mode.</li>
-				<li>Smoother Panel startup for apps with many components.</li>
-				<li>Detect deletions of watched object properties, this allows for example to detect deletion of the last model of a collection.</li>
-				<li>Make Backbone AMD detection work when using implicit require. (<a href="https://github.com/Maluen/Backbone-Debugger/issues/11">#11</a>)</li>
-				<li>Fix 'Times in Actions Table shown as NaN:NaN:NaN' bug. (<a href="https://github.com/Maluen/Backbone-Debugger/issues/6">#6</a>)</li>
+				<li>Added instant <b>free text search</b> for filtering components and actions, with real time update in case components change.</li>
+			   	<li>Use view selectors (e.g. li.done) as <b>view names</b> in panel, with real time update.</li>
+				<li>New components navigation style.</li>
+				<li>Break long words in panel to prevent overflow in case of long names, long urls, etc.</li>
+				<li>Bugfix: Fix WatchJS bug (<a href="https://github.com/Maluen/Backbone-Debugger/issues/14">#14</a>).</li>
+				<li>Bugfix: Make hidden properties really hidden (<a href="https://github.com/Maluen/Backbone-Debugger/issues/16">#16</a>).</li>
+				<li>Optimization: better handling of backbone agent reports.</li>
+				<li>Only show the view index in the Elements sidebar pane.</li>
 			</ul>
 			</p>
+
+			<br />
+			<h4>Hope you enjoy!</h4>
+			<br />
+			<p>P.S: You can get the source code and contribute at <a href="https://github.com/Maluen/Backbone-Debugger" title="Github">https://github.com/Maluen/Backbone-Debugger</a></p>
 		</div></div>
 
 		<script src="js/lib/jquery.js"></script>
