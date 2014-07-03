@@ -11,6 +11,7 @@ body {
     background-color: #F5F5F5;
     padding: 0;
     -webkit-user-select: none; /* disable text selection */
+    word-break: break-all;
 }
 
 .btn-link {
