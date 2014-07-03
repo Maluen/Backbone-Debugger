@@ -1,6 +1,6 @@
 define(["backbone", "underscore", "jquery", "handlebars", "views/containers/CollectionView",
-        "text!templates/appComponents.html"],
-function(Backbone, _, $, Handlebars, CollectionView, template) {
+        "text!templates/appComponents.html", "setImmediate"],
+function(Backbone, _, $, Handlebars, CollectionView, template, setImmediate) {
 
     var AppComponentsView = CollectionView.extend({
 
@@ -29,7 +29,7 @@ function(Backbone, _, $, Handlebars, CollectionView, template) {
             this.forEachItemView(_.bind(function(componentView, i, collectionItemViews) {
                 // don't move this outside or the operation will never end if there aren't item views
                 this.openAllInProgress = true;
-                _.defer(_.bind(function() { // smooth page reflow (one component view at a time)
+                setImmediate(_.bind(function() { // smooth page reflow (one component view at a time)
                     if (componentView.isShown()) componentView.open();
                     if (i == collectionItemViewsLength-1) {
                         // just opened the last item, operation completed
@@ -48,7 +48,7 @@ function(Backbone, _, $, Handlebars, CollectionView, template) {
 
             this.forEachItemView(_.bind(function(componentView, i, collectionItemViews) {
                 this.closeAllInProgress = true;
-                _.defer(_.bind(function() { // smooth page reflow (one component view at a time)
+                setImmediate(_.bind(function() { // smooth page reflow (one component view at a time)
                     if (componentView.isShown()) componentView.close();
                     if (i == collectionItemViewsLength-1) {
                         // just closed the last item, operation completed

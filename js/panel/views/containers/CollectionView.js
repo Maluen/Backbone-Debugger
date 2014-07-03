@@ -6,8 +6,8 @@
             ciò è necessario per il funzionamento della gestione separata di tale collectionEl
             (vedi metodo render). */
 
-define(["backbone", "underscore", "jquery", "views/View", "handlebars", "filters/SearchFilter"],
-function(Backbone, _, $, View, Handlebars, SearchFilter) {
+define(["backbone", "underscore", "jquery", "views/View", "handlebars", "filters/SearchFilter", "setImmediate"],
+function(Backbone, _, $, View, Handlebars, SearchFilter, setImmediate) {
 
     var AppComponentsView = View.extend({
 
@@ -38,7 +38,7 @@ function(Backbone, _, $, View, Handlebars, SearchFilter) {
 
             // handle new items
             this.listenTo(this.collection, "reset", _.bind(function() {
-                _.defer(_.bind(function() { // needed to handle the reset after pending deferred adds
+                setImmediate(_.bind(function() { // needed to handle the reset after pending deferred adds
                     // gestisce i nuovi item
                     this.clearItems();
                     this.render();
@@ -73,10 +73,10 @@ function(Backbone, _, $, View, Handlebars, SearchFilter) {
 
         // Aggiunge l'elemento e lo visualizza nel DOM
         handleNewItem: function(collectionItem) {
-            // don't move the indexOf calculation inside the defer or we'll have an invalid value if
+            // don't move the indexOf calculation inside the setImmediate or we'll have an invalid value if
             // other new items are prepended during the waiting time
             var collectionItemIndex = this.collection.indexOf(collectionItem);
-            _.defer(_.bind(function() { // prevents UI blocking
+            setImmediate(_.bind(function() { // prevents UI blocking
                 var newCollectionItemView = this.addItem(collectionItem, collectionItemIndex);
                 // apply the filter in order to immediately hide the view if its model doesn't pass the filter.
                 // in this way, when added, the view will already have the correct visibility.
@@ -127,7 +127,7 @@ function(Backbone, _, $, View, Handlebars, SearchFilter) {
         // Set filter as the active filter, removing the old one if exists.
         // Note: if filter is undefined, then the method will just remove the existing filter.
         resetFilter: function(filter) {
-            _.defer(_.bind(function() { // wait old deferred reset completitions
+            setImmediate(_.bind(function() { // wait old deferred reset completitions
                 // remove existing filter
                 if (this.filter) {
                     this.filter.remove();
@@ -137,7 +137,7 @@ function(Backbone, _, $, View, Handlebars, SearchFilter) {
                 if (!filter) {
                     // restore views visibility (no new filter)
                     _.each(this.collectionItemViews, function(view) {
-                        _.defer(function() { // defer to prevent UI blocking
+                        setImmediate(function() { // defer to prevent UI blocking
                             view.show(true);
                         });
                     }, this);
@@ -146,7 +146,7 @@ function(Backbone, _, $, View, Handlebars, SearchFilter) {
                     this.filter = filter;
                     _.each(this.collectionItemViews, function(view) {
                         filter.liveMatch(view.model, true, function(model, newMatchResult) {
-                            _.defer(function() { // defer to prevent UI blocking
+                            setImmediate(function() { // defer to prevent UI blocking
                                 view.show(newMatchResult); // hide or show the view based on the filter result
                             });
                         });

@@ -1,7 +1,8 @@
 /* L'aggiornamento in tempo reale viene attivato automaticamente al termine della fetch. */
 
-define(["backbone", "underscore", "collections/AppComponentActions", "backboneAgentClient", "inspectedPageClient"],
-function(Backbone, _, AppComponentActions, backboneAgentClient, inspectedPageClient) {
+define(["backbone", "underscore", "collections/AppComponentActions", 
+        "backboneAgentClient", "inspectedPageClient", "setImmediate"],
+function(Backbone, _, AppComponentActions, backboneAgentClient, inspectedPageClient, setImmediate) {
 
     var AppComponent = Backbone.Model.extend({
 
@@ -45,7 +46,7 @@ function(Backbone, _, AppComponentActions, backboneAgentClient, inspectedPageCli
             }
 
             this.fetchLogic(_.bind(function(appComponentAttributes) { // on executed
-                _.defer(_.bind(function() { // prevent UI blocking
+                setImmediate(_.bind(function() { // prevent UI blocking
                     // resetta gli attributi
                     this.clear({silent: true});
                     this.set(appComponentAttributes);
@@ -60,14 +61,14 @@ function(Backbone, _, AppComponentActions, backboneAgentClient, inspectedPageCli
             // (per evitare che la logica venga eseguita più di una volta)
             if (this.isRealTimeUpdateActive) return;
 
-            _.defer(_.bind(function() { // binding many consecutive events freezes the ui (happens if there are a lot of app components)
+            setImmediate(_.bind(function() { // binding many consecutive events freezes the ui (happens if there are a lot of app components)
                 var reportName = "backboneAgent:"+this.category+":"+this.get("component_index")+":change";
                 this.listenTo(inspectedPageClient, reportName, _.bind(function(report) {
                     // recupera attributi aggiornati
                     this.fetch();
                 }, this));
 
-                // l'avvio della realTimeUpdate è rimandato con la defer, per cui eventuali report
+                // l'avvio della realTimeUpdate è rimandato con la setImmediate, per cui eventuali report
                 // inviati tra l'esecuzione e l'effettivo avvio di questa non sono stati gestiti,
                 // facendo la fetch adesso si ottiene allora lo stato comprensivo degli eventuali cambiamenti,
                 // dopodichè i prossimi report saranno gestiti.

@@ -1,5 +1,5 @@
-define(["backbone", "underscore", "backboneAgentClient"],
-function(Backbone, _, backboneAgentClient) {
+define(["backbone", "underscore", "backboneAgentClient", "setImmediate"],
+function(Backbone, _, backboneAgentClient, setImmediate) {
 
     var AppComponentAction = Backbone.Model.extend({
 
@@ -39,7 +39,7 @@ function(Backbone, _, backboneAgentClient) {
                 return appComponentActionAttributes;
             }, [this.component.category, this.component.get("component_index"), index],
             _.bind(function(appComponentActionAttributes) { // on executed
-                _.defer(_.bind(function() { // prevent UI blocking
+                setImmediate(_.bind(function() { // prevent UI blocking
                     // resetta gli attributi
                     this.clear({silent: true});
                     this.set(appComponentActionAttributes);
