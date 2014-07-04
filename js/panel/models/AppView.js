@@ -77,6 +77,15 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
             }, [this.get("component_index")], _.bind(function(result) { // on executed
                 // do nothing
             }, this));
+        },
+        inspectElement: function() {
+            backboneAgentClient.execFunction(function(componentIndex) {
+                var appViewInfo = this.getAppComponentInfoByIndex("View", componentIndex);
+                var appViewEl = appViewInfo.component.el;
+                inspect(appViewEl);
+            }, [this.get("component_index")], _.bind(function(result) { // on executed
+                // do nothing
+            }, this));
         }
     });
     return AppView;
