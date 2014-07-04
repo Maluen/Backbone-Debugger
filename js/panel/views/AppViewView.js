@@ -16,6 +16,7 @@ function(Backbone, _, $, AppComponentView, Handlebars, template) {
         printElement: function() {
             this.model.printElement();
         },
+        
         inspectElement: function() {
             this.model.inspectElement();
         }

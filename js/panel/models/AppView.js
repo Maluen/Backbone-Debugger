@@ -14,7 +14,8 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
             "component_name": null, // string
             "component_modelIndex": null, // int
             "component_collectionIndex": null, // int
-            "component_status": "Created" // can be "Created", "Rendered" or "Removed"
+            "component_isInDOM": null, // bool
+            "component_status": "Created", // can be "Created", "Rendered" or "Removed"
         },
 
         // Change the component status by analyzing its "Operation" actions.
@@ -57,11 +58,15 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                     componentName = componentName || componentNameDetails;
                 }
 
+                var componentIsInDOM = typeof appViewComponent.el == 'object' && appViewComponent.el !== null ?
+                                        document.body.contains(appViewComponent.el) : false;
+
                 var appViewAttributes = {
                     "component_index": appViewInfo.index,
                     "component_name": componentName,
                     "component_modelIndex": componentModelInfo? componentModelInfo.index : null,
                     "component_collectionIndex": componentCollectionInfo? componentCollectionInfo.index : null,
+                    "component_isInDOM": componentIsInDOM,
                     "component_status": componentStatus
                 };
                 return appViewAttributes;
@@ -78,6 +83,7 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                 // do nothing
             }, this));
         },
+
         inspectElement: function() {
             backboneAgentClient.execFunction(function(componentIndex) {
                 var appViewInfo = this.getAppComponentInfoByIndex("View", componentIndex);
