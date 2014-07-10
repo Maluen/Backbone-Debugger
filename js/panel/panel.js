@@ -8,6 +8,7 @@ require.config({
         jquery: '../lib/jquery',
         underscore: '../lib/underscore-min',
         backbone: '../lib/backbone',
+        chaplin: '../lib/chaplin',
         text: '../lib/text',
         bootstrap: '../lib/bootstrap.min',
         handlebars_original: '../lib/handlebars',

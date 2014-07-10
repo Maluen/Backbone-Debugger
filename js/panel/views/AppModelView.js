@@ -6,17 +6,19 @@ function(Backbone, _, $, AppComponentView, Handlebars, template) {
 
         template: Handlebars.compile(template),
 
-        templateData: function() {
+        initialize: function() {
+            AppComponentView.prototype.initialize.apply(this, arguments);
+
+            this.delegate('click', '.printAppModelAttribute', _.bind(this.printAppModelAttribute, this));
+        },
+
+        getTemplateData: function() {
             var templateData = AppComponentView.prototype.templateData.apply(this, arguments);
             // don't close the attributes list if it was open
             templateData["isAttributesOpen"] = this.$(".attributes").hasClass("in");
 
             return templateData;
         },
-
-        events: $.extend({
-            "click .printAppModelAttribute": "printAppModelAttribute"
-        }, AppComponentView.prototype.events),
 
         printAppModelAttribute: function(event) {
             var button = $(event.target);

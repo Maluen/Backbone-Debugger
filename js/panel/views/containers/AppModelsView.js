@@ -5,7 +5,7 @@ function(Backbone, _, $, AppComponentsView, appModels, AppModelView) {
     var AppModelsView = AppComponentsView.extend({
 
         collection: appModels,
-        CollectionItemView: AppModelView
+        itemView: AppModelView
 
     });
     return AppModelsView;

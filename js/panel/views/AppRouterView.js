@@ -6,10 +6,6 @@ function(Backbone, _, $, AppComponentView, Handlebars, template) {
 
         template: Handlebars.compile(template),
 
-        events: $.extend({
-
-        }, AppComponentView.prototype.events)
-
     });
     return AppRouterView;
 });

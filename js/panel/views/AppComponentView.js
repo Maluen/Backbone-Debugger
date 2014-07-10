@@ -1,16 +1,19 @@
 /* NOTE: the passed model must have already been fetched or have valid attributes. */
 
-define(["backbone", "underscore", "jquery", "views/View", "views/containers/AppComponentActionsView"],
-function(Backbone, _, $, View, AppComponentActionsView) {
+define(["backbone", "underscore", "jquery", "chaplin", "views/View", "views/containers/AppComponentActionsView"],
+function(Backbone, _, $, Chaplin, View, AppComponentActionsView) {
 
     var AppComponentView = View.extend({
 
         template: undefined,
         tagName: "li",
+        autoRender: true,
 
         appComponentActionsView: undefined, // AppComponentActionsView for the component actions
 
         initialize: function(options) {
+            View.prototype.initialize.apply(this, arguments);
+
             _.bindAll(this);
 
             // create sub-view for the component actions
@@ -19,8 +22,6 @@ function(Backbone, _, $, View, AppComponentActionsView) {
             });
 
             this.listenTo(this.model, "change", this.render);
-
-            this.render();
         },
 
         // Override that speeds up browser re-rendering of element when showing (instead of display none)
@@ -40,8 +41,9 @@ function(Backbone, _, $, View, AppComponentActionsView) {
         },
 
         // Return the template data, can be overridden by subtypes to augment / alter the returned data.
-        templateData: function() {
+        getTemplateData: function() {
             var templateData = this.model.toJSON();
+
             // don't close the component content it it was open
             templateData["isOpen"] = this.$(".appComponent").hasClass("in");
 
@@ -52,8 +54,8 @@ function(Backbone, _, $, View, AppComponentActionsView) {
             // before render, remove .appComponent handlers to prevent memory leaks
             this.$('.appComponent').off();
 
-            var templateData = this.templateData();
-            this.el.innerHTML = this.template(templateData); // DON'T use this.$el.html() because it removes the jQuery event handlers of existing sub-views
+            View.prototype.render.apply(this, arguments);
+
             // insert the sub-view for the component actions
             this.$(".appComponentActions").append(this.appComponentActionsView.el);
 

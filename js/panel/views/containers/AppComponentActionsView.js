@@ -5,7 +5,7 @@ function(Backbone, _, $, Handlebars, CollectionView, AppComponentActionView, tem
     var AppComponentActionsView = CollectionView.extend({
 
         template: Handlebars.compile(template),
-        CollectionItemView: AppComponentActionView,
+        itemView: AppComponentActionView,
         collectionElSelector: ".appComponentActionsTable",
         searchFormElSelector: ".searchForm",
         searchTermElSelector: ".searchTerm"

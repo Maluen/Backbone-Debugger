@@ -6,7 +6,7 @@ function(Backbone, _, $, AppComponentView, Handlebars, template) {
 
         template: Handlebars.compile(template),
 
-        templateData: function() {
+        getTemplateData: function() {
             var templateData = AppComponentView.prototype.templateData.apply(this, arguments);
             // don't close the models list if it was open
             templateData["isModelsOpen"] = this.$(".models").hasClass("in");

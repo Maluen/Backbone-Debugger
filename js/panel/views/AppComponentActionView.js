@@ -1,23 +1,25 @@
 /* NOTE: the passed model must have already been fetched or have valid attributes. */
 
-define(["backbone", "underscore", "jquery", "views/View", "handlebars", "text!templates/appComponentAction.html"],
-function(Backbone, _, $, View, Handlebars, template) {
+define(["backbone", "underscore", "jquery", "chaplin", "views/View", "handlebars", "text!templates/appComponentAction.html"],
+function(Backbone, _, $, Chaplin, View, Handlebars, template) {
 
-    var AppComponentActionView = View.extend({
+    var AppComponentActionView = Chaplin.View.extend({
 
         template: Handlebars.compile(template),
         tagName: "tr",
+        autoRender: true,
 
         initialize: function(options) {
+            Chaplin.View.prototype.initialize.apply(this, arguments);
+            
             _.bindAll(this);
 
             this.listenTo(this.model, "change", this.render);
-
-            this.render();
         },
 
-        render: function() {
+        getTemplateData: function() {
             var templateData = this.model.toJSON();
+
             // format timestamp in "hh:mm:ss"
             var date = new Date(this.model.get("timestamp"));
             var hours = date.getHours();
@@ -28,9 +30,7 @@ function(Backbone, _, $, View, Handlebars, template) {
             if (seconds < 10) seconds = "0"+seconds;
             templateData["time"] = hours + ":"+ minutes + ":"+ seconds;
 
-            this.el.innerHTML = this.template(templateData); // DON'T use this.$el.html() because it removes the jQuery event handlers of existing sub-views
-
-            return this;
+            return templateData;
         },
 
         events: {

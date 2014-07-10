@@ -1,8 +1,10 @@
-define(["backbone", "underscore", "jquery"], function(Backbone, _, $) {
+define(["backbone", "underscore", "jquery", "chaplin"], function(Backbone, _, $, Chaplin) {
 
-    var View = Backbone.View.extend({
+    var View = Chaplin.View.extend({
 
         initialize: function(options) {
+            Chaplin.View.prototype.initialize.apply(this, arguments);
+            
             _.bindAll(this);
         },
 
