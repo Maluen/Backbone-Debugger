@@ -43,7 +43,7 @@ function(Backbone, _, $, Handlebars, CollectionView, AppComponentActionView, tem
         loadMoreIfNeeded: function() {
             setImmediate(_.bind(function() { // wait end of pending browser renders (so to work on updated state)
                 if (this.isVisible) {
-                    this.collection.readMore(_.bind(this.loadMoreIfNeeded, this));
+                    this.collection.loadMore(_.bind(this.loadMoreIfNeeded, this));
                 }
             }, this));
         },

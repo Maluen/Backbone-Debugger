@@ -53,7 +53,7 @@ function(Backbone, _, $, Handlebars, CollectionView, template, setImmediate) {
         loadMoreIfNeeded: function() {
             setImmediate(_.bind(function() { // wait end of pending browser renders (so to work on updated state)
                 if (this.isOpened && this.$el.scrollTop() + this.$el[0].clientHeight == this.$el[0].scrollHeight) {
-                    this.collection.readMore(_.bind(this.loadMoreIfNeeded, this));
+                    this.collection.loadMore(_.bind(this.loadMoreIfNeeded, this));
                 }
             }, this));
         },
