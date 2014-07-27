@@ -1,0 +1,14 @@
+{
+    "name": "__backboneAgent",
+
+    "dependencies": [
+        "../lib/watch.js"
+    ],
+
+    "files": [
+        "utils.js",
+        "data.js",
+        "base.js",
+        "logic.js"
+    ]
+}

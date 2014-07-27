@@ -52,52 +52,68 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
             }, this));
         };
 
-        // Reload the inspected page injecting at the beginning of it the scripts
-        // whose url are specified in the "scripts" array,
-        // "injectionData" is an optional JSON-compatible hash accessible to the injected scripts,
-        // tipically used to pass special data not directly accessible from the page, such as the
-        // extension url.
-        this.reloadInjecting = function(scripts, injectionData) {
-            var scriptsContents = []; // array with the content of each script
-            var scriptsLoaded = 0;
+        // Reload the inspected page injecting at the beginning the application
+        // whose absolute base path is specified in the "appBasePath" string.
+        // The application base directory must contain a app.json file with
+        // - the exported application name ("name")
+        // - the application dependencies ("dependencies" array) which will be injected in the provided order
+        // BEFORE the application. 
+        // - its scripts ("files" array) which will be injected in the provided order INSIDE the application scope.
+        // Note: the urls are considered as relative to the base path.
+        // "injectionData" is an optional JSON-compatible hash accessible to the application via the options variable,
+        // is tipically used to pass special data not directly accessible from the page, such as the
+        // extension url, or for app configuration options.
+        this.reloadInjecting = function(appBasePath, injectionData) {
+            injectionData = injectionData || {};
+            var me = this;
 
-            var realThis = this;
+            utils.httpRequest("get", appBasePath+"/app.json", function(data) {
+                var app = JSON.parse(data);
 
-            for (var i=0,l=scripts.length; i<l; i++) {(function (i) { // each iteration has its closure with its own "i"
-                // download the scripts asynchronously (the downloads completion order is random)
-                utils.httpRequest("get", scripts[i], function(data) {
-                    // script number i downloaded.
+                // transform scripts relative urls into their content
+                var scripts = {
+                    dependencies: app.dependencies || [],
+                    files: app.files || []
+                };
+                var fetchScripts = function(onComplete) {
+                    var scriptsLength = _.flatten(_.values(scripts)).length;
+                    var scriptsLoaded = 0;
+                    _.each(_.keys(scripts), function(scriptsType) {
+                        _.each(scripts[scriptsType], function(scriptRelativeURL, index) {
+                            var scriptURL = appBasePath+"/"+scriptRelativeURL;
+                            utils.httpRequest("get", scriptURL, function(data) {
+                                scripts[scriptsType][index] = data; // replace script relative url with its content
+                                scriptsLoaded++;
 
-                    // by executing the script with eval instead that directly, it's possible to specify
-                    // its url with the "sourceURL" special comment, making possible to debug it,
-                    // not having to deal with a single mass of code containing all the injected scripts.
-                    scriptsContents[i] = "eval("+JSON.stringify("//@ sourceURL="+scripts[i]+"\n"+data)+");";
-
-                    scriptsLoaded++;
-                    if (scriptsLoaded == scripts.length) {
-                        // all the scripts have been downloaded
-
-                        // join the scripts separating them with a carriage return.
-                        var toInject = scriptsContents.join('\n')+"\n"; // last "\n" prevents EOF error 
-                                                                        // when injecting a single file with 
-                                                                        // no newline at the end
-
-                        // prepend the injectionData
-                        injectionData = (injectionData !== undefined) ? injectionData : {};
-                        var injectionDataCode = "var injectionData = "+JSON.stringify(injectionData)+";\n";
-                        toInject = injectionDataCode + toInject;
-
-                        // Reload the inspected page with the scripts injected at the beginning of it
-                        realThis.isInjecting = true;
-                        chrome.devtools.inspectedWindow.reload({
-                            ignoreCache: true, // avoid to load the old and possibly different 
-                                               // cached version of the inspected page
-                            injectedScript: toInject
+                                if (scriptsLoaded === scriptsLength) {
+                                    // scripts fetch complete
+                                    onComplete(scripts);
+                                }
+                            });
                         });
-                    }
-                }, true); // disable request caching (avoid to load the old and possibly different cached
-                          // version of the injected scripts), not needed in production.
-            })(i);}
+                    });
+                }
+                fetchScripts(function() { // on complete
+                    // prepare code to inject
+                    // TODO: create and use source map to ease debugging
+
+                    var dependenciesCode = scripts.dependencies.join('\n\n') + '\n\n';
+                    var appCode = 'window.'+app.name+' = new (function(options) {' + '\n\n'
+                                        + scripts.files.join('\n\n') + '\n\n'
+                                + '})('+JSON.stringify(injectionData)+');' + '\n'; // last "\n" prevents eventual EOF error
+
+                    var toInject = dependenciesCode + appCode;
+
+                    // Reload the inspected page with the code to inject at the beginning of it
+                    me.isInjecting = true;
+                    chrome.devtools.inspectedWindow.reload({
+                        ignoreCache: true, // avoid to load the old and possibly different 
+                                           // cached version of the inspected page
+                        injectedScript: toInject
+                    });
+                });
+            }, true); // disable request caching (avoid to load the old and possibly different cached
+                      // version of the injected scripts), not needed in production.
         };
 
         this.initialize();
