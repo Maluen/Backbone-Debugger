@@ -15,7 +15,8 @@ function(Backbone, _, $, View, AppComponentActionsView) {
 
             // create sub-view for the component actions
             this.appComponentActionsView = new AppComponentActionsView({
-                collection: this.model.actions
+                collection: this.model.actions,
+                parent: this
             });
 
             this.listenTo(this.model, "change", this.render);
@@ -52,10 +53,18 @@ function(Backbone, _, $, View, AppComponentActionsView) {
             // before render, remove .appComponent handlers to prevent memory leaks
             this.$('.appComponent').off();
 
+            var isHighlighting = this.$('.appComponentToggle').hasClass('highlight');
+
             var templateData = this.templateData();
             this.el.innerHTML = this.template(templateData); // DON'T use this.$el.html() because it removes the jQuery event handlers of existing sub-views
             // insert the sub-view for the component actions
             this.$(".appComponentActions").append(this.appComponentActionsView.el);
+
+            // restore animation if was active before render
+            if (isHighlighting) this.highlightAnimation();
+
+            // TODO: unbind below elements on view remove to prevent memory leaks
+            // (though as for now the components are never removed)
 
             // prevents the browser from rendering the component content when it is collapsed (closed), 
             // drastically decreasing the rendering time when the application has lots of components
@@ -75,6 +84,16 @@ function(Backbone, _, $, View, AppComponentActionsView) {
                 }
             });
 
+            // keep track of (manual) view open/close or collapsable elements collapse/uncollapse actions
+            this.$el.on('shown', _.bind(function(event) { // fired just after the show animation finished
+                if ($(event.target).is(appComponent)) this.trigger('open');
+                else this.trigger('collapsable:open');
+            }, this));
+            this.$el.on('hidden', _.bind(function(event) { // fired just after the hide animation finished
+                if ($(event.target).is(appComponent)) this.trigger('close');
+                else this.trigger('collapsable:close');
+            }, this));
+
             return this;
         },
 
@@ -88,6 +107,7 @@ function(Backbone, _, $, View, AppComponentActionsView) {
             appComponent.css("display", "block");
             appComponent.addClass("in");
             this.render(); // required to update the css setted by a previous close animation
+            this.trigger('open');
         },
 
         close: function() {
@@ -96,6 +116,11 @@ function(Backbone, _, $, View, AppComponentActionsView) {
             appComponent.removeClass("in");
             appComponent.css("display", "none");
             this.render();  // required to update the css setted by a previous open animation
+            this.trigger('close');
+        },
+
+        isOpened: function() {
+            return this.$(".appComponent").hasClass("in");
         },
 
         highlightAnimation: function() {

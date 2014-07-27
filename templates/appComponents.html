@@ -1,21 +1,23 @@
-{{#if thereAreItems}}
-<div class="navbar appComponentsOptions">
-    <div class="navbar-inner">
-      <ul class="nav">
-        <li><a class="openAll btn-link" title="Open all"><i class="icon-chevron-right icon-chevron-bottom"></i></a></li>
-        <li><a class="closeAll btn-link" title="Close all"><i class="icon-chevron-right icon-chevron-top"></i></a></li>
-        <li>
-            <form class="searchForm navbar-form pull-left">
-                <input class="searchTerm" type="text" placeholder="Search..." />
-                <button class="resetSearch btn btn-link" type="reset" title="Reset search"><i class="icon-remove"></i></button>
-            </form>
-        </li>
-      </ul>
+<div>
+    {{#if thereAreItems}}
+    <div class="navbar appComponentsOptions">
+        <div class="navbar-inner">
+          <ul class="nav">
+            <li><a class="openAll btn-link" title="Open all"><i class="icon-chevron-right icon-chevron-bottom"></i></a></li>
+            <li><a class="closeAll btn-link" title="Close all"><i class="icon-chevron-right icon-chevron-top"></i></a></li>
+            <li>
+                <form class="searchForm navbar-form pull-left">
+                    <input class="searchTerm" type="text" placeholder="Search..." />
+                    <button class="resetSearch btn btn-link" type="reset" title="Reset search"><i class="icon-remove"></i></button>
+                </form>
+            </li>
+          </ul>
+        </div>
     </div>
-</div>
 
-<ul class="appComponentList nav nav-tabs nav-stacked">
-</ul>
-{{else}}
-<p>There is nothing to see here.</p>
-{{/if}}
+    <ul class="appComponentList nav nav-tabs nav-stacked">
+    </ul>
+    {{else}}
+    <p>There is nothing to see here.</p>
+    {{/if}}
+</div>

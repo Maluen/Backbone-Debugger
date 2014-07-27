@@ -10,11 +10,52 @@ function(Backbone, _, $, Handlebars, CollectionView, template, setImmediate) {
         searchFormElSelector: ".appComponentsOptions .searchForm",
         searchTermElSelector: ".appComponentsOptions .searchTerm",
 
+        isOpened: false, // state if the view (tab) is opened
+
+        // number of milliseconds to pass to the throttle function (e.g. for scroll events)
+        throttleDuration: 100,
+
         events: function() {
             return $.extend({
                 "click .openAll": "openAll",
                 "click .closeAll": "closeAll",
+                "scroll": "loadMoreIfNeeded"
             }, CollectionView.prototype.events.apply(this, arguments));
+        },
+
+        initialize: function() {
+            CollectionView.prototype.initialize.apply(this, arguments);
+
+            // throttle and bind the loadMoreIfNeeded function
+            var loadMoreIfNeeded = this.loadMoreIfNeeded;
+            this.loadMoreIfNeeded = _.throttle(_.bind(loadMoreIfNeeded, this), this.throttleDuration);
+
+            $(window).on('resize', this.loadMoreIfNeeded);
+            this.listenTo(this, "child:close child:hide child:collapsable:close", this.loadMoreIfNeeded);
+        },
+
+        // Call this function to notify the view that it has been opened (since is a tab)
+        notifyOpened: function() {
+            this.isOpened = true;
+            this.loadMoreIfNeeded();
+
+            // HACK: give focus to the view, otherwise mousewheel scrolling won't work
+            this.render();
+        },
+
+        // Call this function to notify the view that it has been opened (since is a tab)
+        notifyClosed: function() {
+            this.isOpened = false;
+        },
+
+        // Load more items if the user reached the bottom of the view
+        // Note: the function is automatically throttled and binded on initialize.
+        loadMoreIfNeeded: function() {
+            setImmediate(_.bind(function() { // wait end of pending browser renders (so to work on updated state)
+                if (this.isOpened && this.$el.scrollTop() + this.$el[0].clientHeight == this.$el[0].scrollHeight) {
+                    this.collection.readMore(_.bind(this.loadMoreIfNeeded, this));
+                }
+            }, this));
         },
 
         openAll: function() {

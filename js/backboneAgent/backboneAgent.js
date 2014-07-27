@@ -1,6 +1,6 @@
 window.__backboneAgent = new (function() {
 
-    //// METODI DI UTILITÀ ////
+    //// UTILS ////
 
     // @private
     // backbone agent debugging utils
@@ -173,6 +173,8 @@ window.__backboneAgent = new (function() {
 
     ////
 
+    //// DATA ////
+
     // @private
     // Azione di un componente dell'app.
     var AppComponentAction = function(type, name, data, dataKind) {
@@ -219,8 +221,6 @@ window.__backboneAgent = new (function() {
         "Router": -1
     };
 
-    //// API PUBBLICA ////
-
     // Informazioni sui componenti dell'applicazione.
     // Hash <"componentCategory", [AppComponentInfo]>.
     // (Gli indici degli array sono quelli dei componenti.)
@@ -230,6 +230,8 @@ window.__backboneAgent = new (function() {
         "Collection": [],
         "Router": []
     };
+
+    //// BASE ////
 
     // Restituisce un array con gli indici dei componenti dell'applicazione
     // della categoria specificata che sono presenti nell'app.
@@ -500,6 +502,8 @@ window.__backboneAgent = new (function() {
 
         return actionIndex;
     }, this);
+
+    //// LOGIC ////
 
     // @private
     // Patcha il metodo trigger del componente dell'app.

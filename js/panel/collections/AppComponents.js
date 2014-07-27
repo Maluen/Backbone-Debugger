@@ -1,7 +1,5 @@
 /* Collezione di componenti dell'applicazione di una data categoria. 
-   E' il tipo padre di tutte le altre collezioni di componenti (di viste, modelli, etc.) 
-
-   L'aggiornamento in tempo reale viene attivato automaticamente in fase di inizializzazione. */
+   E' il tipo padre di tutte le altre collezioni di componenti (di viste, modelli, etc.) */
 
 define(["backbone", "underscore", "backboneAgentClient", "inspectedPageClient",
         "collections/Collection", "collections/AppComponentActions"],
@@ -18,18 +16,21 @@ function(Backbone, _, backboneAgentClient, inspectedPageClient, Collection, AppC
             return model;
         },
 
-        fetchModelsIndexes: function(onComplete) {
-            backboneAgentClient.execFunction(function(componentCategory) {
-                // ottiene gli indici dei componenti dell'app
-                return this.getAppComponentsIndexes(componentCategory);
-            }, [this.componentCategory], onComplete);
+        readModelsIndexes: function(onComplete) {
+            backboneAgentClient.execFunction(function(start, length, componentCategory) {
+                // gets the indexes of the app components
+                return this.getAppComponentsIndexes(componentCategory).slice(start, start+length);
+            }, [this.readStartIndex, this.readLength, this.componentCategory], onComplete);
         },
 
-        realTimeUpdateLogic: function(onNew) {
+        startRealTimeUpdateLogic: function(onNew) {
             var reportName = "backboneAgent:"+this.componentCategory+":new";
-            this.listenTo(inspectedPageClient, reportName, _.bind(function(report) {
+            
+            this.realTimeUpdateListener = [inspectedPageClient, reportName, _.bind(function(report) {
                 onNew(report.componentIndex, report.timestamp);
-            }, this));
+            }, this)];
+
+            this.listenTo.apply(this, this.realTimeUpdateListener);
         }
     });
     return AppComponents;

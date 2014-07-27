@@ -1,6 +1,5 @@
 /* Vista per una collezione, crea una sottovista per ogni item (modello) della collezione.
-   Nota: la collezione deve supportare l'aggiornamento in tempo reale e può essere passata
-   anche direttamente nel costruttore (grazie a Backbone.View).
+   Nota: la collezione può essere passata anche direttamente nel costruttore (grazie a Backbone.View).
    VINCOLO: se all'atto della render ci sono item, il template deve stampare il collectionEl
             (l'elemento che contiene gli el delle viste degli item), 
             ciò è necessario per il funzionamento della gestione separata di tale collectionEl
@@ -21,6 +20,8 @@ function(Backbone, _, $, View, Handlebars, SearchFilter, setImmediate) {
         searchFormElSelector: undefined, // jquery selector for the search form element (if any)
         searchTermElSelector: undefined, // jquery selector for the search form term input element (if any)
         searchTriggerTimeout: 500, // number of ms after search field has changed to automatically trigger the search
+
+        searchTerm: undefined, // currently used search term
 
         events: function() {
             var e = {};
@@ -50,9 +51,6 @@ function(Backbone, _, $, View, Handlebars, SearchFilter, setImmediate) {
             }, this));
             this.listenTo(this.collection, "add", this.handleNewItem);
 
-            // recupera item correnti
-            this.collection.fetch();
-
             this.render();
         },
 
@@ -61,6 +59,7 @@ function(Backbone, _, $, View, Handlebars, SearchFilter, setImmediate) {
         clearItems: function() {
             for (var i=0; i<this.collectionItemViews.length; i++) {
                 var collectionItemView = this.collectionItemViews[i];
+                this.stopListening(collectionItemView);
                 if (this.filter) {
                     // disable the live filter check
                     // (prevents the calling of the expired callback on the 'dead' model)
@@ -78,13 +77,12 @@ function(Backbone, _, $, View, Handlebars, SearchFilter, setImmediate) {
             var collectionItemIndex = this.collection.indexOf(collectionItem);
             setImmediate(_.bind(function() { // prevents UI blocking
                 var newCollectionItemView = this.addItem(collectionItem, collectionItemIndex);
-                // apply the filter in order to immediately hide the view if its model doesn't pass the filter.
-                // in this way, when added, the view will already have the correct visibility.
-                if (this.filter) {
-                    this.filter.liveMatch(newCollectionItemView.model, true, function(model, newMatchResult) {
-                        newCollectionItemView.show(newMatchResult); // hide or show the view
-                    });
-                }
+                // retrigger the child view events, so to have a global proxy
+                // (used to react to child events, like hide/show, for example to load more components if needed)
+                this.listenTo(newCollectionItemView, "all", _.bind(function(eventName) {
+                    this.trigger("child:"+eventName, newCollectionItemView);
+                }, this));
+
                 // quando si passa da 0 elementi ad un 1 elemento bisogna fare la render in modo
                 // che il template inserisca il collectionEl, per poterlo poi gestire manualmente;
                 // inoltre evitando di rifare la render ogni volta si impedisce l'effetto "sfarfallio" che
@@ -100,6 +98,13 @@ function(Backbone, _, $, View, Handlebars, SearchFilter, setImmediate) {
                     // inserisce l'el dopo il vicino sinistro
                     var collectionItemViewLeftSibling = this.collectionItemViews[collectionItemIndex-1];
                     newCollectionItemView.$el.insertAfter(collectionItemViewLeftSibling.$el);
+                }
+
+                // apply the filter in order to immediately hide the view if its model doesn't pass the filter.
+                if (this.filter) {
+                    this.filter.liveMatch(newCollectionItemView.model, true, function(model, newMatchResult) {
+                        newCollectionItemView.show(newMatchResult); // hide or show the view
+                    });
                 }
             }, this));
         },
@@ -170,6 +175,7 @@ function(Backbone, _, $, View, Handlebars, SearchFilter, setImmediate) {
             // needed if the user manually started the search and there are pending search triggers
             if (this.searchTriggerTimer) this.searchTriggerTimer = clearTimeout(this.searchTriggerTimer);
 
+            this.searchTerm = searchTerm;
             this.$(this.searchTermElSelector).val(searchTerm);
 
             if (searchTerm === "") {
@@ -190,12 +196,15 @@ function(Backbone, _, $, View, Handlebars, SearchFilter, setImmediate) {
             var collectionEl = this.$(this.collectionElSelector);
 
             var thereAreItems = (this.collectionItemViews.length!==0);
-            this.el.innerHTML = this.template({thereAreItems: thereAreItems}); // NON usare this.$el.html() che disattiva gli event handler jquery delle sottoviste esistenti
+            this.el.innerHTML = this.template({thereAreItems: thereAreItems}); // DON'T use this.$el.html() because it removes the jQuery event handlers of existing sub-views
             // reinserisce il contenitore con gli el delle viste (se applicabile)
             if (thereAreItems && collectionEl.length > 0) {
                 var placeholderCollectionEl = this.$(this.collectionElSelector);
                 placeholderCollectionEl.replaceWith(collectionEl);
             }
+
+            // keep current search term (we don't set it via template to enable reset to empty string)
+            this.$(this.searchTermElSelector).val(this.searchTerm);
 
             return this;
         }

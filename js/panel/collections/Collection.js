@@ -1,58 +1,71 @@
-/* L'aggiornamento in tempo reale viene attivato automaticamente al termine della fetch. */
-
 define(["backbone", "underscore"],
 function(Backbone, _) {
 
     var Collection = Backbone.Collection.extend({
 
-        isRealTimeUpdateActive: false,
-
         initialize: function(models, options) {
             _.bindAll(this);
         },
 
-        // restituisce un nuovo modello (con l'indice settato)
+        // returns a new model (with the index setted)
         createModel: undefined, // abstract function(modelIndex)
 
-        // funzione che chiama onComplete passandogli
-        // un array con gli indici dei modelli correntemente presenti.
-        fetchModelsIndexes: undefined, // abstract function(onComplete)
+        isReadInProgress: false,
+        // onComplete callback passed to readMore, stored so to be able to call it even after loading
+        // remaining models via realtime update
+        readMoreOnComplete: undefined,
 
-        // used to exclude late real time updates, i.e. updates sent from the inspected page 
-        // before the last fetch but handled after it (updates are asynchronous)
-        lastFetchTimestamp: undefined,
+        readStartIndex: 0, // index from which to start getting models 
+        readLength: 5, // number of models to get on each call
 
-        // resetta la collezione con i componenti correnti dell'app, 
-        // chiama onComplete al termine dell'operazione.
-        // N.B: l'operazione termina dopo aver effettuato il fetch di tutti i modelli recuperati.
-        fetch: function(onComplete) {
-            var fetchComplete = _.bind(function(models) {
-                this.reset(models);
-                this.realTimeUpdate(); // ora ha senso avviare l'aggiornamento in tempo reale
-                if (onComplete !== undefined) onComplete();
+        // function that calls onComplete with an array containing the indexes of the retrieved models.
+        readModelsIndexes: undefined, // abstract function(readStartIndex, readLength, onComplete)
+
+        readLeft: 0, // number of models still to get via realtime update so to reach the length
+        isRealTimeUpdateActive: false,
+
+        // adds to the collection more models, as retrieved by the readModelsIndexes function,
+        // calls onComplete at the end of the operation, optionally by getting some of them via realtime update
+        // if the number requested isn't immediately available.
+        // Note: the operation ends after having fetched all the retrieved models.
+        readMore: function(onComplete) {
+            if (this.isReadInProgress) return; // no multiple reads
+            this.isReadInProgress = true;
+
+            this.readMoreOnComplete = onComplete;
+
+            var readComplete = _.bind(function(models) {
+                this.add(models);
+
+                this.readStartIndex += models.length;
+                this.readLeft = this.readLength - models.length;
+                if (this.readLeft == 0) {
+                    this.isReadInProgress = false;
+                    if (onComplete !== undefined) onComplete();
+                } else {
+                    // get the rest via realtime update (it will mark the read as finished when done)
+                    this.startRealTimeUpdate();
+                }
             }, this);
 
-            this.fetchModelsIndexes(_.bind(function(modelsIndexes) { // on complete
-                this.lastFetchTimestamp = new Date().getTime();
-
+            this.readModelsIndexes(_.bind(function(modelsIndexes) { // on complete
                 if (modelsIndexes.length === 0) {
                     // no models
-                    fetchComplete([]);
+                    readComplete([]);
                     return;
                 }
 
-                // there are models
+                // there are models, fetch them
                 var models = [];
                 var fetchedModels = 0;
                 for (var i=0,l=modelsIndexes.length; i<l; i++) {
                     var model = this.createModel(modelsIndexes[i]);
                     models.push(model);
-                    // fa il fetch del modello
                     model.fetch(_.bind(function() { // on complete
                         fetchedModels++;
                         if (fetchedModels === modelsIndexes.length) {
-                            // fetch di tutti i modelli completato
-                            fetchComplete(models);
+                            // fetch of all the models completed
+                            readComplete(models);
                         }
 
                     }, this));
@@ -60,17 +73,20 @@ function(Backbone, _) {
             }, this));
         },
 
-        // logica della realTimeUpdate, ogni volta che viene rilevato un nuovo modello,
+        // logica della startRealTimeUpdate, ogni volta che viene rilevato un nuovo modello,
         // chiama la onNew passandogli l'indice del modello e il timestamp della data di creazione.
-        realTimeUpdateLogic: undefined, // function(onNew)
+        // Note: the created listener must be saved into this.realTimeUpdateListener
+        // so to stop realtime update when needed.
+        startRealTimeUpdateLogic: undefined, // function(onNew)        
+        realTimeUpdateListener: undefined, // array with Backbone listenTo parameters. 
 
         // aggiorna la collezione in tempo reale a seconda dei report inviati dall'agent
-        realTimeUpdate: function() {
+        startRealTimeUpdate: function() {
             // previene l'attivazione multipla della real time update
             // (per evitare che la logica venga eseguita più di una volta)
             if (this.isRealTimeUpdateActive) return;
 
-            this.realTimeUpdateLogic(_.bind(function(modelIndex, creationTimestamp) { // on new
+            this.startRealTimeUpdateLogic(_.bind(function(modelIndex, creationTimestamp) { // on new
                 if (creationTimestamp < this.lastFetchTimestamp) {
                     // this model was already caught by the last fetch, don't duplicate it
                     return;
@@ -79,10 +95,24 @@ function(Backbone, _) {
                 var model = this.createModel(modelIndex);
                 model.fetch(_.bind(function() { // on complete
                     this.add(model);
+
+                    this.readStartIndex++;
+                    this.readLeft--;
+                    // check if we getted all the models of the current read
+                    if (this.readLeft == 0) {
+                        this.stopRealTimeUpdate();
+                        this.isReadInProgress = false;
+                        if (this.readMoreOnComplete) this.readMoreOnComplete();
+                    }
                 }, this));
             }, this));
 
             this.isRealTimeUpdateActive = true;
+        },
+
+        stopRealTimeUpdate: function() {
+            if (this.realTimeUpdateListener) this.stopListening.apply(this, this.realTimeUpdateListener);
+            this.isRealTimeUpdateActive = false;
         }
     });
     return Collection;

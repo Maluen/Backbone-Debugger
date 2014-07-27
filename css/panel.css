@@ -57,16 +57,7 @@ body {
     position: absolute;
     width: 100%;
 }
-.mainTabsContent>.tab-pane>div { /* the actual tab content */
-    /* By setting the padding here, the increasing of .tab-pane size is avoided */
-    padding: 5px 15px 15px 15px;
-}
 
-.appComponentsOptions {
-    margin-left: -15px;
-    margin-top: -5px;
-    margin-right: -15px;
-}
 .appComponentsOptions .navbar-inner {
     border: none;
     padding-left: 12px;
@@ -94,6 +85,7 @@ body {
 
 .appComponentList {
     margin: 0;
+    padding: 5px 15px 15px 15px;
 }
 
 .appComponentList>li {

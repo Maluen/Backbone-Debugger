@@ -28,35 +28,31 @@ function(Backbone, _, backboneAgentClient, inspectedPageClient, Collection, AppC
             return -action.get("index");
         },
 
-        fetchModelsIndexes: function(onComplete) {
-            backboneAgentClient.execFunction(function(componentCategory, componentIndex) {
+        readModelsIndexes: function(onComplete) {
+            backboneAgentClient.execFunction(function(start, length, componentCategory, componentIndex) {
                 var appComponentInfo = this.getAppComponentInfoByIndex(componentCategory, componentIndex);
                 var appComponentActions = appComponentInfo.actions;
                 var appComponentActionsIndexes = [];
-                for (var actionIndex in appComponentActions) {
-                    if (appComponentActions.hasOwnProperty(actionIndex)) {
-                        appComponentActionsIndexes.push(actionIndex);
-                    }
+
+                // get length element or all if there are less
+                var left = appComponentActions.length - start;
+                var end = left < length ? appComponentActions.length : start+length;
+                for (var i=start; i<end; i++) {
+                    appComponentActionsIndexes.push(i);
                 }
                 return appComponentActionsIndexes;
-            }, [this.component.category, this.component.get("component_index")], onComplete);
+            }, [this.readStartIndex, this.readLength, this.component.category, this.component.get("component_index")], onComplete);
         },
 
-        realTimeUpdateLogic: function(onNew) {
+        startRealTimeUpdateLogic: function(onNew) {
+            var reportName = "backboneAgent:"+this.component.category+":"
+                           + this.component.get("component_index")+":action";
 
-            setImmediate(_.bind(function() { // binding many consecutive events freezes the ui (happens if there are a lot of app components)
-                var reportName = "backboneAgent:"+this.component.category+":"
-                               + this.component.get("component_index")+":action";
-                this.listenTo(inspectedPageClient, reportName, _.bind(function(report) {
-                    onNew(report.componentActionIndex, report.timestamp);
-                }, this));
+            this.realTimeUpdateListener = [inspectedPageClient, reportName, _.bind(function(report) {
+                onNew(report.componentActionIndex, report.timestamp);
+            }, this)];
 
-                // l'avvio della realTimeUpdate è rimandato con la setImmediate, per cui eventuali report
-                // inviati tra l'esecuzione e l'effettivo avvio di questa non sono stati gestiti,
-                // facendo la fetch adesso si ottiene allora lo stato comprensivo degli eventuali cambiamenti,
-                // dopodichè i prossimi report saranno gestiti.
-                this.fetch();
-            }, this));
+            this.listenTo.apply(this, this.realTimeUpdateListener);
         }
 
     });
