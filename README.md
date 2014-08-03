@@ -38,7 +38,7 @@ Contribute
 --------
 Want to contribute? You can [report bugs](https://github.com/Maluen/Backbone-Debugger/issues), [suggest features](https://github.com/Maluen/Backbone-Debugger/issues), [write code](https://github.com/Maluen/Backbone-Debugger/pulls) and [write documentation](https://github.com/Maluen/Backbone-Debugger/wiki)!
 
-Searching for other ways? You can also support this project by [donating on Gittip](https://www.gittip.com/Maluen/)
+Looking for other ways? You can also support this project via [Flattr](https://flattr.com/profile/maluen) or [Gittip](https://www.gittip.com/Maluen/)
 
 Screenshots
 --------
