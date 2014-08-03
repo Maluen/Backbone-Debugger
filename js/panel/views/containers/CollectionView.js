@@ -89,14 +89,29 @@ function(Backbone, _, $, View, Handlebars, SearchFilter, setImmediate) {
                 // non permette di aprire i componenti durante l'aggiunta continuativa di questi, a causa
                 // dell'animazione Bootstrap che viene interrotta.
                 if (this.collectionItemViews.length == 1) this.render();
-                // aggiunge al collectionEl l'el per la vista del nuovo item alla posizione corretta
-                var collectionEl = this.$(this.collectionElSelector);
-                if (collectionItemIndex == 0) {
-                    // primo el
+
+                // find the DOM position in which to add the new view element:
+                // after its left sibling if exists, as first otherwise.
+
+                // because of collection comparators, the sequence of add events can be in any order with respect
+                // to the order in which the models have been added to the collection (in case of batch add).
+                // hence, there is no assurance that the view for the model with the previous index
+                // has already been created
+
+                var collectionItemViewLeftSibling;
+                for (var i=collectionItemIndex-1; i>=0; i--) {
+                    var view = this.collectionItemViews[i];
+                    if (view) {
+                        collectionItemViewLeftSibling = view;
+                        break;
+                    }
+                }
+                if (!collectionItemViewLeftSibling) {
+                    // first element
+                    var collectionEl = this.$(this.collectionElSelector);
                     collectionEl.prepend(newCollectionItemView.el);
                 } else {
-                    // inserisce l'el dopo il vicino sinistro
-                    var collectionItemViewLeftSibling = this.collectionItemViews[collectionItemIndex-1];
+                    // add the element after its left sibling
                     newCollectionItemView.$el.insertAfter(collectionItemViewLeftSibling.$el);
                 }
 
