@@ -10,9 +10,8 @@ function(Backbone, _, backboneAgentClient, inspectedPageClient, Collection, AppC
         componentCategory: undefined, // categoria dei componenti (es. "View", "Model", etc.)
 
         createModel: function(componentIndex) {
-            var model = new this.model({
-                "component_index": componentIndex
-            });
+            var model = new this.model();
+            model.index = componentIndex;
             return model;
         },
 

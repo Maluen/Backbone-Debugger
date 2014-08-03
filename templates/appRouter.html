@@ -1,10 +1,10 @@
 <a class="appComponentToggle btn btn-link"
    data-toggle="collapse" 
-   data-target="#router{{component_index}}">
-   <span>Router {{component_index}} {{#unlessNull component_name}} : {{component_name}} {{/unlessNull}}</span>
+   data-target="#router{{index}}">
+   <span>Router {{index}} {{#unlessNull component_name}} : {{component_name}} {{/unlessNull}}</span>
 </a>
 
-<div id="router{{component_index}}" class="appComponent collapse {{#if isOpen}}in{{/if}}">
+<div id="router{{index}}" class="appComponent collapse {{#if isOpen}}in{{/if}}">
     
     <ul>
         <!--

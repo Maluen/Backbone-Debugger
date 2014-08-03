@@ -6,7 +6,11 @@ function(Backbone, _, AppComponentActions, backboneAgentClient, inspectedPageCli
 
     var AppComponent = Backbone.Model.extend({
 
-        category: undefined, // categoria del componente (es. "View", "Model", etc.)
+        category: undefined, // category of the component (eg. "View", "Model", etc.)
+
+        // index of the component (relative to its category), is treated like an id and is mandatory
+        index: undefined,
+
         actions: undefined, // oggetto di tipo AppComponentActions
 
         isRealTimeUpdateActive: false,
@@ -17,35 +21,20 @@ function(Backbone, _, AppComponentActions, backboneAgentClient, inspectedPageCli
             this.actions = new AppComponentActions(undefined, {
                 component: this
             });
-
-            // handle the component actions (useful for example to calcuate its status)
-            this.listenTo(this.actions, "reset", this.handleActions);
-            this.listenTo(this.actions, "add", this.handleAction);
         },
 
-        // Process the existing actions
-        handleActions: function() {
-            // actions are sorted in reverse order, process them from oldest to newest
-            for (var i=this.actions.length-1; i>=0; i--) {
-                this.handleAction(this.actions.at(i));
-            }
-        },
-
-        handleAction: function(action) {
-            // default is no-op, but subtypes can override the method with custom logic
-        },
-
-        // funzione che chiama onComplete passandogli un hash con gli attributi del modello.
-        fetchLogic: undefined, // abstract function(onComplete)
-
-        // richiede che l'attributo component_index sia settato in quanto è usato come un id.
+        // richiede che l'index sia settato in quanto è usato come un id.
         // Chiama onComplete al termine dell'operazione.
         fetch: function(onComplete) {
-            if (this.get("component_index") === undefined) {
-                throw "The component_index attribute is undefined.";
+            if (this.index === undefined) {
+                throw "The index is undefined.";
             }
 
-            this.fetchLogic(_.bind(function(appComponentAttributes) { // on executed
+            backboneAgentClient.execFunction(function(category, index) {
+                var appComponentInfo = this.getAppComponentInfoByIndex(category, index);
+                return appComponentInfo.attributes;
+            }, [this.category, this.index],
+            _.bind(function(appComponentAttributes) { // on executed
                 setImmediate(_.bind(function() { // prevent UI blocking
                     // resetta gli attributi
                     this.clear({silent: true});
@@ -62,10 +51,18 @@ function(Backbone, _, AppComponentActions, backboneAgentClient, inspectedPageCli
             if (this.isRealTimeUpdateActive) return;
 
             setImmediate(_.bind(function() { // binding many consecutive events freezes the ui (happens if there are a lot of app components)
-                var reportName = "backboneAgent:"+this.category+":"+this.get("component_index")+":change";
+                var reportName = "backboneAgent:"+this.category+":"+this.index+":change";
                 this.listenTo(inspectedPageClient, reportName, _.bind(function(report) {
-                    // recupera attributi aggiornati
-                    this.fetch();
+
+                    // update the local value of the changed attribute
+                    backboneAgentClient.execFunction(function(category, index, attribute) {
+                        var appComponentInfo = this.getAppComponentInfoByIndex(category, index);
+                        return appComponentInfo.attributes[attribute];
+                    }, [this.category, this.index, report.attribute],
+                    _.bind(function(attributeValue) {
+                        this.set(report.attribute, attributeValue);
+                    }, this));
+
                 }, this));
 
                 // l'avvio della realTimeUpdate è rimandato con la setImmediate, per cui eventuali report
@@ -84,7 +81,7 @@ function(Backbone, _, AppComponentActions, backboneAgentClient, inspectedPageCli
                 var appComponentInfo = this.getAppComponentInfoByIndex(componentCategory, componentIndex);
                 var appComponent = appComponentInfo.component;
                 console.log(componentCategory+" "+componentIndex+":", appComponent); // es. "View 1: ..."
-            }, [this.category, this.get("component_index")], _.bind(function() { // on executed
+            }, [this.category, this.index], _.bind(function() { // on executed
                 // do nothing
             }, this));
         }

@@ -1,27 +1,7 @@
 //// DATA ////
 
 // @private
-// Azione di un componente dell'app.
-var AppComponentAction = function(type, name, data, dataKind) {
-
-    this.timestamp = new Date().getTime();
-    this.type = type; // stringa
-    this.name = name; // stringa
-    this.data = data; // oggetto
-    // obbligatorio se data è definito, può essere
-    // - "jQuery Event": data è l'oggetto relativo ad un evento jQuery
-    // - "event arguments": data è un array di argomenti di un evento Backbone
-    this.dataKind = dataKind;
-
-    //// Metodi di utilità ////
-
-    // stampa nella console le informazioni sull'azione
-    this.printDetailsInConsole = function() {
-    };
-};
-
-// @private
-var AppComponentInfo = function(category, index, component, actions) {
+var AppComponentInfo = function(category, index, component, attributes, actions) {
 
     // nome del componente Backbone di cui questo componente dell'app è un discendente.
     // I valori validi sono "View", "Model", "Collection", "Router"
@@ -29,8 +9,38 @@ var AppComponentInfo = function(category, index, component, actions) {
     // usato come identificatore tra tutti i componenti dell'app della sua categoria
     this.index = index;
 
-    this.component = component; // oggetto
-    this.actions = actions || []; // array di oggetti AppComponentAction
+    this.component = component; // the Backbone appComponent object (e.g. the view instance)
+
+    // attributes of the component, must be json-compatible since is what is passed to the client.
+    // depend on the component type, except the following defaults
+    this.attributes = extend({
+        "index": this.index // int
+    }, attributes||{});
+
+    this.actions = actions || []; // array of AppComponentAction objects
+};
+
+// @private
+// Action of an app component.
+var AppComponentAction = function(appComponentInfo, index, attributes, data) {
+
+    // the AppComponentInfo object of the component this action belongs to
+    this.appComponentInfo = appComponentInfo;
+    // the index of the action relative to those of the appComponent
+    this.index = index;
+
+    this.attributes = extend({ // defaults
+        "index": this.index,
+        "timestamp": new Date().getTime(), // milliseconds
+        "type": null, // string
+        "name": null, // string
+        // mandatory if data is defined, can be
+        // - "jQuery Event": if data is a jQuery Event object
+        // - "event arguments": if data is an array with the arguments of a Backbone event
+        "dataKind": null
+    }, attributes||{});
+
+    this.data = data;
 };
 
 // @private

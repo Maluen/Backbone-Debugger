@@ -32,7 +32,7 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
                     var error = _.isObject(isException) ? isException.value : result;
                     throw error;
                 } else {
-                    onExecuted(result);
+                    if (onExecuted) onExecuted(result);
                 }
             });
         };

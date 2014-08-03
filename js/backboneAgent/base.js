@@ -179,29 +179,48 @@ var sendAppComponentReport = function(name, report) {
 };
 
 // @private
-// Aggiunge il componente dell'app passato a quelli conosciuti creando l'oggetto con le info
-// e inviando un report all'esterno per informare il resto del mondo.
-// Restituisce l'indice del componente.
-var registerAppComponent = bind(function(appComponentCategory, appComponent) {
+// Return the info of the new registered app component.
+var registerAppComponent = bind(function(appComponentCategory, appComponent, appComponentAttributes) {
     // calcola l'indice del nuovo componente
     var appComponentIndex = ++lastAppComponentsIndex[appComponentCategory];
 
     var appComponentInfo = new AppComponentInfo(appComponentCategory,
                                                 appComponentIndex,
-                                                appComponent);
+                                                appComponent,
+                                                appComponentAttributes);
     setAppComponentInfo(appComponent, appComponentInfo);
 
-    // invia un report riguardante il nuovo componente dell'app
+    // send a report about the new app component
     sendAppComponentReport(appComponentCategory+":new", { componentIndex: appComponentIndex });
     debug.log("New " + appComponentCategory, appComponent);
 
-    return appComponentIndex;
+    return appComponentInfo;
 }, this);
 
 // @private
-// Si mette in ascolto sui cambiamenti della proprietà e invia un report all'esterno quando accade.
-// Nota: se la proprietà inizialmente ha già un valore diverso da undefined, viene inviato subito
-// un report.
+// Return the new added action.
+var addAppComponentAction = bind(function(appComponentInfo, appComponentActionAttributes, appComponentActionData) {
+
+    var actionIndex = appComponentInfo.actions.length;
+
+    var appComponentAction = new AppComponentAction(appComponentInfo,
+                                                    actionIndex,
+                                                    appComponentActionAttributes,
+                                                    appComponentActionData);
+    appComponentInfo.actions.push(appComponentAction);
+
+    // send a report about the new action
+    sendAppComponentReport(appComponentInfo.category+":"+appComponentInfo.index+":action", {
+        componentActionIndex: actionIndex
+    });
+    //debug.log("New action: ", appComponentAction);
+
+    return appComponentAction;
+}, this);
+
+// @private
+// Si mette in ascolto sui cambiamenti della proprietà e chiama la callback quando accade.
+// Note: the callback is immediately called upon start if the property already has a non-undefined value.
 // recursionLevel è un intero che specifica il livello di ricorsione a cui arrivare, ad es.
 // 0 è "no ricorsione", 1 è "analizza anche le proprietà di property" e così via.
 // N.B: non specificare recursionLevel equivale a dire "ricorsione completa",
@@ -212,18 +231,7 @@ var registerAppComponent = bind(function(appComponentCategory, appComponent) {
 // Possible options:
 // - stealth: if true then uses the stealth on setted function to monitor for changes, but this
 //   will cause the recursionLevel to be 0 since is not supported by the stealth monitoring.
-var monitorAppComponentProperty = bind(function(appComponent, property, recursionLevel, options) {
-    // handler per il cambiamento della proprietà
-    var propertyChanged = bind(function() {
-        // invia un report riguardante il cambiamento della proprietà
-        var appComponentInfo = this.getAppComponentInfo(appComponent);
-        sendAppComponentReport(appComponentInfo.category+":"+appComponentInfo.index+":change", {
-            componentProperty: property
-        });
-
-        //debug.log("Property " + property + " of a " + appComponentInfo.category + " has changed: ", appComponent[property]);
-    }, this);
-
+var monitorAppComponentProperty = bind(function(appComponent, property, recursionLevel, propertyChanged, options) {
     options = options || {};
     var onSettedFunc = options.stealth? stealthOnSetted : onSettedDeep;
     var stopOnSettedFunc = options.stealth? stopStealthOnSetted : stopOnSetted;
@@ -246,26 +254,22 @@ var monitorAppComponentProperty = bind(function(appComponent, property, recursio
                 monitorFragment(object[currentProperty], propertyFragments, index+1);
             }
         }
-        if (object[currentProperty] !== undefined) { onFragmentChange(); }
         // watch current fragment
         watchers[index] = onSettedFunc(object, currentProperty, onFragmentChange, recursionLevel);
+        if (object[currentProperty] !== undefined) { onFragmentChange(); }
     }
     monitorFragment(appComponent, property.split('.'), 0);
 }, this);
 
 // @private
-// Restituisce l'indice dell'azione aggiunta.
-var addAppComponentAction = bind(function(appComponent, appComponentAction) {
-    var appComponentInfo = this.getAppComponentInfo(appComponent);
-
-    appComponentInfo.actions.push(appComponentAction);
-    var actionIndex = appComponentInfo.actions.length-1;
-
-    // invia un report riguardante la nuova azione
-    sendAppComponentReport(appComponentInfo.category+":"+appComponentInfo.index+":action", {
-        componentActionIndex: actionIndex
+// Change the component attribute and send a report stating that it changed.
+var setAppComponentAttribute = function(appComponentInfo, attributeName, attributeValue) {
+    appComponentInfo.attributes[attributeName] = attributeValue;
+    
+    sendAppComponentReport(appComponentInfo.category+":"+appComponentInfo.index+":change", {
+        attribute: attributeName
     });
-    //debug.log("New action: ", appComponentAction);
+    // (we send only the attribute name for serialization and performance reasons)
 
-    return actionIndex;
-}, this);
+    //debug.log("Attribute " + attributeName + " of a " + appComponentInfo.category + " has changed: ", attributeValue);
+};

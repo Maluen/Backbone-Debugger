@@ -3,24 +3,19 @@ function(Backbone, _, backboneAgentClient, setImmediate) {
 
     var AppComponentAction = Backbone.Model.extend({
 
-        component: undefined, // oggetto sottotipo di AppComponent
+        component: undefined, // AppComponent child object
 
-        // attributi supportati dal modello
-        defaults: {
-            "index": null,
-            "timestamp": null, // numero
-            "type": null, // stringa
-            "name": null, // stringa
-            "dataKind": null // string, see AppComponentAction dataKind definition 
-                             // in backboneAgent for possible values
-        },
+        // index of the action (relative to those of the component)
+        index: undefined,
+
+        // see backbone agent for supported attributes
 
         initialize: function(attributes, options) {
             _.bindAll(this);
         },
 
         fetch: function(onComplete) {
-            var index = this.get("index");
+            var index = this.index;
             if (index === undefined) {
                 throw "The index attribute is undefined.";
             }
@@ -28,16 +23,8 @@ function(Backbone, _, backboneAgentClient, setImmediate) {
             backboneAgentClient.execFunction(function(componentCategory, componentIndex, index) {
                 var appComponentInfo = this.getAppComponentInfoByIndex(componentCategory, componentIndex);
                 var appComponentAction = appComponentInfo.actions[index];
-
-                var appComponentActionAttributes = {
-                    "index": index,
-                    "timestamp": appComponentAction.timestamp,
-                    "type": appComponentAction.type,
-                    "name": appComponentAction.name,
-                    "dataKind": appComponentAction.dataKind
-                };
-                return appComponentActionAttributes;
-            }, [this.component.category, this.component.get("component_index"), index],
+                return appComponentAction.attributes;
+            }, [this.component.category, this.component.index, this.index],
             _.bind(function(appComponentActionAttributes) { // on executed
                 setImmediate(_.bind(function() { // prevent UI blocking
                     // resetta gli attributi
@@ -54,8 +41,8 @@ function(Backbone, _, backboneAgentClient, setImmediate) {
             backboneAgentClient.execFunction(function(componentCategory, componentIndex, index) {
                 var appComponentInfo = this.getAppComponentInfoByIndex(componentCategory, componentIndex);
                 var appComponentAction = appComponentInfo.actions[index];
-                console.log(appComponentAction.name+":", appComponentAction.data);
-            }, [this.component.category, this.component.get("component_index"), this.get("index")],
+                console.log(appComponentAction.attributes['name']+":", appComponentAction.data);
+            }, [this.component.category, this.component.index, this.index],
             _.bind(function(result) { // on executed
                 // do nothing
             }, this));

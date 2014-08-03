@@ -113,14 +113,14 @@ function(Backbone, _, $, View, Handlebars, template,
 
             var componentsView = this.tabViews["app"+componentCategory+"s"];
             // filter the components to show the one to inspect (to make sure it is visible)
-            componentsView.search('"component_index '+componentIndex+'"'); // strict search
+            componentsView.search('"index '+componentIndex+'"'); // strict search
             // open the tab that shows the component
             var tabElement = this.$("#app"+componentCategory+"sTab");
             var tabContentElement = this.$("#app"+componentCategory+"s");
             this.openTab(tabElement, tabContentElement);
             // wait end of search
             this.listenToOnce(componentsView, "child:show", _.bind(function(child) { // the component child passed the search
-                if (child.model.get('component_index') == componentIndex) { // child is the component we are searching
+                if (child.model.index == componentIndex) { // child is the component we are searching
                     var componentView = child;
                     // open the component and scroll to it
                     componentView.open();

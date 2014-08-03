@@ -16,16 +16,15 @@ function(Backbone, _, backboneAgentClient, inspectedPageClient, Collection, AppC
         },
 
         createModel: function(actionIndex) {
-            var model = new this.model({
-                "index": actionIndex
-            });
+            var model = new this.model();
             model.component = this.component;
+            model.index = actionIndex;
             return model;
         },
 
         // Define the sorting logic: reverse order
         comparator: function(action) {
-            return -action.get("index");
+            return -action.index;
         },
 
         loadModelsIndexes: function(onComplete) {
@@ -41,12 +40,12 @@ function(Backbone, _, backboneAgentClient, inspectedPageClient, Collection, AppC
                     appComponentActionsIndexes.push(i);
                 }
                 return appComponentActionsIndexes;
-            }, [this.loadStartIndex, this.loadLength, this.component.category, this.component.get("component_index")], onComplete);
+            }, [this.loadStartIndex, this.loadLength, this.component.category, this.component.index], onComplete);
         },
 
         startRealTimeUpdateLogic: function(onNew) {
             var reportName = "backboneAgent:"+this.component.category+":"
-                           + this.component.get("component_index")+":action";
+                           + this.component.index+":action";
 
             this.realTimeUpdateListener = [inspectedPageClient, reportName, _.bind(function(report) {
                 onNew(report.componentActionIndex, report.timestamp);

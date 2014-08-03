@@ -104,7 +104,7 @@ function(Backbone, _, $, Handlebars, CollectionView, template, setImmediate) {
             for (var i=0,l=this.collectionItemViews.length; i<l; i++) {
                 var currentComponentView = this.collectionItemViews[i];
                 var currentComponent = currentComponentView.model;
-                if (currentComponent.get("component_index") === componentIndex) {
+                if (currentComponent.index === componentIndex) {
                     return currentComponentView;
                 }
             }

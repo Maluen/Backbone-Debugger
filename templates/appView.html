@@ -1,10 +1,10 @@
 <a class="appComponentToggle btn btn-link {{#compare component_status 'Removed'}}removed{{/compare}}"
    data-toggle="collapse" 
-   data-target="#view{{component_index}}">
-   <span>View {{component_index}} {{#unlessNull component_name}} : {{component_name}} {{/unlessNull}}</span>
+   data-target="#view{{index}}">
+   <span>View {{index}} {{#unlessNull component_name}} : {{component_name}} {{/unlessNull}}</span>
 </a>
 
-<div id="view{{component_index}}" class="appComponent collapse {{#if isOpen}}in{{/if}}">
+<div id="view{{index}}" class="appComponent collapse {{#if isOpen}}in{{/if}}">
     
     <ul>
         <!--

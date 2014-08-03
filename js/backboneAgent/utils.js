@@ -44,6 +44,16 @@ var clone = function(object) {
 };
 
 // @private
+// Extend the destination object with the properties of the source object.
+// Returns the destination object.
+var extend = function(destination, source) {
+    for (var prop in source) {
+      destination[prop] = source[prop];
+    }
+    return destination;
+};
+
+// @private
 var watchOnce = function(object, property, callback) {
     watch(object, property, function onceHandler(prop, action, newValue, oldValue) {
         // facendo l'unwatch prima di chiamare la callback (invece di farlo dopo),
