@@ -83,6 +83,11 @@ body {
     outline: none;
 }
 
+.more {
+    text-align: center;
+    display: none;
+}
+
 .appComponentList {
     margin: 0;
     padding: 5px 15px 15px 15px;

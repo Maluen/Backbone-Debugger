@@ -19,7 +19,8 @@ function(Backbone, _, $, Handlebars, CollectionView, template, setImmediate) {
             return $.extend({
                 "click .openAll": "openAll",
                 "click .closeAll": "closeAll",
-                "scroll": "loadMoreIfNeeded"
+                "scroll": "loadMoreIfNeeded",
+                "click .loadMore": "loadMoreIfNeeded"
             }, CollectionView.prototype.events.apply(this, arguments));
         },
 
@@ -53,7 +54,18 @@ function(Backbone, _, $, Handlebars, CollectionView, template, setImmediate) {
         loadMoreIfNeeded: function() {
             setImmediate(_.bind(function() { // wait end of pending browser renders (so to work on updated state)
                 if (this.isOpened && this.$el.scrollTop() + this.$el[0].clientHeight == this.$el[0].scrollHeight) {
-                    this.collection.loadMore(_.bind(this.loadMoreIfNeeded, this));
+
+                    this.$('.more').hide(); // hide load more button
+
+                    this.collection.loadMore(_.bind(function() { // on complete
+                        // show load more button (provided as a last resort, manual method, to load more in case
+                        // the user is somewhat able to reach the bottom without being catched, 
+                        // e.g. after an untracked component height drecrease)
+                        this.$('.more').show(); // show load more button
+
+                        this.loadMoreIfNeeded();
+                    }, this));
+                
                 }
             }, this));
         },
