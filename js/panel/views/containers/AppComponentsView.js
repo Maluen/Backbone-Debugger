@@ -72,12 +72,12 @@ function(Backbone, _, $, Handlebars, CollectionView, template, setImmediate) {
 
         // show or hide the load more button
         showLoadMore: function(showOrHide) {
-            this.$('.more').toggleClass('hidden', !showOrHide);
+            this.$('.loadMore').toggleClass('hidden', !showOrHide);
         },
 
         templateData: function() {
             return _.extend({
-                'isLoadMoreHidden': this.$('.more').hasClass('hidden') // keep button visiblity between renders
+                'isLoadMoreHidden': this.$('.loadMore').hasClass('hidden') // keep button visiblity between renders
             }, CollectionView.prototype.templateData.apply(this, arguments));
         },
 
