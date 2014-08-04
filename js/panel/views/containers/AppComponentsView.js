@@ -12,8 +12,8 @@ function(Backbone, _, $, Handlebars, CollectionView, template, setImmediate) {
 
         isOpened: false, // state if the view (tab) is opened
 
-        // number of milliseconds to pass to the throttle function (e.g. for scroll events)
-        throttleDuration: 100,
+        // number of milliseconds to pass to the debounce function (e.g. for scroll events)
+        debounceDuration: 100,
 
         events: function() {
             return $.extend({
@@ -27,9 +27,9 @@ function(Backbone, _, $, Handlebars, CollectionView, template, setImmediate) {
         initialize: function() {
             CollectionView.prototype.initialize.apply(this, arguments);
 
-            // throttle and bind the loadMoreIfNeeded function
+            // debounce and bind the loadMoreIfNeeded function
             var loadMoreIfNeeded = this.loadMoreIfNeeded;
-            this.loadMoreIfNeeded = _.throttle(_.bind(loadMoreIfNeeded, this), this.throttleDuration);
+            this.loadMoreIfNeeded = _.debounce(_.bind(loadMoreIfNeeded, this), this.debounceDuration);
 
             $(window).on('resize', this.loadMoreIfNeeded);
             this.listenTo(this, "child:close child:hide child:collapsable:close", this.loadMoreIfNeeded);
@@ -50,7 +50,7 @@ function(Backbone, _, $, Handlebars, CollectionView, template, setImmediate) {
         },
 
         // Load more items if the user reached the bottom of the view
-        // Note: the function is automatically throttled and binded on initialize.
+        // Note: the function is automatically debounced and binded on initialize.
         loadMoreIfNeeded: function() {
             setImmediate(_.bind(function() { // wait end of pending browser renders (so to work on updated state)
                 if (this.isOpened && this.$el.scrollTop() + this.$el[0].clientHeight == this.$el[0].scrollHeight) {
