@@ -14,6 +14,10 @@ body {
     word-break: break-all;
 }
 
+.hidden {
+    display: none;
+}
+
 .btn-link {
     padding: 0;
 }
@@ -85,7 +89,6 @@ body {
 
 .more {
     text-align: center;
-    display: none;
 }
 
 .appComponentList {

@@ -202,6 +202,12 @@ function(Backbone, _, $, View, Handlebars, SearchFilter, setImmediate) {
             }
         },
 
+        templateData: function() {
+            return {
+                thereAreItems: this.collectionItemViews.length!==0
+            };
+        },
+
         render: function() {
             // recupera il contenitore con gli el delle viste degli item per reinserirlo poi,
             // infatti tali el vengono aggiunti/rimossi a parte in base agli eventi della collezione,
@@ -211,7 +217,7 @@ function(Backbone, _, $, View, Handlebars, SearchFilter, setImmediate) {
             var collectionEl = this.$(this.collectionElSelector);
 
             var thereAreItems = (this.collectionItemViews.length!==0);
-            this.el.innerHTML = this.template({thereAreItems: thereAreItems}); // DON'T use this.$el.html() because it removes the jQuery event handlers of existing sub-views
+            this.el.innerHTML = this.template(this.templateData()); // DON'T use this.$el.html() because it removes the jQuery event handlers of existing sub-views
             // reinserisce il contenitore con gli el delle viste (se applicabile)
             if (thereAreItems && collectionEl.length > 0) {
                 var placeholderCollectionEl = this.$(this.collectionElSelector);

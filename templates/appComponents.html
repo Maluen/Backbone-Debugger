@@ -17,11 +17,11 @@
 
     <ul class="appComponentList nav nav-tabs nav-stacked">
     </ul>
-    <div class="more">
-        <a class="loadMore btn-link">Load more</a>
-    </div>
-
     {{else}}
     <p>There is nothing to see here.</p>
     {{/if}}
+
+    <div class="more {{#isLoadMoreHidden}}hidden{{/isLoadMoreHidden}}">
+        <a class="loadMore btn-link">Load more</a>
+    </div>
 </div>
