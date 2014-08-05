@@ -15,6 +15,8 @@ function(Backbone, _, $, Handlebars, CollectionView, template, setImmediate) {
         // number of milliseconds to pass to the debounce function (e.g. for scroll events)
         debounceDuration: 100,
 
+        isLoadMoreHidden: false, // state if the 'load more' button is hidden
+
         events: function() {
             return $.extend({
                 "click .openAll": "openAll",
@@ -73,11 +75,12 @@ function(Backbone, _, $, Handlebars, CollectionView, template, setImmediate) {
         // show or hide the load more button
         showLoadMore: function(showOrHide) {
             this.$('.loadMore').toggleClass('hidden', !showOrHide);
+            this.isLoadMoreHidden = !showOrHide;
         },
 
         templateData: function() {
             return _.extend({
-                'isLoadMoreHidden': this.$('.loadMore').hasClass('hidden') // keep button visiblity between renders
+                'isLoadMoreHidden': this.isLoadMoreHidden // keep button visiblity between renders
             }, CollectionView.prototype.templateData.apply(this, arguments));
         },
 
