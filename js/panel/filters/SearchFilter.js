@@ -17,9 +17,9 @@ define(["backbone", "underscore", "utils"], function(Backbone, _, utils) {
             }
             // save the list with the search terms
             this.searchTermList = this.searchTerm.split(" ");
-            // case insensitive search (turns terms to lowercase)
+            // case insensitive search (turns terms to uppercase)
             this.caseSensitive = false;
-            this.searchTermList = _.map(this.searchTermList, function(term) { return term.toLowerCase(); });
+            this.searchTermList = _.map(this.searchTermList, function(term) { return term.toUpperCase(); });
         },
 
         // The method contains the actual filter logic.
@@ -28,7 +28,7 @@ define(["backbone", "underscore", "utils"], function(Backbone, _, utils) {
         // Return true if the model matches the filter.
         match: function(model, attributeName) {
             var searchTermOnObjectPropertyString = _.bind(function(property, term) {
-                if (!this.caseSensitive) property = property.toLowerCase(); // case insensitive search
+                if (!this.caseSensitive) property = property.toUpperCase(); // case insensitive search
                 if (this.strictSearch) {
                     // returns true if there exists a 'word' in the property that is equal to the search term
                     return _.some(property.split(' '), function(propertyTerm) {
