@@ -52,44 +52,35 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
             }, this));
         };
 
-        // Reload the inspected page injecting at the beginning the application
-        // whose absolute base path is specified in the "appBasePath" string.
-        // The application base directory must contain a app.json file with
-        // - the exported application name ("name")
-        // - the application dependencies ("dependencies" array) which will be injected in the provided order
-        // BEFORE the application. 
-        // - its scripts ("files" array) which will be injected in the provided order INSIDE the application scope.
+        // Reload the inspected page injecting at the beginning the scripts
+        // whose absolute base path is specified in the "scriptsBasePath" string.
+        // The scripts base directory must contain an index.json file with
+        // a scripts array which will be injected in the provided order.
         // Note: the urls are considered as relative to the base path.
-        // "injectionData" is an optional JSON-compatible hash accessible to the application via the options variable,
+        // "injectionData" is an optional JSON-compatible hash accessible to the scripts,
         // is tipically used to pass special data not directly accessible from the page, such as the
-        // extension url, or for app configuration options.
-        this.reloadInjecting = function(appBasePath, injectionData) {
+        // extension url, or for scripts configuration options.
+        this.reloadInjecting = function(scriptsBasePath, injectionData) {
             injectionData = injectionData || {};
             var me = this;
 
-            utils.httpRequest("get", appBasePath+"/app.json", function(data) {
-                var app = JSON.parse(data);
+            utils.httpRequest("get", scriptsBasePath+"/index.json", function(data) {
+                var index = JSON.parse(data);
 
                 // transform scripts relative urls into their content
-                var scripts = {
-                    dependencies: app.dependencies || [],
-                    files: app.files || []
-                };
+                var scripts = index.scripts;
                 var fetchScripts = function(onComplete) {
-                    var scriptsLength = _.flatten(_.values(scripts)).length;
                     var scriptsLoaded = 0;
-                    _.each(_.keys(scripts), function(scriptsType) {
-                        _.each(scripts[scriptsType], function(scriptRelativeURL, index) {
-                            var scriptURL = appBasePath+"/"+scriptRelativeURL;
-                            utils.httpRequest("get", scriptURL, function(data) {
-                                scripts[scriptsType][index] = data; // replace script relative url with its content
-                                scriptsLoaded++;
+                    _.each(scripts, function(scriptRelativeURL, index) {
+                        var scriptURL = scriptsBasePath+"/"+scriptRelativeURL;
+                        utils.httpRequest("get", scriptURL, function(data) {
+                            scripts[index] = data; // replace script relative url with its content
+                            scriptsLoaded++;
 
-                                if (scriptsLoaded === scriptsLength) {
-                                    // scripts fetch complete
-                                    onComplete(scripts);
-                                }
-                            });
+                            if (scriptsLoaded === scripts.length) {
+                                // scripts fetch complete
+                                onComplete(scripts);
+                            }
                         });
                     });
                 }
@@ -97,12 +88,9 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
                     // prepare code to inject
                     // TODO: create and use source map to ease debugging
 
-                    var dependenciesCode = scripts.dependencies.join('\n\n') + '\n\n';
-                    var appCode = 'window.'+app.name+' = new (function(options) {' + '\n\n'
-                                        + scripts.files.join('\n\n') + '\n\n'
+                    var toInject = '(function(injectionData) {' + '\n\n'
+                                        + scripts.join('\n\n') + '\n\n'
                                 + '})('+JSON.stringify(injectionData)+');' + '\n'; // last "\n" prevents eventual EOF error
-
-                    var toInject = dependenciesCode + appCode;
 
                     // Reload the inspected page with the code to inject at the beginning of it
                     me.isInjecting = true;

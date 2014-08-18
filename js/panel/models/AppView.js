@@ -13,7 +13,7 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
         // stampa l'elemento html della vista sulla console
         printElement: function() {
             backboneAgentClient.execFunction(function(componentIndex) {
-                var appViewInfo = this.getAppComponentInfoByIndex("View", componentIndex);
+                var appViewInfo = this.appComponentsInfos['View'].at(componentIndex);
                 var appViewEl = appViewInfo.component.el;
                 console.log(appViewEl);
             }, [this.index], _.bind(function(result) { // on executed

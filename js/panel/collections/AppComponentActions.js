@@ -28,12 +28,13 @@ function(Backbone, _, backboneAgentClient, inspectedPageClient, Collection, AppC
         },
 
         loadModelsIndexes: function(onComplete) {
+            // get the indexes of the app component actions
             backboneAgentClient.execFunction(function(start, length, componentCategory, componentIndex) {
-                var appComponentInfo = this.getAppComponentInfoByIndex(componentCategory, componentIndex);
+                var appComponentInfo = this.appComponentsInfos[componentCategory].at(componentIndex);
                 var appComponentActions = appComponentInfo.actions;
-                var appComponentActionsIndexes = [];
 
                 // get length element or all if there are less
+                var appComponentActionsIndexes = [];
                 var left = appComponentActions.length - start;
                 var end = left < length ? appComponentActions.length : start+length;
                 for (var i=start; i<end; i++) {

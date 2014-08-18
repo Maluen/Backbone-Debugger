@@ -21,13 +21,13 @@ function(Backbone, _, backboneAgentClient, setImmediate) {
             }
 
             backboneAgentClient.execFunction(function(componentCategory, componentIndex, index) {
-                var appComponentInfo = this.getAppComponentInfoByIndex(componentCategory, componentIndex);
-                var appComponentAction = appComponentInfo.actions[index];
+                var appComponentInfo = this.appComponentsInfos[componentCategory].at(componentIndex);
+                var appComponentAction = appComponentInfo.actions.at(index);
                 return appComponentAction.attributes;
             }, [this.component.category, this.component.index, this.index],
             _.bind(function(appComponentActionAttributes) { // on executed
                 setImmediate(_.bind(function() { // prevent UI blocking
-                    // resetta gli attributi
+                    // reset attributes
                     this.clear({silent: true});
                     this.set(appComponentActionAttributes);
 
@@ -36,17 +36,18 @@ function(Backbone, _, backboneAgentClient, setImmediate) {
             }, this));
         },
 
-        // stampa l'action data sulla console
+        // print the action data on the console
         printData: function() {
             backboneAgentClient.execFunction(function(componentCategory, componentIndex, index) {
-                var appComponentInfo = this.getAppComponentInfoByIndex(componentCategory, componentIndex);
-                var appComponentAction = appComponentInfo.actions[index];
-                console.log(appComponentAction.attributes['name']+":", appComponentAction.data);
+                var appComponentInfo = this.appComponentsInfos[componentCategory].at(componentIndex);
+                var appComponentAction = appComponentInfo.actions.at(index);
+                console.log(appComponentAction.get('name')+":", appComponentAction.data);
             }, [this.component.category, this.component.index, this.index],
             _.bind(function(result) { // on executed
                 // do nothing
             }, this));
         }
+        
     });
     return AppComponentAction;
 });

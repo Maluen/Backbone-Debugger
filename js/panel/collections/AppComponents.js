@@ -16,9 +16,18 @@ function(Backbone, _, backboneAgentClient, inspectedPageClient, Collection, AppC
         },
 
         loadModelsIndexes: function(onComplete) {
+            // gets the indexes of the app components
             backboneAgentClient.execFunction(function(start, length, componentCategory) {
-                // gets the indexes of the app components
-                return this.getAppComponentsIndexes(componentCategory).slice(start, start+length);
+                var appComponentsInfo = this.appComponentsInfos[componentCategory];
+
+                // get length element or all if there are less
+                var appComponentIndexes = [];
+                var left = appComponentsInfo.length - start;
+                var end = left < length ? appComponentsInfo.length : start+length;
+                for (var i=start; i<end; i++) {
+                    appComponentIndexes.push(i);
+                }
+                return appComponentIndexes;
             }, [this.loadStartIndex, this.loadLength, this.componentCategory], onComplete);
         },
 

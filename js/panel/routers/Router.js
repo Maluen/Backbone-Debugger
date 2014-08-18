@@ -35,8 +35,6 @@ function(Backbone, inspectedPageClient, backboneAgentClient, WaitingView, Debugg
                         }
                     }, this));
                 }
-
-                //window.location.href = "";
             }, this));
         },
 
@@ -60,7 +58,7 @@ function(Backbone, inspectedPageClient, backboneAgentClient, WaitingView, Debugg
                         document.body.appendChild(debuggerView.el);
                         this.debugMode = true;
                     } else {
-                        // Agent non attivo, carica la vista usata per attivarlo.
+                        // Agent not active, show the view used to activate it.
                         var debugDisabledView = new DebugDisabledView();
                         document.body.appendChild(debugDisabledView.el);
                     }

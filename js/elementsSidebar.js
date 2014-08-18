@@ -11,7 +11,7 @@ var isBackboneAgentActive = function() {
 // Returns the corresponding view index if exists, otherwise returns undefined.
 // Note: assumes that the backbone agent is active.
 var getViewIndex = function() {
-    var viewInfo = window.__backboneAgent.getAppViewInfoFromElement($0);
+    var viewInfo = window.__backboneAgent.appComponentsInfos['View'].getByDOMElement($0);
     return viewInfo? viewInfo.index : undefined;
 };
 

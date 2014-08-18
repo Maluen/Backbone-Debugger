@@ -31,7 +31,7 @@ function(Backbone, _, AppComponentActions, backboneAgentClient, inspectedPageCli
             }
 
             backboneAgentClient.execFunction(function(category, index) {
-                var appComponentInfo = this.getAppComponentInfoByIndex(category, index);
+                var appComponentInfo = this.appComponentsInfos[category].at(index);
                 return appComponentInfo.attributes;
             }, [this.category, this.index],
             _.bind(function(appComponentAttributes) { // on executed
@@ -56,8 +56,8 @@ function(Backbone, _, AppComponentActions, backboneAgentClient, inspectedPageCli
 
                     // update the local value of the changed attribute
                     backboneAgentClient.execFunction(function(category, index, attribute) {
-                        var appComponentInfo = this.getAppComponentInfoByIndex(category, index);
-                        return appComponentInfo.attributes[attribute];
+                        var appComponentInfo = this.appComponentsInfos[category].at(index);
+                        return appComponentInfo.get(attribute);
                     }, [this.category, this.index, report.attribute],
                     _.bind(function(attributeValue) {
                         this.set(report.attribute, attributeValue);
@@ -78,9 +78,9 @@ function(Backbone, _, AppComponentActions, backboneAgentClient, inspectedPageCli
         // stampa il componente dell'app sulla console
         printThis: function() {
             backboneAgentClient.execFunction(function(componentCategory, componentIndex) {
-                var appComponentInfo = this.getAppComponentInfoByIndex(componentCategory, componentIndex);
+                var appComponentInfo = this.appComponentsInfos[componentCategory].at(componentIndex);
                 var appComponent = appComponentInfo.component;
-                console.log(componentCategory+" "+componentIndex+":", appComponent); // es. "View 1: ..."
+                console.log(componentCategory+" "+componentIndex+":", appComponent); // e.g. "View 1: ..."
             }, [this.category, this.index], _.bind(function() { // on executed
                 // do nothing
             }, this));

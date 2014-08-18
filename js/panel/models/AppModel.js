@@ -7,10 +7,10 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
 
         // see backbone agent for supported attributes
 
-        // stampa il valore dell'attributo nella console
+        // print the model attribute value on the console
         printAttribute: function(attributeName) {
             backboneAgentClient.execFunction(function(componentIndex, attributeName) {
-                var appModelInfo = this.getAppComponentInfoByIndex("Model", componentIndex);
+                var appModelInfo = this.appComponentsInfos['Model'].at(componentIndex);
                 var attributeValue = appModelInfo.component.attributes[attributeName];
                 console.log(attributeName+":", attributeValue);
             }, [this.index, attributeName], _.bind(function(result) { // on executed
