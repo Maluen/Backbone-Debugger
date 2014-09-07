@@ -9,14 +9,15 @@ Modules.set('controllers.backboneController', function() {
         // Calls the callback passing to it the Backbone object every time it's detected.
         // The function uses multiple methods of detection.
         onBackboneDetected: function(callback) {
-            var handleBackbone = function(Backbone) {
+            var handleBackbone = u.bind(function(Backbone) {
                 // skip if already detected
                 // (needed because the app could define Backbone in multiple ways at once)
                 if (hidden.get(Backbone, "isDetected")) return;
                 hidden.set(Backbone, "isDetected", true);
 
+                this.trigger('backboneDetected', Backbone);
                 callback(Backbone);
-            }
+            }, this);
 
             // global
             u.onSetted(window, "Backbone", handleBackbone);

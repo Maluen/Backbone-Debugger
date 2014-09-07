@@ -17,6 +17,7 @@ function(Backbone, _, $, View, Handlebars, template) {
             this.el.innerHTML = this.template(); // DON'T use this.$el.html() because it removes the jQuery event handlers of existing sub-views
             return this;
         }
+
     });
     return DebugDisabledView;
 });

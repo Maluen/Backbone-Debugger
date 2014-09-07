@@ -18,11 +18,12 @@ Modules.set('backboneAgent', function() {
 
         // business logic
         initialize: function() {
-            
+
             reportController.start();
 
             // detect backbone
             backboneController.onBackboneDetected(u.bind(function(Backbone) {
+                this.isBackboneDetected = true;
                 debug.log('Backbone detected: ', Backbone);
 
                 // detect backbone components
@@ -42,6 +43,7 @@ Modules.set('backboneAgent', function() {
         },
 
         // PUBLIC API
+        isBackboneDetected: false,
         appComponentsInfos: appComponentsInfos
 
 

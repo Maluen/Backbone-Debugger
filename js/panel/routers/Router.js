@@ -49,16 +49,21 @@ function(Backbone, inspectedPageClient, backboneAgentClient, WaitingView, Debugg
 
             // Wait until the inspected page is ready, in order to wait the completion of 
             // an eventual Backbone Agent in-progress activation.
+            waitingView.setWaitingText('Waiting for inspected page loading...');
             inspectedPageClient.ready(_.bind(function() {
                 backboneAgentClient.isActive(_.bind(function(isActive) {
-                    waitingView.remove();
-
                     if (isActive) {
-                        var debuggerView = new DebuggerView();
-                        document.body.appendChild(debuggerView.el);
-                        this.debugMode = true;
+                        // Wait until Backbone is detected
+                        waitingView.setWaitingText('Waiting for Backbone...');
+                        backboneAgentClient.detectBackbone(_.bind(function() {
+                            waitingView.remove();
+                            var debuggerView = new DebuggerView();
+                            document.body.appendChild(debuggerView.el);
+                            this.debugMode = true;
+                        }, this));
                     } else {
                         // Agent not active, show the view used to activate it.
+                        waitingView.remove();
                         var debugDisabledView = new DebugDisabledView();
                         document.body.appendChild(debugDisabledView.el);
                     }

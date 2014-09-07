@@ -1,8 +1,8 @@
 /* This collection is sorted in reverse order (latest first) */
 
-define(["backbone", "underscore", "backboneAgentClient", "inspectedPageClient",
+define(["backbone", "underscore", "backboneAgentClient",
         "collections/Collection", "models/AppComponentAction", "setImmediate"],
-function(Backbone, _, backboneAgentClient, inspectedPageClient, Collection, AppComponentAction, setImmediate) {
+function(Backbone, _, backboneAgentClient, Collection, AppComponentAction, setImmediate) {
 
     var AppComponentActions = Collection.extend({
 
@@ -48,7 +48,7 @@ function(Backbone, _, backboneAgentClient, inspectedPageClient, Collection, AppC
             var reportName = "backboneAgent:"+this.component.category+":"
                            + this.component.index+":action";
 
-            this.realTimeUpdateListener = [inspectedPageClient, reportName, _.bind(function(report) {
+            this.realTimeUpdateListener = [backboneAgentClient, reportName, _.bind(function(report) {
                 onNew(report.componentActionIndex, report.timestamp);
             }, this)];
 

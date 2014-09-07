@@ -1,8 +1,8 @@
 /* L'aggiornamento in tempo reale viene attivato automaticamente al termine della fetch. */
 
 define(["backbone", "underscore", "collections/AppComponentActions", 
-        "backboneAgentClient", "inspectedPageClient", "setImmediate"],
-function(Backbone, _, AppComponentActions, backboneAgentClient, inspectedPageClient, setImmediate) {
+        "backboneAgentClient", "setImmediate"],
+function(Backbone, _, AppComponentActions, backboneAgentClient, setImmediate) {
 
     var AppComponent = Backbone.Model.extend({
 
@@ -52,7 +52,7 @@ function(Backbone, _, AppComponentActions, backboneAgentClient, inspectedPageCli
 
             setImmediate(_.bind(function() { // binding many consecutive events freezes the ui (happens if there are a lot of app components)
                 var reportName = "backboneAgent:"+this.category+":"+this.index+":change";
-                this.listenTo(inspectedPageClient, reportName, _.bind(function(report) {
+                this.listenTo(backboneAgentClient, reportName, _.bind(function(report) {
 
                     // update the local value of the changed attribute
                     backboneAgentClient.execFunction(function(category, index, attribute) {
