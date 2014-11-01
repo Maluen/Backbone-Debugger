@@ -14,12 +14,16 @@
           </ul>
         </div>
     </div>
-
-    <ul class="appComponentList nav nav-tabs nav-stacked">
-    </ul>
-    {{else}}
-    <p>There is nothing to see here.</p>
     {{/if}}
+
+    <div class="appComponentsContent">
+        {{#if thereAreItems}}
+        <ul class="appComponentList nav nav-tabs nav-stacked">
+        </ul>
+        {{else}}
+        <p>There is nothing to see here.</p>
+        {{/if}}
+    </div>
 
     <div class="more">
         <a class="loadMore btn-link {{#isLoadMoreHidden}}hidden{{/isLoadMoreHidden}}">Load more</a>
