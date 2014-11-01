@@ -15,6 +15,10 @@ chrome.extension.onConnect.addListener(function(port) {
         if (message.name == "identification") {
             var tabId = message.data;
             panelPorts[tabId] = port;
+
+            port.onDisconnect.addListener(function() {
+                delete panelPorts[tabId];
+            });
         }
     });
 });
