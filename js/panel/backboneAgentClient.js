@@ -95,7 +95,13 @@ define(["backbone", "underscore", "inspectedPageClient"], function(Backbone, _, 
                     // that is in the backbone frame
                     var isValidMessage = frameURL == this.frameURL &&
                                          name.indexOf("backboneAgent:") == 0; // starts with
-                    if (isValidMessage) this.trigger(name, data);
+                    if (isValidMessage) {
+                        // triggered arguments are whole report + all the report arguments
+                        var reportName = name;
+                        var report = data;
+                        var eventArguments = report.args;
+                        this.trigger.apply(this, [reportName].concat(report).concat(eventArguments));
+                    }
                 }, this));
 
                 if (onDetected) onDetected();

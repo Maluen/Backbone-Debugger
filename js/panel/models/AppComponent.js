@@ -52,15 +52,16 @@ function(Backbone, _, AppComponentActions, backboneAgentClient, setImmediate) {
 
             setImmediate(_.bind(function() { // binding many consecutive events freezes the ui (happens if there are a lot of app components)
                 var reportName = "backboneAgent:"+this.category+":"+this.index+":change";
-                this.listenTo(backboneAgentClient, reportName, _.bind(function(report) {
+                this.listenTo(backboneAgentClient, reportName, 
+                _.bind(function(report, attributeName) {
 
                     // update the local value of the changed attribute
-                    backboneAgentClient.execFunction(function(category, index, attribute) {
+                    backboneAgentClient.execFunction(function(category, index, attributeName) {
                         var appComponentInfo = this.appComponentsInfos[category].at(index);
-                        return appComponentInfo.get(attribute);
-                    }, [this.category, this.index, report.attribute],
+                        return appComponentInfo.get(attributeName);
+                    }, [this.category, this.index, attributeName],
                     _.bind(function(attributeValue) {
-                        this.set(report.attribute, attributeValue);
+                        this.set(attributeName, attributeValue);
                     }, this));
 
                 }, this));

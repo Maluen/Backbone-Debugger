@@ -34,8 +34,9 @@ function(Backbone, _, backboneAgentClient, Collection, AppComponentActions) {
         startRealTimeUpdateLogic: function(onNew) {
             var reportName = "backboneAgent:"+this.componentCategory+":new";
             
-            this.realTimeUpdateListener = [backboneAgentClient, reportName, _.bind(function(report) {
-                onNew(report.componentIndex, report.timestamp);
+            this.realTimeUpdateListener = [backboneAgentClient, reportName,
+            _.bind(function(report, componentIndex) {
+                onNew(componentIndex, report.timestamp);
             }, this)];
 
             this.listenTo.apply(this, this.realTimeUpdateListener);

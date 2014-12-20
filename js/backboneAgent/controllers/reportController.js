@@ -19,27 +19,23 @@ Modules.set('controllers.reportController', function() {
 
                 // reports about new app components
                 appComponentsInfo.on('add', u.bind(function(appComponent) {
-                    this.sendReport(appComponentsInfo.category+':new', { 
-                        componentIndex: appComponent.index
-                    });
+                    this.sendReport(appComponentsInfo.category+':new', appComponent.index);
                     debug.log('New ' + appComponentsInfo.category, appComponent);
                 }, this));
 
                 // reports about new app component actions
                 appComponentsInfo.on('actions:add', u.bind(function(appComponentAction) {
                     var appComponentIndex = appComponentAction.appComponentInfo.get('index');
-                    this.sendReport(appComponentsInfo.category+':'+appComponentIndex+':action', {
-                        componentActionIndex: appComponentAction.index
-                    });
+                    this.sendReport(appComponentsInfo.category+':'+appComponentIndex+':action', 
+                                    appComponentAction.index);
                     //debug.log('New action: ', appComponentAction);
                 }, this));
 
                 // report about app component attribute changes
                 appComponentsInfo.on('change', u.bind(function(appComponentInfo) {
                     u.each(appComponentInfo.changed, function(attributeValue, attributeName) {
-                        this.sendReport(appComponentsInfo.category+':'+appComponentInfo.index+':change', {
-                            attribute: attributeName
-                        });
+                        this.sendReport(appComponentsInfo.category+':'+appComponentInfo.index+':change', 
+                                        attributeName);
                         // (we send only the attribute name for serialization and performance reasons)
 
                         //debug.log('Attribute ' + attributeName + ' of a ' + appComponentInfo.category + ' has changed: ', attributeValue);
@@ -49,14 +45,18 @@ Modules.set('controllers.reportController', function() {
             }, this));
         },
 
-        // Note: name is prefixed by "backboneAgent:" and can't contain spaces
+        // Note: reportName is prefixed by "backboneAgent:" and can't contain spaces
         // (because it's transformed in a Backbone event in the Panel)
-        sendReport: function(name, report) {
-            report = report || {};
+        sendReport: function(reportName /*, arg1, ... , argN */) {
+            var reportArguments = Array.prototype.slice.call(arguments, 1); // from second argument
+            reportName = 'backboneAgent:'+reportName;
+
+            var report = {};
             // the timestamp is tipicaly used by the panel to exclude old reports
             report.timestamp = new Date().getTime();
+            report.args = reportArguments;
 
-            this.sendPageMessage('backboneAgent:'+name, report);
+            this.sendPageMessage(reportName, report);
         },
 
         sendPageMessage: function(name, data) {
