@@ -43,10 +43,10 @@ Modules.set('models.AppComponentInfo', function() {
                 });
             }
             // re-trigger any actions event (prefixing it)
-            this.actions.on('all', u.bind(function(eventName /*, arg1, ... , argN */) {
+            this.listenTo(this.actions, 'all', function(eventName /*, arg1, ... , argN */) {
                 var eventArguments = Array.prototype.slice.call(arguments, 1); // from second argument
                 this.trigger.apply(this, ['actions:'+eventName].concat(eventArguments));
-            }, this));
+            });
         }
 
     });

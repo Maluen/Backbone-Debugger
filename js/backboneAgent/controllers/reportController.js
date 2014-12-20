@@ -11,36 +11,40 @@ Modules.set('controllers.reportController', function() {
         start: function() {
             // setup reports
 
-            backboneController.on('backboneDetected', u.bind(function(Backbone) {
+            this.listenTo(backboneController, 'backboneDetected', function(Backbone) {
                 this.sendReport('backboneDetected');
-            }, this));
+            });
 
             u.each(appComponentsInfos, u.bind(function(appComponentsInfo) {
 
                 // reports about new app components
-                appComponentsInfo.on('add', u.bind(function(appComponent) {
-                    this.sendReport(appComponentsInfo.category+':new', appComponent.index);
+                this.listenTo(appComponentsInfo, 'add', function(appComponent) {
+                    this.sendReport(appComponentsInfo.category+':new', { 
+                        componentIndex: appComponent.index
+                    });
                     debug.log('New ' + appComponentsInfo.category, appComponent);
-                }, this));
+                });
 
                 // reports about new app component actions
-                appComponentsInfo.on('actions:add', u.bind(function(appComponentAction) {
+                this.listenTo(appComponentsInfo, 'actions:add', function(appComponentAction) {
                     var appComponentIndex = appComponentAction.appComponentInfo.get('index');
-                    this.sendReport(appComponentsInfo.category+':'+appComponentIndex+':action', 
-                                    appComponentAction.index);
+                    this.sendReport(appComponentsInfo.category+':'+appComponentIndex+':action', {
+                        componentActionIndex: appComponentAction.index
+                    });
                     //debug.log('New action: ', appComponentAction);
-                }, this));
+                });
 
                 // report about app component attribute changes
-                appComponentsInfo.on('change', u.bind(function(appComponentInfo) {
+                this.listenTo(appComponentsInfo, 'change', function(appComponentInfo) {
                     u.each(appComponentInfo.changed, function(attributeValue, attributeName) {
-                        this.sendReport(appComponentsInfo.category+':'+appComponentInfo.index+':change', 
-                                        attributeName);
+                        this.sendReport(appComponentsInfo.category+':'+appComponentInfo.index+':change', {
+                            attributeName: attributeName
+                        });
                         // (we send only the attribute name for serialization and performance reasons)
 
                         //debug.log('Attribute ' + attributeName + ' of a ' + appComponentInfo.category + ' has changed: ', attributeValue);
                     }, this);
-                }, this));
+                });
 
             }, this));
         },

@@ -49,8 +49,8 @@ function(Backbone, _, backboneAgentClient, Collection, AppComponentAction, setIm
                            + this.component.index+":action";
 
             this.realTimeUpdateListener = [backboneAgentClient, reportName, 
-            _.bind(function(report, componentActionIndex) {
-                onNew(componentActionIndex, report.timestamp);
+            _.bind(function(report, changeInfo) {
+                onNew(changeInfo.componentActionIndex, report.timestamp);
             }, this)];
 
             this.listenTo.apply(this, this.realTimeUpdateListener);

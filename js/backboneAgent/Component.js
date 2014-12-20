@@ -30,7 +30,8 @@ Modules.set('Component', function() {
 
         u.extend(Child, Super); // for static properties
         Child.prototype = Object.create(Super.prototype);
-        Child.prototype.__super = Super;
+        Child.prototype.__Super = Super;
+        Child.prototype.__super = Super.prototype;
         u.extend(Child.prototype, ChildProperties);
 
         return Child;
@@ -45,6 +46,57 @@ Modules.set('Component', function() {
                 callback: callback,
                 context: context
             });
+        },
+
+        off: function(eventName, callback, context) {
+            if (!this._eventHandlers) return;
+
+            u.each(this._eventHandlers, function(handlers, currentEventName) {
+                var areHandlersAffected = (eventName == undefined || currentEventName === eventName);
+                if (areHandlersAffected) {
+                    for (var i=0; i<handlers.length; i++) { // no length cache, it might change
+                        var handler = handlers[i];
+
+                        var isHandlerAffected = (callback == undefined || handler.callback === callback) &&
+                                                (context == undefined || handler.context === context);
+                        if (isHandlerAffected) {
+                            // remove handler
+                            handlers.splice(i, 1);
+                            i--;
+                        } 
+                    }
+                    if (handlers.length == 0) {
+                        delete this._eventHandlers[currentEventName];
+                    }
+                }
+            }, this);
+        },
+
+        listenTo: function(other, eventName, callback) {
+            other.on(eventName, callback, this);
+
+            if (!this._listeners) this._listeners = [];
+            this._listeners.push({
+                other: other, 
+                eventName: eventName, 
+                callback: callback
+            });
+        },
+
+        stopListening: function(other, eventName, callback) {
+            if (!this._listeners) return;
+
+            for (var i=0; i<this._listeners.length; i++) { // no length cache, it might change
+                var listener = this._listeners[i];
+                var isAffected = (other == undefined || listener.other === other) &&
+                                 (eventName == undefined || listener.eventName === eventName) &&
+                                 (callback == undefined || listener.callback === callback);
+                if (isAffected) {
+                    listener.other.off(listener.eventName, listener.callback, this);
+                    this._listeners.splice(i, 1);
+                    i--;
+                }
+            }
         },
 
         trigger: function(eventName /*, arg1, ... , argN */) {
@@ -67,6 +119,10 @@ Modules.set('Component', function() {
                 var handler = handlers[i];
                 handler.callback.apply(handler.context, eventArguments);
             }
+        },
+
+        remove: function() {
+            this.stopListening();
         }
 
     });

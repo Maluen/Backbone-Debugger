@@ -18,9 +18,9 @@ Modules.set('collections.Collection', function() {
             this.length = this.models.length;
 
             // re-trigger any model event
-            model.on('all', u.bind(function(eventName /*, arg1, ... , argN */) {
+            this.listenTo(model, 'all', function(eventName /*, arg1, ... , argN */) {
                 this.trigger.apply(this, arguments);
-            }, this));
+            });
 
             this.trigger('add', model, this);
         },
