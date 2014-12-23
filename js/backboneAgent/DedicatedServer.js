@@ -19,7 +19,7 @@ Modules.set('DedicatedServer', function() {
             reader.index = readerIndex;
             this.readers.push(reader);
 
-            // re-emit the reader notifications by prepending our index in the notification name
+            // re-emit the reader notifications by prepending its index in the notification name
             this.listenTo(reader, 'notify', function(notifyName, notifyData) {
                 notifyName = 'reader:'+readerIndex+':' + notifyName;
                 this.notify(notifyName, notifyData);
