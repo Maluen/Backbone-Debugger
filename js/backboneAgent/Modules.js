@@ -16,7 +16,11 @@ var Modules = new (function() { // singleton object
     this.get = function(name) {
         var module = modules[name];
         if (!module) {
-            module = modules[name] = factories[name]();
+            if (!factories[name]) {
+                throw 'Module "'+name+'" does not exist.';
+            } else {
+                module = modules[name] = factories[name]();
+            }
         }
         return module;
     };
