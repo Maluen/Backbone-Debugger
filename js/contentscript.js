@@ -16,6 +16,14 @@ window.addEventListener("message", function(event) {
     chrome.extension.sendMessage(message);
 }, false);
 
+// Receives messages from the background and redirects them to the inspected page.
+chrome.runtime.onMessage.addListener(function(message) {
+	// Only accept messages for our frame
+	if (message.frameURL != frameURL) return;
+
+	window.postMessage(message, '*');
+});
+
 if (isTopFrame) {
 	/* Code to be executed only if this is the top frame content script! */
 
