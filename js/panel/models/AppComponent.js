@@ -51,9 +51,10 @@ function(Backbone, _, AppComponentActions, backboneAgentClient, setImmediate) {
             if (this.isRealTimeUpdateActive) return;
 
             setImmediate(_.bind(function() { // binding many consecutive events freezes the ui (happens if there are a lot of app components)
-                var reportName = "backboneAgent:"+this.category+":"+this.index+":change";
-                this.listenTo(backboneAgentClient, reportName, 
-                _.bind(function(report, changeInfo) {
+                var messageName = "backboneAgent:"+this.category+":"+this.index+":change";
+                this.listenTo(backboneAgentClient, messageName, 
+                _.bind(function(message) {
+                    var changeInfo = message.data;
 
                     // update the local value of the changed attribute
                     backboneAgentClient.execFunction(function(category, index, attributeName) {

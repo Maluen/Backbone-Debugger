@@ -13,7 +13,7 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
             // so that Backbone.Events methods like the useful "listenTo" can be used
             panelPort.onMessage.addListener(_.bind(function(message) {
                 if (message && message.target == "page") {
-                    this.trigger(message.name, message.data, message.frameURL);
+                    this.trigger(message.name, message);
                 }
             }, this));
         };
@@ -52,6 +52,18 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
                 } else {
                     if (onExecuted) onExecuted(result);
                 }
+            });
+        };
+
+        this.sendMessage = function(messageName, frameURL, messageData) {
+            messageName = 'client:'+messageName;
+
+            panelPort.postMessage({
+                target: 'extension',
+                timestamp: new Date().getTime(),
+                name: messageName,
+                data: messageData,
+                frameURL: frameURL
             });
         };
 

@@ -3,7 +3,7 @@ Modules.set('backboneAgent', function() {
     var Component = Modules.get('Component');
     var u = Modules.get('utils');
     var debug = Modules.get('debug');
-    var reportController = Modules.get('controllers.reportController');
+    var server = Modules.get('server');
     var backboneController = Modules.get('controllers.backboneController');
     var backboneComponentController = Modules.get('controllers.backboneComponentController');
     var appComponentControllers = {
@@ -19,7 +19,7 @@ Modules.set('backboneAgent', function() {
         // business logic
         initialize: function() {
 
-            reportController.start();
+            server.start();
 
             // detect backbone
             backboneController.onBackboneDetected(u.bind(function(Backbone) {
@@ -43,9 +43,9 @@ Modules.set('backboneAgent', function() {
         },
 
         // PUBLIC API
+        Modules: Modules,
         isBackboneDetected: false,
-        appComponentsInfos: appComponentsInfos
-
+        appComponentsInfos: appComponentsInfos,
 
     }))();
 

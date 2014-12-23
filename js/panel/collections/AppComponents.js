@@ -32,11 +32,12 @@ function(Backbone, _, backboneAgentClient, Collection, AppComponentActions) {
         },
 
         startRealTimeUpdateLogic: function(onNew) {
-            var reportName = "backboneAgent:"+this.componentCategory+":new";
+            var messageName = "backboneAgent:"+this.componentCategory+":new";
             
-            this.realTimeUpdateListener = [backboneAgentClient, reportName,
-            _.bind(function(report, changeInfo) {
-                onNew(changeInfo.componentIndex, report.timestamp);
+            this.realTimeUpdateListener = [backboneAgentClient, messageName,
+            _.bind(function(message) {
+                var changeInfo = message.data;
+                onNew(changeInfo.componentIndex, message.timestamp);
             }, this)];
 
             this.listenTo.apply(this, this.realTimeUpdateListener);

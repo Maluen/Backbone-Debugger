@@ -54,8 +54,9 @@ function(Backbone, inspectedPageClient, backboneAgentClient, WaitingView, Debugg
                 backboneAgentClient.isActive(_.bind(function(isActive) {
                     if (isActive) {
                         // Wait until Backbone is detected
+                        // and the client is connected to the agent
                         waitingView.setWaitingText('Waiting for Backbone...');
-                        backboneAgentClient.detectBackbone(_.bind(function() {
+                        backboneAgentClient.connect(_.bind(function() { // on connected
                             waitingView.remove();
                             var debuggerView = new DebuggerView();
                             document.body.appendChild(debuggerView.el);

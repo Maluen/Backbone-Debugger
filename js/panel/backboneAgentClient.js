@@ -4,6 +4,10 @@ define(["backbone", "underscore", "inspectedPageClient"], function(Backbone, _, 
 
         this.context = "window.__backboneAgent";
 
+        // sent by the backbone agent server when connected
+        // as an identifier for the client and for its dedicated server.
+        this.clientIndex = undefined;
+
         this.initialize = function() {
             _.bindAll(this);
 
@@ -90,17 +94,13 @@ define(["backbone", "underscore", "inspectedPageClient"], function(Backbone, _, 
                 this.stopListening.apply(this, backboneDetectedListener);
 
                 this.frameURL = frameURL; // execute code on backbone frame by default
-                this.listenTo(inspectedPageClient, "all", _.bind(function(name, data, frameURL) {
+                this.listenTo(inspectedPageClient, "all", _.bind(function(name, message) {
                     // re-trigger only events of the backbone agent instance
                     // that is in the backbone frame
-                    var isValidMessage = frameURL == this.frameURL &&
-                                         name.indexOf("backboneAgent:") == 0; // starts with
+                    var isValidMessage = message.frameURL == this.frameURL &&
+                                         message.name.indexOf("backboneAgent:") == 0; // starts with
                     if (isValidMessage) {
-                        // triggered arguments are whole report + all the report arguments
-                        var reportName = name;
-                        var report = data;
-                        var eventArguments = report.args;
-                        this.trigger.apply(this, [reportName].concat(report).concat(eventArguments));
+                        this.trigger.apply(this, arguments);
                     }
                 }, this));
 
@@ -111,8 +111,8 @@ define(["backbone", "underscore", "inspectedPageClient"], function(Backbone, _, 
             var backboneDetectedListener = [
                 inspectedPageClient, 
                 "backboneAgent:backboneDetected",
-                function(data, frameURL) { 
-                    onBackboneFrame(frameURL); 
+                function(message) { 
+                    onBackboneFrame(message.frameURL); 
                 }
             ];
             this.listenToOnce.apply(this, backboneDetectedListener);
@@ -120,6 +120,18 @@ define(["backbone", "underscore", "inspectedPageClient"], function(Backbone, _, 
             // get (eventual) existing backbone
             this.getBackboneFrame(_.bind(function(frame) {
                 if (frame) onBackboneFrame(frame.url);
+            }, this));
+        };
+
+        this.connect = function(onConnected) {
+            this.detectBackbone(_.bind(function() { // on detected
+                // connect to the server of the detected backbone agent
+                this.listenToOnce(this, 'backboneAgent:connected', function(message) {
+                    var details = message.data;
+                    this.clientIndex = details.clientIndex;
+                    if (onConnected) onConnected();
+                });
+                inspectedPageClient.sendMessage('connect', this.frameURL);
             }, this));
         };
 
