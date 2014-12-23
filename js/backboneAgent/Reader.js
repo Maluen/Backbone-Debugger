@@ -7,7 +7,7 @@ Modules.set('Reader', function() {
 
     var Reader = Component.extend({
 
-        // setted by the reader manager (the server) on registration
+        // setted by the reader manager (the dedicated server) on registration
         index: undefined,
 
         // the collection to read
