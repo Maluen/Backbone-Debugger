@@ -16,13 +16,13 @@ Modules.set('filters.Filter', function() {
             if (on) {
                 // activate
                 var result = this.match(model);
-                this.listenTo(model, "change", _.bind(function() {
+                this.listenTo(model, "change", function() {
                     var newResult = this.match(model);
                     if (newResult != result) {
                         result = newResult;
                         callback(model, newResult);
                     }
-                }, this));
+                });
                 callback(model, result);
             } else {
                 // deactivate

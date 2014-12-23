@@ -18,6 +18,9 @@
         "collections/AppComponentActions.js",
         "collections/appComponentsInfos.js",
 
+        "filters/Filter.js",
+        "filters/SearchFilter.js",
+
         "controllers/backboneController.js",
         "controllers/backboneComponentController.js",
         "controllers/AppComponentController.js",
