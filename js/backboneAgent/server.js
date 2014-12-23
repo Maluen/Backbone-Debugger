@@ -13,7 +13,6 @@ Modules.set('server', function() {
             this.dedicatedServers = []; // this might be sparse!
         },
 
-        
         start: function() {
             // setup incoming messages listening and handling
 
@@ -24,7 +23,7 @@ Modules.set('server', function() {
                 var message = event.data;
 
                 // Only accept our messages
-                if (typeof message != 'object' || message === null || message.target != 'extension') return;
+                if (!u.isObject(message) || message.target != 'extension') return;
 
                 this.trigger(message.name, message);
             }, this));
@@ -41,7 +40,7 @@ Modules.set('server', function() {
             });
 
             // setup outgoing messages
-            // OBSOLETE
+            // almost OBSOLETE
 
             this.listenTo(backboneController, 'backboneDetected', function(Backbone) {
                 this.sendMessage('backboneDetected');
@@ -103,7 +102,7 @@ Modules.set('server', function() {
         disconnect: function(index) {
             var dedicatedServer = this.dedicatedServers[index];
             if (dedicatedServer) {
-                dedicatedServer.stopListening();
+                this.stopListening(dedicatedServer);
                 dedicatedServer.remove();
                 delete this.dedicatedServers[index];
             }
