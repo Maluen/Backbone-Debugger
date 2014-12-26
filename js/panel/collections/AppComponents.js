@@ -8,6 +8,7 @@ function(Backbone, _, backboneAgentClient, Collection, AppComponentActions) {
     var AppComponents = Collection.extend({
 
         componentCategory: undefined, // categoria dei componenti (es. "View", "Model", etc.)
+        url: undefined, // must be defined by child types
 
         createModel: function(componentIndex) {
             var model = new this.model();

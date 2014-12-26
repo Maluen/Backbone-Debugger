@@ -23,6 +23,12 @@ function(Backbone, _, AppComponentActions, backboneAgentClient, setImmediate) {
             });
         },
 
+        url: function() {
+            var collectionUrl = (typeof this.collection.url == 'function') ?
+                                this.collection.url() : this.collection.url;
+            return collectionUrl+'/'+this.index;
+        },
+
         // richiede che l'index sia settato in quanto è usato come un id.
         // Chiama onComplete al termine dell'operazione.
         fetch: function(onComplete) {

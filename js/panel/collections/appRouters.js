@@ -4,7 +4,8 @@ function(Backbone, _, AppComponents, AppRouter) {
     var appRouters = new (AppComponents.extend({
 
         componentCategory: "Router",
-        model: AppRouter
+        model: AppRouter,
+        url: '/routers'
 
     }))();
     return appRouters;

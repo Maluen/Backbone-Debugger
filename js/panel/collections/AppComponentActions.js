@@ -15,6 +15,10 @@ function(Backbone, _, backboneAgentClient, Collection, AppComponentAction, setIm
             Collection.prototype.initialize.apply(this, arguments);
         },
 
+        url: function() {
+            return this.component.url()+'/actions';
+        },
+
         createModel: function(actionIndex) {
             var model = new this.model();
             model.component = this.component;

@@ -14,6 +14,13 @@ function(Backbone, _, backboneAgentClient, setImmediate) {
             _.bindAll(this);
         },
 
+        // TODO: same as AppComponent, refactor to have a base Model
+        url: function() {
+            var collectionUrl = (typeof this.collection.url == 'function') ?
+                                this.collection.url() : this.collection.url;
+            return collectionUrl+'/'+this.index;
+        },
+
         fetch: function(onComplete) {
             var index = this.index;
             if (index === undefined) {

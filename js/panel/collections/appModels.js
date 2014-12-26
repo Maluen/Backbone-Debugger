@@ -4,7 +4,8 @@ function(Backbone, _, AppComponents, AppModel) {
     var appModels = new (AppComponents.extend({
 
         componentCategory: "Model",
-        model: AppModel
+        model: AppModel,
+        url: '/models'
 
     }))();
     return appModels;

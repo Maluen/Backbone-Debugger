@@ -4,7 +4,8 @@ function(Backbone, _, AppComponents, AppCollection) {
     var appCollections = new (AppComponents.extend({
 
         componentCategory: "Collection",
-        model: AppCollection
+        model: AppCollection,
+        url: '/collections'
 
     }))();
     return appCollections;
