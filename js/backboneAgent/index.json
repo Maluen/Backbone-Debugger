@@ -18,6 +18,8 @@
         "collections/AppComponentActions.js",
         "collections/appComponentsInfos.js",
 
+        "database.js",
+
         "filters/Filter.js",
         "filters/SearchFilter.js",
 
