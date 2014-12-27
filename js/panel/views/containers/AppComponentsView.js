@@ -32,9 +32,15 @@ function(Backbone, _, $, Handlebars, CollectionView, template, setImmediate) {
             // debounce and bind the loadMoreIfNeeded function
             var loadMoreIfNeeded = this.loadMoreIfNeeded;
             this.loadMoreIfNeeded = _.debounce(_.bind(loadMoreIfNeeded, this), this.debounceDuration);
+        },
 
-            $(window).on('resize', this.loadMoreIfNeeded);
-            this.listenTo(this, "child:close child:hide child:collapsable:close", this.loadMoreIfNeeded);
+        start: function(onStarted) {
+            CollectionView.prototype.start.call(this, _.bind(function() { // on started
+                $(window).on('resize', this.loadMoreIfNeeded);
+                this.listenTo(this, "child:close child:hide child:collapsable:close", this.loadMoreIfNeeded);
+
+                if (onStarted) onStarted();
+            }, this));
         },
 
         // Call this function to notify the view that it has been opened (since is a tab)
@@ -54,6 +60,8 @@ function(Backbone, _, $, Handlebars, CollectionView, template, setImmediate) {
         // Load more items if the user reached the bottom of the view
         // Note: the function is automatically debounced and binded on initialize.
         loadMoreIfNeeded: function() {
+            if (!this.started) return; // prevent premature call
+
             setImmediate(_.bind(function() { // wait end of pending browser renders (so to work on updated state)
                 if (this.isOpened && this.$el.scrollTop() + this.$el[0].clientHeight == this.$el[0].scrollHeight) {
 

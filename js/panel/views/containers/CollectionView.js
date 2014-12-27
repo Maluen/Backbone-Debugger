@@ -15,6 +15,8 @@ function(Backbone, _, $, View, Handlebars, SearchFilter, setImmediate) {
         CollectionItemView: undefined, // tipo vista di un item
         collectionElSelector: undefined, // selettore per l'elemento html che contiene gli el delle viste degli item
 
+        started: false,
+
         filter: undefined,
 
         searchFormElSelector: undefined, // jquery selector for the search form element (if any)
@@ -51,7 +53,15 @@ function(Backbone, _, $, View, Handlebars, SearchFilter, setImmediate) {
             }, this));
             this.listenTo(this.collection, "add", this.handleNewItem);
 
-            this.render();
+            this.start();
+        },
+
+        start: function(onStarted) {
+            this.collection.start(_.bind(function() { // on started
+                this.render();
+                this.started = true;
+                if (onStarted) onStarted();
+            }, this));
         },
 
         // Resetta l'array delle viste degli item

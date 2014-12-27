@@ -17,11 +17,18 @@ function(Backbone, _, $, Handlebars, CollectionView, AppComponentActionView, tem
             CollectionView.prototype.initialize.apply(this, arguments);
 
             this.appComponentView = options.parent;
-            this.listenTo(this.appComponentView, "open show", _.bind(this.checkVisibility, this));
-            this.listenTo(this.appComponentView, "close hide", _.bind(this.notifyHidden, this));
-            this.checkVisibility();
+        },
 
-            this.loadMoreIfNeeded();
+        start: function(onStarted) {
+            CollectionView.prototype.start.call(this, _.bind(function() { // on started
+                this.listenTo(this.appComponentView, "open show", _.bind(this.checkVisibility, this));
+                this.listenTo(this.appComponentView, "close hide", _.bind(this.notifyHidden, this));
+                this.checkVisibility();
+
+                this.loadMoreIfNeeded();
+
+                if (onStarted) onStarted();
+            }, this));
         },
 
         checkVisibility: function() {
@@ -41,6 +48,8 @@ function(Backbone, _, $, Handlebars, CollectionView, AppComponentActionView, tem
         },
 
         loadMoreIfNeeded: function() {
+            if (!this.started) return; // prevent premature call
+
             setImmediate(_.bind(function() { // wait end of pending browser renders (so to work on updated state)
                 if (this.isVisible) {
                     this.collection.loadMore(_.bind(this.loadMoreIfNeeded, this));

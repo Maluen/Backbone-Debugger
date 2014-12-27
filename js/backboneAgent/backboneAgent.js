@@ -43,8 +43,10 @@ Modules.set('backboneAgent', function() {
         },
 
         // PUBLIC API
-        Modules: Modules,
         isBackboneDetected: false,
+        server: server,
+        database: Modules.get('database'),
+        Reader: Modules.get('Reader'),
         appComponentsInfos: appComponentsInfos,
 
     }))();

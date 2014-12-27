@@ -1,5 +1,5 @@
-define(["backbone", "underscore"],
-function(Backbone, _) {
+define(["backbone", "underscore", "backboneAgentClient"],
+function(Backbone, _, backboneAgentClient) {
 
     var Collection = Backbone.Collection.extend({
 
@@ -7,8 +7,15 @@ function(Backbone, _) {
             _.bindAll(this);
         },
 
+        // the user should wait this to become true
+        // before requesting data from the collection
+        started: false,
+
         // returns a new model (with the index setted)
         createModel: undefined, // abstract function(modelIndex)
+
+        // index of the associated agent Reader instance for the remote collection
+        readerIndex: undefined,
 
         isLoadInProgress: false,
         // onComplete callback passed to loadMore, stored so to be able to call it even after loading
@@ -23,6 +30,24 @@ function(Backbone, _) {
 
         loadLeft: 0, // number of models still to get via realtime update so to reach the length
         isRealTimeUpdateActive: false,
+
+        // connects the collection with the agent endpoint
+        start: function(onStarted) {
+            var url = (typeof this.url == 'function') ? this.url() : this.url;
+
+            // register reader
+            backboneAgentClient.execFunction(function(clientIndex, collectionUrl) {
+                var collection = this.database.get(collectionUrl);
+                var reader = new this.Reader(collection);
+                var dedicatedServer = this.server.getDedicatedServer(clientIndex);
+                var readerIndex = dedicatedServer.registerReader(reader);
+                return readerIndex;
+            }, [backboneAgentClient.clientIndex, url], _.bind(function(readerIndex) {
+                this.readerIndex = readerIndex;
+                this.started = true;
+                if (onStarted) onStarted();
+            }, this));
+        },
 
         // adds to the collection more models, as retrieved by the loadModelsIndexes function,
         // calls onComplete at the end of the operation, optionally by getting some of them via realtime update
