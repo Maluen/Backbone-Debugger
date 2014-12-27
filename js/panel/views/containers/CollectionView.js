@@ -88,7 +88,7 @@ function(Backbone, _, $, View, Handlebars, SearchFilter, setImmediate) {
             setImmediate(_.bind(function() { // prevents UI blocking
                 var newCollectionItemView = this.addItem(collectionItem, collectionItemIndex);
                 // retrigger the child view events, so to have a global proxy
-                // (used to react to child events, like hide/show, for example to load more components if needed)
+                // (used to react to child events, like hide/show, for example to read more components if needed)
                 this.listenTo(newCollectionItemView, "all", _.bind(function(eventName) {
                     this.trigger("child:"+eventName, newCollectionItemView);
                 }, this));

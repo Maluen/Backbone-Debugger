@@ -31,7 +31,7 @@ function(Backbone, _, backboneAgentClient, Collection, AppComponentAction, setIm
             return -action.index;
         },
 
-        loadModelsIndexes: function(onComplete) {
+        readModelsIndexes: function(onComplete) {
             // get the indexes of the app component actions
             backboneAgentClient.execFunction(function(start, length, componentCategory, componentIndex) {
                 var appComponentInfo = this.appComponentsInfos[componentCategory].at(componentIndex);
@@ -45,7 +45,7 @@ function(Backbone, _, backboneAgentClient, Collection, AppComponentAction, setIm
                     appComponentActionsIndexes.push(i);
                 }
                 return appComponentActionsIndexes;
-            }, [this.loadStartIndex, this.loadLength, this.component.category, this.component.index], onComplete);
+            }, [this.readStartIndex, this.readLength, this.component.category, this.component.index], onComplete);
         },
 
         startRealTimeUpdateLogic: function(onNew) {

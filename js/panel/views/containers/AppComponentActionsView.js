@@ -10,7 +10,7 @@ function(Backbone, _, $, Handlebars, CollectionView, AppComponentActionView, tem
         searchFormElSelector: ".searchForm",
         searchTermElSelector: ".searchTerm",
 
-        // true if we can assume that the view is visible (for what concerns the loadMoreIfNeeded)
+        // true if we can assume that the view is visible (for what concerns the readMoreIfNeeded)
         isVisible: false,
 
         initialize: function(options) {
@@ -25,7 +25,7 @@ function(Backbone, _, $, Handlebars, CollectionView, AppComponentActionView, tem
                 this.listenTo(this.appComponentView, "close hide", _.bind(this.notifyHidden, this));
                 this.checkVisibility();
 
-                this.loadMoreIfNeeded();
+                this.readMoreIfNeeded();
 
                 if (onStarted) onStarted();
             }, this));
@@ -40,19 +40,19 @@ function(Backbone, _, $, Handlebars, CollectionView, AppComponentActionView, tem
 
         notifyVisible: function() {
             this.isVisible = true;
-            this.loadMoreIfNeeded();
+            this.readMoreIfNeeded();
         },
 
         notifyHidden: function() {
             this.isVisible = false;
         },
 
-        loadMoreIfNeeded: function() {
+        readMoreIfNeeded: function() {
             if (!this.started) return; // prevent premature call
 
             setImmediate(_.bind(function() { // wait end of pending browser renders (so to work on updated state)
                 if (this.isVisible) {
-                    this.collection.loadMore(_.bind(this.loadMoreIfNeeded, this));
+                    this.collection.readMore(_.bind(this.readMoreIfNeeded, this));
                 }
             }, this));
         },

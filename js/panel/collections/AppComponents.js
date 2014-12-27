@@ -16,7 +16,7 @@ function(Backbone, _, backboneAgentClient, Collection, AppComponentActions) {
             return model;
         },
 
-        loadModelsIndexes: function(onComplete) {
+        readModelsIndexes: function(onComplete) {
             // gets the indexes of the app components
             backboneAgentClient.execFunction(function(start, length, componentCategory) {
                 var appComponentsInfo = this.appComponentsInfos[componentCategory];
@@ -29,7 +29,7 @@ function(Backbone, _, backboneAgentClient, Collection, AppComponentActions) {
                     appComponentIndexes.push(i);
                 }
                 return appComponentIndexes;
-            }, [this.loadStartIndex, this.loadLength, this.componentCategory], onComplete);
+            }, [this.readStartIndex, this.readLength, this.componentCategory], onComplete);
         },
 
         startRealTimeUpdateLogic: function(onNew) {
