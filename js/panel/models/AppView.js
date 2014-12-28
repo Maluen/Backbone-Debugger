@@ -22,14 +22,13 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
         highlightElement: function() {
             backboneAgentClient.execFunction(function(componentIndex) {
                 var appViewInfo = this.appComponentsInfos['View'].at(componentIndex);
-                appViewInfo.component.$el.css('box-shadow', '0px 0px 20px #f00');
+                this.appComponentControllers['View'].highlight(appViewInfo.component);
             }, [this.index]);
         },
 
         unHighlightElement: function() {
             backboneAgentClient.execFunction(function(componentIndex) {
-                var appViewInfo = this.appComponentsInfos['View'].at(componentIndex);
-                appViewInfo.component.$el.css('box-shadow', '');
+                this.appComponentControllers['View'].unhighlight();
             }, [this.index]);
         }
 

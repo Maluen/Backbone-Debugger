@@ -8,6 +8,9 @@ Modules.set('controllers.appViewController', function() {
 
     var appViewController = new (AppComponentController.extend({ // singleton
 
+        // the currently highlighted DOM element
+        highlightedElement: undefined,
+
         handle: function(view) {
             // on new instance
 
@@ -151,6 +154,22 @@ Modules.set('controllers.appViewController', function() {
 
                 return result;
             }});
+        },
+
+        // highlight the dom element associated with the view
+        highlight: function(view) {
+            this.unhighlight();
+
+            view.$el.css('box-shadow', '0px 0px 20px #f00');
+            this.highlightedElement = view.$el;
+        },
+
+        // remove the highlight
+        unhighlight: function() {
+            if (this.highlightedElement) {
+                this.highlightedElement.css('box-shadow', '');
+                this.highlightedElement = undefined;
+            }
         }
 
     }))();
