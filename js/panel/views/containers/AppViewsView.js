@@ -9,7 +9,7 @@ function(Backbone, _, $, AppComponentsView, appViews, AppViewView) {
 
         events: function() {
             return $.extend({
-                "mouseenter .appComponentList>li": "highlightViewElement",
+                "mouseover .appComponentList>li": "highlightViewElement",
                 "mouseleave .appComponentList>li": "unhighlightViewElements"
             }, AppComponentsView.prototype.events.apply(this, arguments));
         },
