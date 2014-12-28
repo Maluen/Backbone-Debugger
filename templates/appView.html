@@ -1,6 +1,7 @@
 <a class="appComponentToggle btn btn-link {{#compare component_status 'Removed'}}removed{{/compare}}"
    data-toggle="collapse" 
-   data-target="#view{{index}}">
+   data-target="#view{{index}}"
+   data-component-index="{{index}}">
    <span>View {{index}} {{#unlessNull component_name}} : {{component_name}} {{/unlessNull}}</span>
 </a>
 
