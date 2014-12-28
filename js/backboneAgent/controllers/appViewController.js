@@ -8,8 +8,9 @@ Modules.set('controllers.appViewController', function() {
 
     var appViewController = new (AppComponentController.extend({ // singleton
 
-        // the currently highlighted DOM element
-        highlightedElement: undefined,
+        // the DOM element that is placed hover another element to highlight it,
+        // is created just-in-time when needed.
+        highlightMask: undefined,
 
         handle: function(view) {
             // on new instance
@@ -169,7 +170,7 @@ Modules.set('controllers.appViewController', function() {
             highlightMask.style.pointerEvents = 'none';
             highlightMask.style.backgroundColor = 'rgba(55, 161, 243, 0.48)';
             highlightMask.style.webkitFilter = 'grayscale(20%)';
-            
+
             // set position and size (top, right, bottom, left, width, height)
             var bounds = element.getBoundingClientRect();
             u.each(bounds, function(boundValue, boundName) {
