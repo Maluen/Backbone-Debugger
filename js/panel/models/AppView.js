@@ -16,21 +16,21 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                 var appViewInfo = this.appComponentsInfos['View'].at(componentIndex);
                 var appViewEl = appViewInfo.component.el;
                 console.log(appViewEl);
-            }, [this.index], function(){});
+            }, [this.index]);
         },
 
         highlightElement: function() {
             backboneAgentClient.execFunction(function(componentIndex) {
                 var appViewInfo = this.appComponentsInfos['View'].at(componentIndex);
                 appViewInfo.component.$el.css('box-shadow', '0px 0px 20px #f00');
-            }, [this.index], function(){});
+            }, [this.index]);
         },
 
         unHighlightElement: function() {
             backboneAgentClient.execFunction(function(componentIndex) {
                 var appViewInfo = this.appComponentsInfos['View'].at(componentIndex);
                 appViewInfo.component.$el.css('box-shadow', '');
-            }, [this.index], function(){});
+            }, [this.index]);
         }
 
     });

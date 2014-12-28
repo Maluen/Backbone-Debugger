@@ -14,14 +14,16 @@ function(Backbone, _, $, AppComponentsView, appViews, AppViewView) {
             }, AppComponentsView.prototype.events.apply(this, arguments));
         },
 
-        highlightDOMElement: function(e) {
-          var componentIndex = Number.parseInt(e.target.dataset.componentIndex);
-          this.getComponentView(componentIndex).highlightDOMElement();
+        highlightDOMElement: function(event) {
+            var target = $(event.target);
+            var componentIndex = parseInt(target.attr("data-component-index"), 10);
+            this.getComponentView(componentIndex).highlightDOMElement();
         },
 
-        unHighlightDOMElementUnlessOpened: function(e) {
-          var componentIndex = Number.parseInt(e.target.dataset.componentIndex);
-          this.getComponentView(componentIndex).unHighlightDOMElementUnlessOpened();
+        unHighlightDOMElementUnlessOpened: function(event) {
+            var target = $(event.target);
+            var componentIndex = parseInt(target.attr("data-component-index"), 10);
+            this.getComponentView(componentIndex).unHighlightDOMElementUnlessOpened();
         }
 
     });
