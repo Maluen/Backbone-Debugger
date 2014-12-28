@@ -157,17 +157,34 @@ Modules.set('controllers.appViewController', function() {
         },
 
         // highlight the dom element associated with the view
-        highlight: function(view) {
-            this.unhighlight();
+        highlightViewElement: function(view) {
+            this.unhighlightViewElements();
 
-            view.$el.css('box-shadow', '0px 0px 20px #f00');
-            this.highlightedElement = view.$el;
+            var element = view.$el ? view.$el[0] : view.el;
+            if (!element) return;
+
+            var highlightMask = document.createElement('div');
+            highlightMask.style.position = 'absolute';
+            highlightMask.style.zIndex = '100000000000';
+            highlightMask.style.pointerEvents = 'none';
+            highlightMask.style.backgroundColor = 'rgba(55, 161, 243, 0.48)';
+            highlightMask.style.webkitFilter = 'grayscale(20%)';
+            
+            // set position and size (top, right, bottom, left, width, height)
+            var bounds = element.getBoundingClientRect();
+            u.each(bounds, function(boundValue, boundName) {
+                highlightMask.style[boundName] = boundValue+'px';
+            }, this);
+
+            document.body.appendChild(highlightMask);
+
+            this.highlightMask = highlightMask;
         },
 
-        unhighlight: function() {
-            if (this.highlightedElement) {
-                this.highlightedElement.css('box-shadow', '');
-                this.highlightedElement = undefined;
+        unhighlightViewElements: function() {
+            if (this.highlightMask) {
+                this.highlightMask.parentNode.removeChild(this.highlightMask);
+                this.highlightMask = undefined;
             }
         }
 

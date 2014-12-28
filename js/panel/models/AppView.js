@@ -22,7 +22,7 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
         highlightElement: function() {
             backboneAgentClient.execFunction(function(componentIndex) {
                 var appViewInfo = this.appComponentsInfos['View'].at(componentIndex);
-                this.appComponentControllers['View'].highlight(appViewInfo.component);
+                this.appComponentControllers['View'].highlightViewElement(appViewInfo.component);
             }, [this.index]);
         }
 

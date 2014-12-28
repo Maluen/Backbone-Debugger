@@ -10,7 +10,7 @@ function(Backbone, _, AppComponents, AppView, backboneAgentClient) {
 
         unhighlightViewElements: function() {
         	backboneAgentClient.execFunction(function() {
-        	    this.appComponentControllers['View'].unhighlight();
+        	    this.appComponentControllers['View'].unhighlightViewElements();
         	});
         }
 
