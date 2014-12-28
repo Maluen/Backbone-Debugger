@@ -164,7 +164,6 @@ Modules.set('controllers.appViewController', function() {
             this.highlightedElement = view.$el;
         },
 
-        // remove the highlight
         unhighlight: function() {
             if (this.highlightedElement) {
                 this.highlightedElement.css('box-shadow', '');

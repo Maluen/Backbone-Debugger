@@ -24,12 +24,6 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
                 var appViewInfo = this.appComponentsInfos['View'].at(componentIndex);
                 this.appComponentControllers['View'].highlight(appViewInfo.component);
             }, [this.index]);
-        },
-
-        unHighlightElement: function() {
-            backboneAgentClient.execFunction(function(componentIndex) {
-                this.appComponentControllers['View'].unhighlight();
-            }, [this.index]);
         }
 
     });

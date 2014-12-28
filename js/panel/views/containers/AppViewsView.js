@@ -9,21 +9,19 @@ function(Backbone, _, $, AppComponentsView, appViews, AppViewView) {
 
         events: function() {
             return $.extend({
-                "mouseenter .appComponentToggle": "highlightDOMElement",
-                "mouseleave .appComponentToggle": "unHighlightDOMElementUnlessOpened"
+                "mouseenter .appComponentList>li": "highlightViewElement",
+                "mouseleave .appComponentList>li": "unhighlightViewElements"
             }, AppComponentsView.prototype.events.apply(this, arguments));
         },
 
-        highlightDOMElement: function(event) {
-            var target = $(event.target);
-            var componentIndex = parseInt(target.attr("data-component-index"), 10);
-            this.getComponentView(componentIndex).highlightDOMElement();
+        highlightViewElement: function(event) {
+            var appComponentToggle = $(event.currentTarget).find('.appComponentToggle');
+            var componentIndex = parseInt(appComponentToggle.attr("data-component-index"), 10);
+            this.getComponentView(componentIndex).highlightElement();
         },
 
-        unHighlightDOMElementUnlessOpened: function(event) {
-            var target = $(event.target);
-            var componentIndex = parseInt(target.attr("data-component-index"), 10);
-            this.getComponentView(componentIndex).unHighlightDOMElementUnlessOpened();
+        unhighlightViewElements: function() {
+            this.collection.unhighlightViewElements();
         }
 
     });
