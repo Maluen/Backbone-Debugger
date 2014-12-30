@@ -9,7 +9,7 @@ function(Backbone, _, $, View, Handlebars, template) {
         tagName: "tr",
 
         initialize: function(options) {
-            _.bindAll(this);
+            View.prototype.initialize.apply(this, arguments);
 
             this.listenTo(this.model, "change", this.render);
 

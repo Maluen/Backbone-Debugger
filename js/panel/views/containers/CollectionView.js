@@ -34,7 +34,7 @@ function(Backbone, _, $, View, Handlebars, SearchFilter, setImmediate) {
         },
 
         initialize: function(options) {
-            _.bindAll(this);
+            View.prototype.initialize.apply(this, arguments);
 
             // array con una vista per ogni item
             this.collectionItemViews = [];

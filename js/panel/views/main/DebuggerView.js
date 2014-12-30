@@ -20,7 +20,7 @@ function(Backbone, _, $, View, Handlebars, template,
         tabViews: {}, // hash <tabId, tabView> where tabView is of type tabTypes[tabId]
 
         initialize: function(options) {
-            _.bindAll(this);
+            View.prototype.initialize.apply(this, arguments);
 
             this.render();
 

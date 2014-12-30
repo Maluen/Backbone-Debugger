@@ -7,6 +7,14 @@ function(Backbone, _, $, AppComponentsView, appViews, AppViewView) {
         collection: appViews,
         CollectionItemView: AppViewView,
 
+        initialize: function() {
+            AppComponentsView.prototype.initialize.apply(this, arguments);
+
+            // unhighlight when mouse goes outside the panel window
+            // TODO: improve this if possible, the mouse leave is not always detected.
+            this.listenToDOM($(document), "mouseleave", this.unhighlightViewElements);
+        },
+
         events: function() {
             return $.extend({
                 "mouseover .appComponentList>li": "highlightViewElement",

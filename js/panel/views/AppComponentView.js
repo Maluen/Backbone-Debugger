@@ -11,7 +11,7 @@ function(Backbone, _, $, View, AppComponentActionsView) {
         appComponentActionsView: undefined, // AppComponentActionsView for the component actions
 
         initialize: function(options) {
-            _.bindAll(this);
+            View.prototype.initialize.apply(this, arguments);
 
             // create sub-view for the component actions
             this.appComponentActionsView = new AppComponentActionsView({
