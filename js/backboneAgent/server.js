@@ -2,6 +2,7 @@ Modules.set('server', function() {
     // imports
     var Component = Modules.get('Component');
     var u = Modules.get('utils');
+    var port = Modules.get('port');
     var DedicatedServer = Modules.get('DedicatedServer');
     var backboneController = Modules.get('controllers.backboneController');
     var appComponentsInfos = Modules.get('collections.appComponentsInfos');
@@ -16,24 +17,12 @@ Modules.set('server', function() {
         start: function() {
             // setup incoming messages listening and handling
 
-            window.addEventListener('message', u.bind(function(event) {
-                // Only accept messages from same frame
-                if (event.source != window) return;
-
-                var message = event.data;
-
-                // Only accept our messages
-                if (!u.isObject(message) || message.target != 'extension') return;
-
-                this.trigger(message.name, message);
-            }, this));
-
-            this.listenTo(this, 'client:connect', function() {
+            this.listenTo(port, 'client:connect', function() {
                 var clientIndex = this.connect();
-                this.sendMessage('connected', {clientIndex: clientIndex});
+                port.sendMessage('connected', {clientIndex: clientIndex});
             });
 
-            this.listenTo(this, 'client:disconnect', function(message) {
+            this.listenTo(port, 'client:disconnect', function(message) {
                 // disconnect client
                 var details = message.data;
                 this.disconnect(details.clientIndex);
@@ -43,14 +32,14 @@ Modules.set('server', function() {
             // almost OBSOLETE
 
             this.listenTo(backboneController, 'backboneDetected', function(Backbone) {
-                this.sendMessage('backboneDetected');
+                port.sendMessage('backboneDetected');
             });
 
             u.each(appComponentsInfos, u.bind(function(appComponentsInfo) {
 
                 // messages about new app components
                 this.listenTo(appComponentsInfo, 'add', function(appComponent) {
-                    this.sendMessage(appComponentsInfo.category+':new', { 
+                    port.sendMessage(appComponentsInfo.category+':new', { 
                         componentIndex: appComponent.index
                     });
                     debug.log('New ' + appComponentsInfo.category, appComponent);
@@ -59,7 +48,7 @@ Modules.set('server', function() {
                 // messages about new app component actions
                 this.listenTo(appComponentsInfo, 'actions:add', function(appComponentAction) {
                     var appComponentIndex = appComponentAction.appComponentInfo.get('index');
-                    this.sendMessage(appComponentsInfo.category+':'+appComponentIndex+':action', {
+                    port.sendMessage(appComponentsInfo.category+':'+appComponentIndex+':action', {
                         componentActionIndex: appComponentAction.index
                     });
                     //debug.log('New action: ', appComponentAction);
@@ -68,7 +57,7 @@ Modules.set('server', function() {
                 // messages about app component attribute changes
                 this.listenTo(appComponentsInfo, 'change', function(appComponentInfo) {
                     u.each(appComponentInfo.changed, function(attributeValue, attributeName) {
-                        this.sendMessage(appComponentsInfo.category+':'+appComponentInfo.index+':change', {
+                        port.sendMessage(appComponentsInfo.category+':'+appComponentInfo.index+':change', {
                             attributeName: attributeName
                         });
                         // (we send only the attribute name for serialization and performance reasons)
@@ -89,7 +78,7 @@ Modules.set('server', function() {
             // transform the dedicated server notifications into outgoing messages
             this.listenTo(dedicatedServer, 'notify', function(notifyName, notifyData) {
                 notifyName = 'dedicatedServer:'+index+':' + notifyName;
-                this.sendMessage(notifyName, notifyData);
+                port.sendMessage(notifyName, notifyData);
             });
 
             return index;
@@ -106,19 +95,6 @@ Modules.set('server', function() {
                 dedicatedServer.remove();
                 delete this.dedicatedServers[index];
             }
-        },
-
-        // Note: messageName is prefixed by "backboneAgent:" and can't contain spaces
-        // (because it's transformed in a Backbone event in the Panel)
-        sendMessage: function(messageName, messageData) {
-            messageName = 'backboneAgent:'+messageName;
-
-            window.postMessage({
-                target: 'page',
-                timestamp: new Date().getTime(),
-                name: messageName,
-                data: messageData
-            }, '*');
         }
 
     }))();

@@ -2,6 +2,7 @@ Modules.set('controllers.appViewController', function() {
     // imports
     var AppComponentController = Modules.get('controllers.AppComponentController');
     var u = Modules.get('utils');
+    var port = Modules.get('port');
     var appViewsInfo = Modules.get('collections.appViewsInfo');
     var appModelsInfo = Modules.get('collections.appModelsInfo');
     var appCollectionsInfo = Modules.get('collections.appCollectionsInfo');
@@ -11,6 +12,10 @@ Modules.set('controllers.appViewController', function() {
         // the DOM element that is placed hover another element to highlight it,
         // is created just-in-time when needed.
         highlightMask: undefined,
+
+        initialize: function() {
+            this.setupHighlightMask();
+        },
 
         handle: function(view) {
             // on new instance
@@ -155,6 +160,11 @@ Modules.set('controllers.appViewController', function() {
 
                 return result;
             }});
+        },
+
+        setupHighlightMask: function() {
+            // unhighlight when the user closes the devtools, etc.
+            this.listenTo(port, 'client:disconnect', this.unhighlightViewElements);
         },
 
         // highlight the dom element associated with the view

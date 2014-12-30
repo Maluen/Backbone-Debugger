@@ -1,0 +1,42 @@
+Modules.set('port', function() {
+	// imports
+	var Component = Modules.get('Component');
+	var u = Modules.get('utils');
+
+	var port = new (Component.extend({ // singleton
+
+		initialize: function() {
+			this.startListening();
+		},
+
+		startListening: function() {
+			window.addEventListener('message', u.bind(function(event) {
+			    // Only accept messages from same frame
+			    if (event.source != window) return;
+
+			    var message = event.data;
+
+			    // Only accept our messages
+			    if (!u.isObject(message) || message.target != 'extension') return;
+
+			    this.trigger(message.name, message);
+			}, this));
+		},
+
+		// Note: messageName is prefixed by "backboneAgent:" and can't contain spaces
+		// (because might be transformed in a Backbone event in the Panel)
+		sendMessage: function(messageName, messageData) {
+		    messageName = 'backboneAgent:'+messageName;
+
+		    window.postMessage({
+		        target: 'page',
+		        timestamp: new Date().getTime(),
+		        name: messageName,
+		        data: messageData
+		    }, '*');
+		}
+
+	}))();
+
+	return port;
+});
