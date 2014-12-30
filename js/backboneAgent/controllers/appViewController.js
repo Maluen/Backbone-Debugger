@@ -9,12 +9,11 @@ Modules.set('controllers.appViewController', function() {
 
     var appViewController = new (AppComponentController.extend({ // singleton
 
-        // the DOM element that is placed hover another element to highlight it,
-        // is created just-in-time when needed.
+        // the DOM element that is placed hover another element to highlight it
         highlightMask: undefined,
 
         initialize: function() {
-            this.setupHighlightMask();
+            this.setupHighlight();
         },
 
         handle: function(view) {
@@ -162,7 +161,14 @@ Modules.set('controllers.appViewController', function() {
             }});
         },
 
-        setupHighlightMask: function() {
+        setupHighlight: function() {
+            this.highlightMask = document.createElement('div');
+            this.highlightMask.style.position = 'absolute';
+            this.highlightMask.style.zIndex = '100000000000';
+            this.highlightMask.style.pointerEvents = 'none';
+            this.highlightMask.style.backgroundColor = 'rgba(55, 161, 243, 0.48)';
+            this.highlightMask.style.webkitFilter = 'grayscale(20%)';
+
             // unhighlight when the user closes the devtools, etc.
             this.listenTo(port, 'client:disconnect', this.unhighlightViewElements);
         },
@@ -174,28 +180,25 @@ Modules.set('controllers.appViewController', function() {
             var element = view.$el ? view.$el[0] : view.el;
             if (!element) return;
 
-            var highlightMask = document.createElement('div');
-            highlightMask.style.position = 'absolute';
-            highlightMask.style.zIndex = '100000000000';
-            highlightMask.style.pointerEvents = 'none';
-            highlightMask.style.backgroundColor = 'rgba(55, 161, 243, 0.48)';
-            highlightMask.style.webkitFilter = 'grayscale(20%)';
-
             // set position and size (top, right, bottom, left, width, height)
             var bounds = element.getBoundingClientRect();
             u.each(bounds, function(boundValue, boundName) {
-                highlightMask.style[boundName] = boundValue+'px';
+                this.highlightMask.style[boundName] = boundValue+'px';
             }, this);
 
-            document.body.appendChild(highlightMask);
+            if (!this.highlightMask.parentNode) {
+                // is not in the dom yet
+                document.body.appendChild(this.highlightMask);
+            }
 
-            this.highlightMask = highlightMask;
+            // make visible
+            this.highlightMask.style.display = '';
         },
 
         unhighlightViewElements: function() {
-            if (this.highlightMask) {
-                this.highlightMask.parentNode.removeChild(this.highlightMask);
-                this.highlightMask = undefined;
+            // hide if visible
+            if (this.highlightMask.style.display != 'none') {
+                this.highlightMask.style.display = 'none';
             }
         }
 
