@@ -11,9 +11,9 @@ function(Backbone, _, $, View, Handlebars, template) {
         waitingText: undefined,
 
         initialize: function(options) {
-            options = options || {};
+            View.prototype.initialize.apply(this, arguments);
 
-            _.bindAll(this);
+            options = options || {};
 
             this.setWaitingText(options.waitingText || '');
             // (first render provided by above function)

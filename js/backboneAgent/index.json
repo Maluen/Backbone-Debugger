@@ -8,6 +8,8 @@
 
         "Component.js",
 
+        "port.js",
+
         "hidden.js",
 
         "models/Model.js",

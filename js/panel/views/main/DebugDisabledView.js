@@ -8,7 +8,7 @@ function(Backbone, _, $, View, Handlebars, template) {
         template: Handlebars.compile(template),
 
         initialize: function(options) {
-            _.bindAll(this);
+            View.prototype.initialize.apply(this, arguments);
 
             this.render();
         },

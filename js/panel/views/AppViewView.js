@@ -14,6 +14,10 @@ function(Backbone, _, $, AppComponentView, Handlebars, template) {
 
         printElement: function() {
             this.model.printElement();
+        },
+
+        highlightElement: function() {
+            this.model.highlightElement();
         }
 
     });

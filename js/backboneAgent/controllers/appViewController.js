@@ -2,11 +2,19 @@ Modules.set('controllers.appViewController', function() {
     // imports
     var AppComponentController = Modules.get('controllers.AppComponentController');
     var u = Modules.get('utils');
+    var port = Modules.get('port');
     var appViewsInfo = Modules.get('collections.appViewsInfo');
     var appModelsInfo = Modules.get('collections.appModelsInfo');
     var appCollectionsInfo = Modules.get('collections.appCollectionsInfo');
 
     var appViewController = new (AppComponentController.extend({ // singleton
+
+        // the DOM element that is placed hover another element to highlight it
+        highlightMask: undefined,
+
+        initialize: function() {
+            this.setupHighlight();
+        },
 
         handle: function(view) {
             // on new instance
@@ -151,6 +159,47 @@ Modules.set('controllers.appViewController', function() {
 
                 return result;
             }});
+        },
+
+        setupHighlight: function() {
+            this.highlightMask = document.createElement('div');
+            this.highlightMask.style.position = 'absolute';
+            this.highlightMask.style.zIndex = '100000000000';
+            this.highlightMask.style.pointerEvents = 'none';
+            this.highlightMask.style.backgroundColor = 'rgba(55, 161, 243, 0.48)';
+            this.highlightMask.style.webkitFilter = 'grayscale(20%)';
+
+            // unhighlight when the user closes the devtools, etc.
+            this.listenTo(port, 'client:disconnect', this.unhighlightViewElements);
+        },
+
+        // highlight the dom element associated with the view
+        highlightViewElement: function(view) {
+            this.unhighlightViewElements();
+
+            var element = view.$el ? view.$el[0] : view.el;
+            if (!element) return;
+
+            // set position and size (top, right, bottom, left, width, height)
+            var bounds = element.getBoundingClientRect();
+            u.each(bounds, function(boundValue, boundName) {
+                this.highlightMask.style[boundName] = boundValue+'px';
+            }, this);
+
+            if (!this.highlightMask.parentNode) {
+                // is not in the dom yet
+                document.body.appendChild(this.highlightMask);
+            }
+
+            // make visible
+            this.highlightMask.style.display = '';
+        },
+
+        unhighlightViewElements: function() {
+            // hide if visible
+            if (this.highlightMask.style.display != 'none') {
+                this.highlightMask.style.display = 'none';
+            }
         }
 
     }))();
