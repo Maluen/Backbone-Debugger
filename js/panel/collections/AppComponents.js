@@ -14,35 +14,8 @@ function(Backbone, _, backboneAgentClient, Collection, AppComponentActions) {
             var model = new this.model();
             model.index = componentIndex;
             return model;
-        },
-
-        readModelsIndexes: function(onComplete) {
-            // gets the indexes of the app components
-            backboneAgentClient.execFunction(function(start, length, componentCategory) {
-                var appComponentsInfo = this.appComponentsInfos[componentCategory];
-
-                // get length element or all if there are less
-                var appComponentIndexes = [];
-                var left = appComponentsInfo.length - start;
-                var end = left < length ? appComponentsInfo.length : start+length;
-                for (var i=start; i<end; i++) {
-                    appComponentIndexes.push(i);
-                }
-                return appComponentIndexes;
-            }, [this.readStartIndex, this.readLength, this.componentCategory], onComplete);
-        },
-
-        startRealTimeUpdateLogic: function(onNew) {
-            var messageName = "backboneAgent:"+this.componentCategory+":new";
-            
-            this.realTimeUpdateListener = [backboneAgentClient, messageName,
-            _.bind(function(message) {
-                var changeInfo = message.data;
-                onNew(changeInfo.componentIndex, message.timestamp);
-            }, this)];
-
-            this.listenTo.apply(this, this.realTimeUpdateListener);
         }
+
     });
     return AppComponents;
 });

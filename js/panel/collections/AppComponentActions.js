@@ -29,36 +29,6 @@ function(Backbone, _, backboneAgentClient, Collection, AppComponentAction, setIm
         // Define the sorting logic: reverse order
         comparator: function(action) {
             return -action.index;
-        },
-
-        readModelsIndexes: function(onComplete) {
-            // get the indexes of the app component actions
-            backboneAgentClient.execFunction(function(start, length, componentCategory, componentIndex) {
-                var appComponentInfo = this.appComponentsInfos[componentCategory].at(componentIndex);
-                var appComponentActions = appComponentInfo.actions;
-
-                // get length element or all if there are less
-                var appComponentActionsIndexes = [];
-                var left = appComponentActions.length - start;
-                var end = left < length ? appComponentActions.length : start+length;
-                for (var i=start; i<end; i++) {
-                    appComponentActionsIndexes.push(i);
-                }
-                return appComponentActionsIndexes;
-            }, [this.readStartIndex, this.readLength, this.component.category, this.component.index], onComplete);
-        },
-
-        startRealTimeUpdateLogic: function(onNew) {
-            var messageName = "backboneAgent:"+this.component.category+":"
-                            + this.component.index+":action";
-
-            this.realTimeUpdateListener = [backboneAgentClient, messageName, 
-            _.bind(function(message) {
-                var changeInfo = message.data;
-                onNew(changeInfo.componentActionIndex, message.timestamp);
-            }, this)];
-
-            this.listenTo.apply(this, this.realTimeUpdateListener);
         }
 
     });
