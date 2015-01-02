@@ -19,6 +19,16 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
             }, [this.index]);
         },
 
+        inspectElement: function() {
+            backboneAgentClient.execFunction(function(componentIndex) {
+                var appViewInfo = this.appComponentsInfos['View'].at(componentIndex);
+
+                var appView = appViewInfo.component;
+                var element = appView.$el ? appView.$el[0] : appView.el;
+                inspect(element);
+            }, [this.index]);
+        },
+
         highlightElement: function() {
             backboneAgentClient.execFunction(function(componentIndex) {
                 var appViewInfo = this.appComponentsInfos['View'].at(componentIndex);
