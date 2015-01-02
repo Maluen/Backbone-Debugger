@@ -182,9 +182,10 @@ Modules.set('controllers.appViewController', function() {
 
             // set position and size (top, right, bottom, left, width, height)
             var bounds = element.getBoundingClientRect();
-            u.each(bounds, function(boundValue, boundName) {
-                this.highlightMask.style[boundName] = boundValue+'px';
-            }, this);
+            this.highlightMask.style.left = (bounds.left + window.scrollX)+'px';
+            this.highlightMask.style.top = (bounds.top + window.scrollY)+'px';
+            this.highlightMask.style.width = bounds.width+'px';
+            this.highlightMask.style.height = bounds.height+'px';
 
             if (!this.highlightMask.parentNode) {
                 // is not in the dom yet
