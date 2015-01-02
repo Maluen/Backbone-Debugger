@@ -180,7 +180,7 @@ Modules.set('controllers.appViewController', function() {
             var element = view.$el ? view.$el[0] : view.el;
             if (!element) return;
 
-            // set position and size (top, right, bottom, left, width, height)
+            // set position and size
             var bounds = element.getBoundingClientRect();
             this.highlightMask.style.left = (bounds.left + window.scrollX)+'px';
             this.highlightMask.style.top = (bounds.top + window.scrollY)+'px';
@@ -188,7 +188,7 @@ Modules.set('controllers.appViewController', function() {
             this.highlightMask.style.height = bounds.height+'px';
 
             if (!this.highlightMask.parentNode) {
-                // is not in the dom yet
+                // is not in the DOM yet
                 document.body.appendChild(this.highlightMask);
             }
 
