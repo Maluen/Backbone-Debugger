@@ -44,6 +44,25 @@ function(Backbone, _, backboneAgentClient) {
             }, this));
         },
 
+        // setup the remote reader event handlers
+        startRealTimeUpdate: function() {
+
+            var clientIndex = backboneAgentClient.clientIndex;
+            var prefix = 'backboneAgent:dedicatedServer:'+clientIndex
+                       + ':reader:'+this.readerIndex+':';
+
+            var events = typeof this.readerEvents == 'function' ?
+                         this.readerEvents() : this.readerEvents;
+
+            _.each(events || {}, function(eventHandler, eventName) {
+                eventHandler = typeof eventHandler == 'string' ?
+                                this[eventHandler] : eventHandler;
+
+                this.listenTo(backboneAgentClient, prefix+eventName, 
+                            _.bind(eventHandler, this));
+            }, this);
+        },
+
         // read models from the remote collection by using the associated Reader,
         // calls onComplete at the end of the operation.
         readMore: function(onComplete) {
@@ -58,18 +77,9 @@ function(Backbone, _, backboneAgentClient) {
             }, [backboneAgentClient.clientIndex, this.readerIndex, this.readLength]);
         },
 
-        // aggiorna la collezione in tempo reale a seconda dei report inviati dall'agent
-        startRealTimeUpdate: function() {
-
-            var clientIndex = backboneAgentClient.clientIndex;
-            var prefix = 'backboneAgent:dedicatedServer:'+clientIndex
-                       + ':reader:'+this.readerIndex+':';
-
-            this.listenTo(backboneAgentClient, prefix+'readMoreFinished', 
-                        _.bind(this.handleReadMoreFinished, this));
-
-            this.listenTo(backboneAgentClient, prefix+'visibilityChange', 
-                        _.bind(this.handleVisibilityChange, this));
+        readerEvents: {
+            'readMoreFinished': 'handleReadMoreFinished',
+            'visibilityChange': 'handleVisibilityChange'
         },
 
         handleReadMoreFinished: function() {
@@ -77,8 +87,8 @@ function(Backbone, _, backboneAgentClient) {
             if (this.readMoreOnComplete) this.readMoreOnComplete();
         },
 
-        handleVisibilityChange: function(message) {
-            var changeInfo = message.data;
+        handleVisibilityChange: function(event) {
+            var changeInfo = event.data;
 
             // TODO: for now we only have adds (no remote filters)
             this.onNewModel(changeInfo.modelIndex);
