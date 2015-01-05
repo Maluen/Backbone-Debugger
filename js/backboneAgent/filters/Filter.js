@@ -4,6 +4,10 @@ Modules.set('filters.Filter', function() {
 
     var Filter = Component.extend({
 
+        initialize: function(options) {
+            this.options = options || {};
+        },
+
         // function(model, attributeName)
         // return boolean
         match: undefined,

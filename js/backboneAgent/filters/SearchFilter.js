@@ -5,10 +5,14 @@ Modules.set('filters.SearchFilter', function() {
 
     var SearchFilter = Filter.extend({
 
-        // Search term is a space separated list of "AND" search terms, e.g. "title foo"
-        setSearchTerm: function(searchTerm) {
-            // save the normalized search term
-            this.searchTerm = u.simplify(searchTerm);
+        initialize: function() {
+            this.__super.initialize.apply(this, arguments);
+
+            this.searchTerm = this.options.searchTerm || "";
+            this.caseSensitive = this.options.caseSensitive || false;
+
+            // normalize the search term
+            this.searchTerm = u.simplify(this.searchTerm);
             if (u.startsWith(this.searchTerm, '"') && u.endsWith(this.searchTerm, '"')) {
                 this.strictSearch = true;
                 // remove quotes
@@ -16,12 +20,15 @@ Modules.set('filters.SearchFilter', function() {
             } else {
                 this.strictSearch = false;
             }
-            // save the list with the search terms
+
+            // extract search terms
             this.searchTermList = this.searchTerm.split(" ");
-            // case insensitive search (turns terms to uppercase)
-            this.caseSensitive = false;
-            for (var i=0, l=this.searchTermList.length; i<l; i++) {
-                this.searchTermList[i] = this.searchTermList[i].toUpperCase();
+
+            if (!this.caseSensitive) {
+                // case insensitive search (turns terms to uppercase)
+                for (var i=0, l=this.searchTermList.length; i<l; i++) {
+                    this.searchTermList[i] = this.searchTermList[i].toUpperCase();
+                }
             }
         },
 
@@ -43,9 +50,11 @@ Modules.set('filters.SearchFilter', function() {
                 for (var i=0, l=object.length; i<l; i++)
                     if (this.searchOnObjectProperty(object, i, terms)) return true;
             } else {
-                for (property in object)
-                    if (object.hasOwnProperty(property))
+                for (var property in object) {
+                    if (object.hasOwnProperty(property)) {
                         if (this.searchOnObjectProperty(object, property, terms)) return true;
+                    }
+                }
             }
             return false;
         },
