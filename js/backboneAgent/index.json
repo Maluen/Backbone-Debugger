@@ -24,6 +24,7 @@
 
         "filters/Filter.js",
         "filters/SearchFilter.js",
+        "filters/filters.js",
 
         "controllers/backboneController.js",
         "controllers/backboneComponentController.js",
