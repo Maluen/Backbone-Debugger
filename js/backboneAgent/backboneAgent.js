@@ -51,6 +51,7 @@ Modules.set('backboneAgent', function() {
         server: server,
         database: Modules.get('database'),
         Reader: Modules.get('Reader'),
+        filters: Modules.get('filters.filters'),
 
         appComponentControllers: appComponentControllers
 
