@@ -1,4 +1,6 @@
-var frameURL = window.location.href;
+// as per chrome, frameURL is the original frame url without eventual hash string
+var frameURL = window.location.origin + window.location.pathname + window.location.search;
+
 var isTopFrame = (window.parent == window);
 
 // Receives messages from the inspected page frame and redirects them to the background,
