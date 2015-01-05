@@ -48,6 +48,7 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
             function(result, isException) { // on executed
                 if (isException) {
                     var error = _.isObject(isException) ? isException.value : result;
+                    console.log({error: error, evalCode: evalCode, args: args});
                     throw error;
                 } else {
                     if (onExecuted) onExecuted(result);
