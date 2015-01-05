@@ -51,6 +51,9 @@ Modules.set('utils', function() {
                     }
                 }
             }
+
+            // return the object for chaining
+            return object;
         },
 
         // Note: uses WatchJS dependency.
