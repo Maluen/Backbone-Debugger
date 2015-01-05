@@ -29,30 +29,12 @@ Modules.set('server', function() {
             });
 
             // setup outgoing messages
-            // almost OBSOLETE
 
             this.listenTo(backboneController, 'backboneDetected', function(Backbone) {
                 port.sendMessage('backboneDetected');
             });
 
             u.each(appComponentsInfos, u.bind(function(appComponentsInfo) {
-
-                // messages about new app components
-                this.listenTo(appComponentsInfo, 'add', function(appComponent) {
-                    port.sendMessage(appComponentsInfo.category+':new', { 
-                        componentIndex: appComponent.index
-                    });
-                    debug.log('New ' + appComponentsInfo.category, appComponent);
-                });
-
-                // messages about new app component actions
-                this.listenTo(appComponentsInfo, 'actions:add', function(appComponentAction) {
-                    var appComponentIndex = appComponentAction.appComponentInfo.get('index');
-                    port.sendMessage(appComponentsInfo.category+':'+appComponentIndex+':action', {
-                        componentActionIndex: appComponentAction.index
-                    });
-                    //debug.log('New action: ', appComponentAction);
-                });
 
                 // messages about app component attribute changes
                 this.listenTo(appComponentsInfo, 'change', function(appComponentInfo) {
