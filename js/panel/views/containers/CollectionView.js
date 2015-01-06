@@ -5,8 +5,8 @@
             ciò è necessario per il funzionamento della gestione separata di tale collectionEl
             (vedi metodo render). */
 
-define(["backbone", "underscore", "jquery", "views/View", "handlebars", "filters/SearchFilter", "setImmediate"],
-function(Backbone, _, $, View, Handlebars, SearchFilter, setImmediate) {
+define(["backbone", "underscore", "jquery", "views/View", "handlebars", "setImmediate"],
+function(Backbone, _, $, View, Handlebars, setImmediate) {
 
     var AppComponentsView = View.extend({
 
@@ -16,8 +16,6 @@ function(Backbone, _, $, View, Handlebars, SearchFilter, setImmediate) {
         collectionElSelector: undefined, // selettore per l'elemento html che contiene gli el delle viste degli item
 
         started: false,
-
-        filter: undefined,
 
         searchFormElSelector: undefined, // jquery selector for the search form element (if any)
         searchTermElSelector: undefined, // jquery selector for the search form term input element (if any)
@@ -39,18 +37,6 @@ function(Backbone, _, $, View, Handlebars, SearchFilter, setImmediate) {
             // array con una vista per ogni item
             this.collectionItemViews = [];
 
-            // handle new items
-            this.listenTo(this.collection, "reset", _.bind(function() {
-                setImmediate(_.bind(function() { // needed to handle the reset after pending deferred adds
-                    // gestisce i nuovi item
-                    this.clearItems();
-                    this.render();
-                    for (var i=0,l=this.collection.length; i<l; i++) {
-                        var collectionItem = this.collection.at(i);
-                        this.handleNewItem(collectionItem);
-                    }
-                }, this));
-            }, this));
             this.listenTo(this.collection, "add", this.handleNewItem);
 
             this.start();
@@ -64,22 +50,6 @@ function(Backbone, _, $, View, Handlebars, SearchFilter, setImmediate) {
             }, this));
         },
 
-        // Resetta l'array delle viste degli item
-        // N.B: la render NON verrà chiamata!
-        clearItems: function() {
-            for (var i=0; i<this.collectionItemViews.length; i++) {
-                var collectionItemView = this.collectionItemViews[i];
-                this.stopListening(collectionItemView);
-                if (this.filter) {
-                    // disable the live filter check
-                    // (prevents the calling of the expired callback on the 'dead' model)
-                    this.filter.liveMatch(collectionItemView.model, false);
-                }
-                collectionItemView.remove();
-            };
-            this.collectionItemViews = [];
-        },
-
         // Aggiunge l'elemento e lo visualizza nel DOM
         handleNewItem: function(collectionItem) {
             // don't move the indexOf calculation inside the setImmediate or we'll have an invalid value if
@@ -87,11 +57,6 @@ function(Backbone, _, $, View, Handlebars, SearchFilter, setImmediate) {
             var collectionItemIndex = this.collection.indexOf(collectionItem);
             setImmediate(_.bind(function() { // prevents UI blocking
                 var newCollectionItemView = this.addItem(collectionItem, collectionItemIndex);
-                // retrigger the child view events, so to have a global proxy
-                // (used to react to child events, like hide/show, for example to read more components if needed)
-                this.listenTo(newCollectionItemView, "all", _.bind(function(eventName) {
-                    this.trigger("child:"+eventName, newCollectionItemView);
-                }, this));
 
                 // quando si passa da 0 elementi ad un 1 elemento bisogna fare la render in modo
                 // che il template inserisca il collectionEl, per poterlo poi gestire manualmente;
@@ -125,22 +90,44 @@ function(Backbone, _, $, View, Handlebars, SearchFilter, setImmediate) {
                     newCollectionItemView.$el.insertAfter(collectionItemViewLeftSibling.$el);
                 }
 
-                // apply the filter in order to immediately hide the view if its model doesn't pass the filter.
-                if (this.filter) {
-                    this.filter.liveMatch(newCollectionItemView.model, true, function(model, newMatchResult) {
-                        newCollectionItemView.show(newMatchResult); // hide or show the view
-                    });
-                }
+                // must be explicitly called or we won't have the child:show event
+                // that someone might need (the AppComponentsView searchComponent)
+                // TODO: it's kinda ugly to have to do this
+                newCollectionItemView.show(true);
             }, this));
         },
 
         // Crea un nuova vista per l'item e la restituisce.
         // N.B: la render NON verrà chiamata!
+        // Note: collectionItemIndex is different from collectionItem.item
+        // since the former is the position in the collection
+        // (a filtered collection could show only 1 model with index 34)
+        // TODO: refactor the above naming to make it more clear
         addItem: function(collectionItem, collectionItemIndex) {
             var collectionItemView = new this.CollectionItemView({
                 model: collectionItem
             });
             this.collectionItemViews.splice(collectionItemIndex, 0, collectionItemView);
+
+            // retrigger the child view events, so to have a global proxy
+            // (used to react to child events, like hide/show, 
+            // for example to read more components if needed)
+            this.listenTo(collectionItemView, "all", _.bind(function(eventName) {
+                this.trigger("child:"+eventName, collectionItemView);
+            }, this));
+
+            this.listenTo(this.collection, "visible:"+collectionItem.index, _.bind(function() {
+                setImmediate(function() { // defer to prevent UI blocking
+                    collectionItemView.show(true);
+                });
+            }, this));
+
+            this.listenTo(this.collection, "hidden:"+collectionItem.index, _.bind(function() {
+                setImmediate(function() { // defer to prevent UI blocking
+                    collectionItemView.show(false);
+                });
+            }, this));
+
             return collectionItemView;
         },
 
@@ -152,37 +139,6 @@ function(Backbone, _, $, View, Handlebars, SearchFilter, setImmediate) {
                 var collectionItemView = this.collectionItemViews[i];
                 handleItemView(collectionItemView, i, this.collectionItemViews);
             }
-        },
-
-        // Set filter as the active filter, removing the old one if exists.
-        // Note: if filter is undefined, then the method will just remove the existing filter.
-        resetFilter: function(filter) {
-            setImmediate(_.bind(function() { // wait old deferred reset completitions
-                // remove existing filter
-                if (this.filter) {
-                    this.filter.remove();
-                    this.filter = undefined;
-                }
-
-                if (!filter) {
-                    // restore views visibility (no new filter)
-                    _.each(this.collectionItemViews, function(view) {
-                        setImmediate(function() { // defer to prevent UI blocking
-                            view.show(true);
-                        });
-                    }, this);
-                } else {
-                    // set & apply new filter
-                    this.filter = filter;
-                    _.each(this.collectionItemViews, function(view) {
-                        filter.liveMatch(view.model, true, function(model, newMatchResult) {
-                            setImmediate(function() { // defer to prevent UI blocking
-                                view.show(newMatchResult); // hide or show the view based on the filter result
-                            });
-                        });
-                    }, this);
-                }
-            }, this));
         },
 
         startSearchTriggerTimer: function(event) {
@@ -205,10 +161,12 @@ function(Backbone, _, $, View, Handlebars, SearchFilter, setImmediate) {
 
             if (searchTerm === "") {
                 // just remove the filter
-                this.resetFilter();
+                this.collection.setFilter(null);
             } else {
                 // apply the new filter
-                this.resetFilter(new SearchFilter(searchTerm));
+                this.collection.setFilter('search', {
+                    searchTerm: searchTerm
+                });
             }
         },
 

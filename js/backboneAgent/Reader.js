@@ -75,7 +75,9 @@ Modules.set('Reader', function() {
             }
         },
 
-        // pass falsy value for no filter
+        // pass falsy value for no filter.
+        // Note: the reader takes ownership of the filter,
+        // i.e. will remove it when not needed anymore.
         setFilter: function(filter) {
             // remove old filter
             if (this.filter) this.filter.remove();

@@ -5,6 +5,11 @@ function(Backbone, _, backboneAgentClient) {
 
         initialize: function(models, options) {
             _.bindAll(this);
+
+            // hash <model index, model>
+            // (hash for efficiency reason, since an array could be very sparse!)
+            this.hiddenModels = {};
+            this.visibleModels = {};
         },
 
         // the user should wait this to become true
@@ -63,6 +68,19 @@ function(Backbone, _, backboneAgentClient) {
             }, this);
         },
 
+        // Define the sorting logic: index order
+        comparator: function(model) {
+            return model.index;
+        },
+
+        isVisible: function(modelIndex) {
+            return this.visibleModels[modelIndex] != undefined;
+        },
+
+        isHidden: function(modelIndex) {
+            return this.hiddenModels[modelIndex] != undefined;
+        },
+
         // read models from the remote collection by using the associated Reader,
         // calls onComplete at the end of the operation.
         readMore: function(onComplete) {
@@ -75,6 +93,21 @@ function(Backbone, _, backboneAgentClient) {
                 var reader = dedicatedServer.getReader(readerIndex);
                 reader.readMore(readLength);
             }, [backboneAgentClient.clientIndex, this.readerIndex, this.readLength]);
+        },
+
+        // Note: an empty filter name means 'no filter'
+        setFilter: function(name, options) {
+            backboneAgentClient.execFunction(function(clientIndex, readerIndex, filterName, filterOptions) {
+                var filter;
+                if (filterName) {
+                    var Filter = this.filters[filterName];
+                    filter = new Filter(filterOptions);
+                }
+
+                var dedicatedServer = this.server.getDedicatedServer(clientIndex);
+                var reader = dedicatedServer.getReader(readerIndex);
+                reader.setFilter(filter);
+            }, [backboneAgentClient.clientIndex, this.readerIndex, name, options]);
         },
 
         readerEvents: {
@@ -90,16 +123,50 @@ function(Backbone, _, backboneAgentClient) {
         handleVisibilityChange: function(event) {
             var changeInfo = event.data;
 
-            // TODO: for now we only have adds (no remote filters)
-            this.onNewModel(changeInfo.modelIndex);
+            var modelIndex = changeInfo.modelIndex,
+                isVisible = changeInfo.isVisible,
+                wasVisible = this.isVisible(modelIndex),
+                wasHidden = this.isHidden(modelIndex),
+                wasExisting = wasVisible || wasHidden;
+
+            if (isVisible && wasHidden) {
+                // hidden -> visible: show it
+                var model = this.hiddenModels[modelIndex];
+                this.onVisibleModel(model);
+
+            } else if (isVisible && !wasExisting) {
+                // not existing -> visible: create and show it
+                this.onNewModel(modelIndex);
+
+            } else if (!isVisible && wasVisible) {
+                // visible -> hidden: hide it
+                var model = this.visibleModels[modelIndex];
+                this.onHiddenModel(model);
+            }
         },
 
+        // create and show the model
         onNewModel: function(modelIndex) {
             // add the model to the collection after having fetched it
             var model = this.createModel(modelIndex);
             model.fetch(_.bind(function() { // on complete
                 this.add(model);
+                this.onVisibleModel(model);
             }, this));
+        },
+
+        // the model passed from hidden to visible state
+        onVisibleModel: function(model) {
+            delete this.hiddenModels[model.index];
+            this.visibleModels[model.index] = model;
+            this.trigger('visible visible:'+model.index, model);
+        },
+
+        // the model passed from visible to hidden state
+        onHiddenModel: function(model) {
+            delete this.visibleModels[model.index];
+            this.hiddenModels[model.index] = model;
+            this.trigger('hidden hidden:'+model.index, model);
         }
 
     });

@@ -133,8 +133,8 @@ function(Backbone, _, $, Handlebars, CollectionView, template, setImmediate) {
             }, this));
         },
 
+        // return the component view if exists.
         getComponentView: function(componentIndex) {
-            // cerca la vista del componente
             for (var i=0,l=this.collectionItemViews.length; i<l; i++) {
                 var currentComponentView = this.collectionItemViews[i];
                 var currentComponent = currentComponentView.model;
@@ -144,6 +144,25 @@ function(Backbone, _, $, Handlebars, CollectionView, template, setImmediate) {
             }
 
             return;
+        },
+
+        // calls onFound with the component view.
+        searchComponent: function(componentIndex, onFound) {
+            var componentView = this.getComponentView(componentIndex);
+            if (componentView && componentView.isShown()) {
+                // the component is already there and visible
+                onFound(componentView);
+            } else {
+                // search the component
+                this.search('"index '+componentIndex+'"'); // strict search
+                // wait end of search
+                this.listenToOnce(this, "child:show", _.bind(function(child) { // the component child passed the search
+                    if (child.model.index == componentIndex) { // child is the component we are searching
+                        componentView = child;
+                        onFound(componentView);
+                    }
+                }, this));
+            }
         }
 
     });

@@ -19,16 +19,16 @@ function(Backbone, _, backboneAgentClient, Collection, AppComponentAction, setIm
             return this.component.url()+'/actions';
         },
 
-        createModel: function(actionIndex) {
+        createModel: function(modelIndex) {
             var model = new this.model();
             model.component = this.component;
-            model.index = actionIndex;
+            model.index = modelIndex;
             return model;
         },
 
-        // Define the sorting logic: reverse order
-        comparator: function(action) {
-            return -action.index;
+        // Define the sorting logic: reverse index order
+        comparator: function(model) {
+            return -model.index;
         }
 
     });

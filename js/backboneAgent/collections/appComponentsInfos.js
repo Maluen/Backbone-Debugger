@@ -126,7 +126,7 @@ Modules.set('collections.appRoutersInfo', function() {
 });
 
 
-// Hash <"componentCategory", AppComponentsInfo>.
+// Hash <"component category", AppComponentsInfo>.
 Modules.set('collections.appComponentsInfos', function() {
     // imports
     var appViewsInfo = Modules.get('collections.appViewsInfo');
@@ -134,12 +134,12 @@ Modules.set('collections.appComponentsInfos', function() {
     var appCollectionsInfo = Modules.get('collections.appCollectionsInfo');
     var appRoutersInfo = Modules.get('collections.appRoutersInfo');
 
-    var AppComponentsInfos = {
+    var appComponentsInfos = {
         'View': appViewsInfo,
         'Model': appModelsInfo,
         'Collection': appCollectionsInfo,
         'Router': appRoutersInfo
     }
 
-    return AppComponentsInfos;
+    return appComponentsInfos;
 });

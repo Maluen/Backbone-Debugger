@@ -112,24 +112,21 @@ function(Backbone, _, $, View, Handlebars, template,
             var componentIndex = parseInt(inspectButton.attr("data-component-index"), 10);
 
             var componentsView = this.tabViews["app"+componentCategory+"s"];
-            // filter the components to show the one to inspect (to make sure it is visible)
-            componentsView.search('"index '+componentIndex+'"'); // strict search
-            // open the tab that shows the component
+
+            // open the component tab
             var tabElement = this.$("#app"+componentCategory+"sTab");
             var tabContentElement = this.$("#app"+componentCategory+"s");
             this.openTab(tabElement, tabContentElement);
-            // wait end of search
-            this.listenToOnce(componentsView, "child:show", _.bind(function(child) { // the component child passed the search
-                if (child.model.index == componentIndex) { // child is the component we are searching
-                    var componentView = child;
-                    // open the component and scroll to it
-                    componentView.open();
-                    tabContentElement.scrollTop(tabContentElement.scrollTop() + componentView.$el.position().top); // obsolete: the search should return just one component
-                    // highlight the component
-                    componentView.highlightAnimation();
-                }
+
+            componentsView.searchComponent(componentIndex, _.bind(function(componentView) {
+                // open the component and scroll to it
+                componentView.open();
+                tabContentElement.scrollTop(tabContentElement.scrollTop() + componentView.$el.position().top); // obsolete: the search should return just one component
+                // highlight the component
+                componentView.highlightAnimation();
             }, this));
         }
+        
     });
     return DebuggerView;
 });
