@@ -43,8 +43,10 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
         this.execFunction = function(func, args, onExecuted, context, frameURL) {
             if (context === undefined) { context = "this"; }
 
+            var options = frameURL ? {frameURL: frameURL} : undefined;
+
             var evalCode = "("+func.toString()+").apply("+context+", "+JSON.stringify(args)+");";
-            chrome.devtools.inspectedWindow.eval(evalCode, {frameURL: frameURL}, 
+            chrome.devtools.inspectedWindow.eval(evalCode, options, 
             function(result, isException) { // on executed
                 if (isException) {
                     var error = _.isObject(isException) ? isException.value : result;
