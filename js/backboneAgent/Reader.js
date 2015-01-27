@@ -19,8 +19,11 @@ Modules.set('Reader', function() {
         // the filter to use on the collection
         filter: undefined,
 
-        initialize: function(collection) {
+        initialize: function(collection, orderReverse) {
             this.collection = collection;
+            if (typeof orderReverse !== 'undefined') { // otherwise keep default
+                this.orderReverse = orderReverse;
+            }
 
             this.readListeners = [];
             this.isReadMoreInProgress = false;
@@ -66,6 +69,8 @@ Modules.set('Reader', function() {
             // reset everything, that's a new begin!
             this.unreadAll();
             this.readMoreFinished();
+
+            this.send('begin');
         },
 
         setOrderReverse: function(orderReverse) {
@@ -116,7 +121,11 @@ Modules.set('Reader', function() {
 
                     // process model
                     var passes = this.readModel(model);
-                    if (passes && this.isReadMoreInProgress) {
+                    // if a read more is in progress and the model was actually added
+                    // at the (relative) end, update the models left to read
+                    // (never in reverse mode since the adds are done at the collection end,
+                    // (i.e. at the relative start, that's intended.)
+                    if (passes && !this.orderReverse && this.isReadMoreInProgress) {
                         this.readMoreLeft--;
                         if (this.readMoreLeft == 0) {
                             this.readMoreFinished();
@@ -138,19 +147,20 @@ Modules.set('Reader', function() {
                 if (passes) this.readMoreLeft--;
             }
 
-            if (this.readMoreLeft == 0 || this.orderReverse) {
+            if (this.readMoreLeft == 0) {
                 this.readMoreFinished();
             } else {
                 // read will finish after remaining models have been read via add events
-                // (this doesn't apply in reverse order since new models are actually
-                // before the current position)
+                // (will never finish in reverse order since new models are actually
+                // before the current position, that's intended to prevent infinite
+                // client back and forth for new never-existing models)
             }
         },
 
         readMoreStarted: function() {
             if (!this.isReadMoreInProgress) {
                 this.isReadMoreInProgress = true;
-                this.notify('readMoreStarted');
+                this.send('readMoreStarted');
             }
         },
 
@@ -158,7 +168,7 @@ Modules.set('Reader', function() {
             if (this.isReadMoreInProgress) {
                 this.readMoreLeft = 0;
                 this.isReadMoreInProgress = false;
-                this.notify('readMoreFinished');
+                this.send('readMoreFinished');
             }
         },
 
@@ -225,14 +235,14 @@ Modules.set('Reader', function() {
         },
 
         visibilityChange: function(model, isVisible) {
-            this.notify('visibilityChange', {
+            this.send('visibilityChange', {
                 modelIndex: model.index,
                 isVisible: isVisible
             });
         },
 
-        notify: function(notifyName, notifyData) {
-            this.trigger('notify', notifyName, notifyData);
+        send: function(name, data) {
+            this.trigger('send', name, data);
         }
 
     });

@@ -1,5 +1,4 @@
 <div>
-    {{#if thereAreItems}}
     <div class="navbar appComponentsOptions">
         <div class="navbar-inner">
           <ul class="nav">
@@ -12,16 +11,26 @@
                 </form>
             </li>
           </ul>
+          <ul class="nav navbar-nav pull-right">
+            <li>
+                <form class="sortForm form-inline">
+                    <label>Sort:</label>
+                    <select>
+                        <option value="normal" {{#compare sortType 'normal'}}selected="selected"{{/compare}}>Oldest first</option>
+                        <option value="reverse" {{#compare sortType 'reverse'}}selected="selected"{{/compare}}>Newest first</option>
+                    </select>
+                </form>
+            </li>
+          </ul>
         </div>
     </div>
-    {{/if}}
 
     <div class="appComponentsContent">
         {{#if thereAreItems}}
         <ul class="appComponentList nav nav-tabs nav-stacked">
         </ul>
         {{else}}
-        <p>There is nothing to see here.</p>
+        <p class="clear">There is nothing to see here.</p>
         {{/if}}
     </div>
 

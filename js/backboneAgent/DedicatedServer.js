@@ -20,9 +20,9 @@ Modules.set('DedicatedServer', function() {
             this.readers.push(reader);
 
             // re-emit the reader notifications by prepending its index in the notification name
-            this.listenTo(reader, 'notify', function(notifyName, notifyData) {
-                notifyName = 'reader:'+readerIndex+':' + notifyName;
-                this.notify(notifyName, notifyData);
+            this.listenTo(reader, 'send', function(name, data) {
+                name = 'reader:'+readerIndex+':' + name;
+                this.send(name, data);
             });
 
             return readerIndex;
@@ -41,8 +41,8 @@ Modules.set('DedicatedServer', function() {
             }
         },
 
-        notify: function(notifyName, notifyData) {
-            this.trigger('notify', notifyName, notifyData);
+        send: function(name, data) {
+            this.trigger('send', name, data);
         },
 
         remove: function() {

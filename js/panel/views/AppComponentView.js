@@ -58,7 +58,7 @@ function(Backbone, _, $, View, AppComponentActionsView) {
             var templateData = this.templateData();
             this.el.innerHTML = this.template(templateData); // DON'T use this.$el.html() because it removes the jQuery event handlers of existing sub-views
             // insert the sub-view for the component actions
-            this.$(".appComponentActions").append(this.appComponentActionsView.el);
+            this.$(".appComponentActionsContainer").append(this.appComponentActionsView.el);
 
             // restore animation if was active before render
             if (isHighlighting) this.highlightAnimation();

@@ -9,6 +9,8 @@ function(Backbone, _, backboneAgentClient, Collection, AppComponentAction, setIm
         component: undefined, // oggetto sottotipo di AppComponent
         model: AppComponentAction,
 
+        orderReverse: true,
+
         initialize: function(models, options) {
             this.component = options.component;
 
@@ -24,11 +26,6 @@ function(Backbone, _, backboneAgentClient, Collection, AppComponentAction, setIm
             model.component = this.component;
             model.index = modelIndex;
             return model;
-        },
-
-        // Define the sorting logic: reverse index order
-        comparator: function(model) {
-            return -model.index;
         }
 
     });

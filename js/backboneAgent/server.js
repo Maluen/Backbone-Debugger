@@ -58,9 +58,9 @@ Modules.set('server', function() {
             this.dedicatedServers.push(dedicatedServer);
 
             // transform the dedicated server notifications into outgoing messages
-            this.listenTo(dedicatedServer, 'notify', function(notifyName, notifyData) {
-                notifyName = 'dedicatedServer:'+index+':' + notifyName;
-                port.sendMessage(notifyName, notifyData);
+            this.listenTo(dedicatedServer, 'send', function(name, data) {
+                name = 'dedicatedServer:'+index+':' + name;
+                port.sendMessage(name, data);
             });
 
             return index;

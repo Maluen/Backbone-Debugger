@@ -11,11 +11,39 @@ define(["backbone", "underscore", "jquery"], function(Backbone, _, $) {
         // true to show, false to hide
         show: function(showOrHide) {
             this.$el.toggle(showOrHide);
+            
+            if (showOrHide) {
+                this.trigger('show');
+            } else {
+                this.trigger('hide');
+            }
         },
 
         isShown: function() {
             // might be true also if the parent is hidden, differently from jquery ".is(':visible')"
             return this.$el.css('display') != 'none';
+        },
+
+        // return a function
+        // that calls the passed DOM event handler and stops immediate propagation,
+        // needed for keeping the event from bubbling up to parent views,
+        // otherwise it could be handled by them too
+        // (is the case if the parent view has the same type)
+        // Set passEvent to false to call the handler without passing the event object.
+        localHandler: function(domEventHandler, passEvent) {
+            passEvent = passEvent || true;
+
+            if (typeof domEventHandler == 'string') {
+                domEventHandler = this[domEventHandler];
+            }
+
+            var self = this;
+            return function(e) {
+                e.stopPropagation();
+                
+                // (returned to prevent default if handler returns false)
+                return domEventHandler.call(self, passEvent ? e : undefined);
+            };
         },
 
         // A wrapper for $el.on(eventName, handler) that adds garbage management:

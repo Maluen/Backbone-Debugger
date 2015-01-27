@@ -18,6 +18,10 @@ body {
     display: none;
 }
 
+.clear {
+    clear: both;
+}
+
 .btn-link {
     padding: 0;
 }
@@ -87,6 +91,16 @@ body {
     outline: none;
 }
 
+.appComponentsOptions .sortForm {
+    margin-top: 5px;
+}
+.appComponentsOptions .sortForm label {
+    margin-right: 5px;
+}
+.appComponentsOptions .sortForm select {
+    width: 120px;
+}
+
 .more {
     text-align: center;
 }
@@ -142,12 +156,23 @@ body {
     margin-bottom: 20px;
 }
 
-.appComponentActions .searchForm {
+.appComponentActions form {
     margin-bottom: 10px;
+    margin-right: 10px;
 }
 
-.appComponentActions .searchForm .searchTerm {
+.appComponentActions form input {
     height: 10px;
+}
+
+.appComponentActions .sortForm {
+    margin-top: 5px;
+}
+
+.appComponentActions .sortForm select {
+    width: 100px;
+    padding: 0;
+    height: 20px;
 }
 
 .appComponentActions table {

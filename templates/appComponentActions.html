@@ -1,7 +1,14 @@
-{{#if thereAreItems}}
 <form class="searchForm navbar-form pull-left">
     <input class="searchTerm" type="text" placeholder="Filter..." />
 </form>
+<form class="sortForm form-inline pull-left">
+    <label>Sort:</label>
+    <select>
+        <option value="normal" {{#compare sortType 'normal'}}selected="selected"{{/compare}}>Oldest first</option>
+        <option value="reverse" {{#compare sortType 'reverse'}}selected="selected"{{/compare}}>Newest first</option>
+    </select>
+</form>
+{{#if thereAreItems}}
 <table class="table table-striped table-bordered table-condensed">
     <thead>
         <tr>
@@ -14,5 +21,9 @@
     </tbody>
 </table>
 {{else}}
-<p>There is nothing to see here.</p>
+<p class="clear">There is nothing to see here.</p>
 {{/if}}
+
+<div class="more">
+    <a class="readMore btn-link {{#isReadMoreHidden}}hidden{{/isReadMoreHidden}}">Load more</a>
+</div>

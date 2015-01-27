@@ -5,33 +5,21 @@ function(Backbone, _, $, Handlebars, CollectionView, template, setImmediate) {
     var AppComponentsView = CollectionView.extend({
 
         template: Handlebars.compile(template),
+        
         CollectionItemView: undefined, // oggetto sottotipo di AppComponentView
         collectionElSelector: ".appComponentList",
         searchFormElSelector: ".appComponentsOptions .searchForm",
         searchTermElSelector: ".appComponentsOptions .searchTerm",
 
-        isOpened: false, // state if the view (tab) is opened
-
-        // number of milliseconds to pass to the debounce function (e.g. for scroll events)
-        debounceDuration: 100,
-
-        isReadMoreHidden: false, // state if the 'read more' button is hidden
-
         events: function() {
             return $.extend({
                 "click .openAll": "openAll",
-                "click .closeAll": "closeAll",
-                "scroll": "readMoreIfNeeded",
-                "click .readMore": "readMoreIfNeeded"
+                "click .closeAll": "closeAll"
             }, CollectionView.prototype.events.apply(this, arguments));
         },
 
         initialize: function() {
             CollectionView.prototype.initialize.apply(this, arguments);
-
-            // debounce and bind the readMoreIfNeeded function
-            var readMoreIfNeeded = this.readMoreIfNeeded;
-            this.readMoreIfNeeded = _.debounce(_.bind(readMoreIfNeeded, this), this.debounceDuration);
         },
 
         start: function(onStarted) {
@@ -45,8 +33,7 @@ function(Backbone, _, $, Handlebars, CollectionView, template, setImmediate) {
 
         // Call this function to notify the view that it has been opened (since is a tab)
         notifyOpened: function() {
-            this.isOpened = true;
-            this.readMoreIfNeeded();
+            this.notifyIsInViewport();
 
             // HACK: give focus to the view, otherwise mousewheel scrolling won't work
             this.render();
@@ -54,42 +41,7 @@ function(Backbone, _, $, Handlebars, CollectionView, template, setImmediate) {
 
         // Call this function to notify the view that it has been opened (since is a tab)
         notifyClosed: function() {
-            this.isOpened = false;
-        },
-
-        // Read more items if the user reached the bottom of the view
-        // Note: the function is automatically debounced and binded on initialize.
-        readMoreIfNeeded: function() {
-            if (!this.started) return; // prevent premature call
-
-            setImmediate(_.bind(function() { // wait end of pending browser renders (so to work on updated state)
-                if (this.isOpened && this.$el.scrollTop() + this.$el[0].clientHeight == this.$el[0].scrollHeight) {
-
-                    this.showReadMore(false);
-
-                    this.collection.readMore(_.bind(function() { // on complete
-                        // show read more button (provided as a last resort, manual method, to read more in case
-                        // the user is somewhat able to reach the bottom without being catched, 
-                        // e.g. after an untracked component height drecrease)
-                        this.showReadMore(true);
-
-                        this.readMoreIfNeeded();
-                    }, this));
-                
-                }
-            }, this));
-        },
-
-        // show or hide the read more button
-        showReadMore: function(showOrHide) {
-            this.$('.readMore').toggleClass('hidden', !showOrHide);
-            this.isReadMoreHidden = !showOrHide;
-        },
-
-        templateData: function() {
-            return _.extend({
-                'isReadMoreHidden': this.isReadMoreHidden // keep button visiblity between renders
-            }, CollectionView.prototype.templateData.apply(this, arguments));
+            this.notifyIsNotInViewport();
         },
 
         openAll: function() {
