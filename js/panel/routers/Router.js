@@ -14,7 +14,7 @@ function(Backbone, inspectedPageClient, backboneAgentClient, WaitingView, Debugg
                 if (inspectedPageClient.isInjecting) {
                     // we are injecting scripts into the inspected page
                     // => reload the panel to wait for injected scripts loading (i.e. backbone agent)
-                    window.location.href = "";
+                    this.reloadPanel();
                 } else {
                     // if the inspected page still has the backbone agent, then the update isn't a 
                     // "real one" (e.g. is an hash change / push state, etc.) and we can ignore it.
@@ -22,13 +22,11 @@ function(Backbone, inspectedPageClient, backboneAgentClient, WaitingView, Debugg
                     // in a waiting or debug disabled view, than the update is always considered as real
                     backboneAgentClient.isActive(_.bind(function(isActive) {
                         if (!isActive) { // the update is "real"
-                            if (updateDetails.urlChanged || !this.debugMode) {
-                                // the user moved to another page/app/site or refreshed the page
-                                // while not in debug mode
+                            if (!this.debugMode) {
+                                // the user refreshed the page while not in debug mode
                                 // => reload the panel to show the view for activating debugging
-                                window.location.href = "";
+                                this.reloadPanel();
                             } else {
-                                // the update is a refresh while in debug mode
                                 // => reinject the backbone agent to keep the debug mode running
                                 this.restartAppInDebugMode();
                             }
@@ -40,7 +38,8 @@ function(Backbone, inspectedPageClient, backboneAgentClient, WaitingView, Debugg
 
         routes: {
             "": "start",
-            "restartAppInDebugMode": "restartAppInDebugMode"
+            "restartAppInDebugMode": "restartAppInDebugMode",
+            "stopDebugMode": "stopDebugMode"
         },
 
         start: function() {
@@ -53,6 +52,10 @@ function(Backbone, inspectedPageClient, backboneAgentClient, WaitingView, Debugg
             inspectedPageClient.ready(_.bind(function() {
                 backboneAgentClient.isActive(_.bind(function(isActive) {
                     if (isActive) {
+                        // we are in debug mode even if we are still not connected
+                        // (this allows auto-reinject on url change)
+                        this.debugMode = true;
+
                         // Wait until Backbone is detected
                         // and the client is connected to the agent
                         waitingView.setWaitingText('Waiting for Backbone...');
@@ -60,7 +63,6 @@ function(Backbone, inspectedPageClient, backboneAgentClient, WaitingView, Debugg
                             waitingView.remove();
                             var debuggerView = new DebuggerView();
                             document.body.appendChild(debuggerView.el);
-                            this.debugMode = true;
                         }, this));
                     } else {
                         // Agent not active, show the view used to activate it.
@@ -74,6 +76,16 @@ function(Backbone, inspectedPageClient, backboneAgentClient, WaitingView, Debugg
 
         restartAppInDebugMode: function() {
             backboneAgentClient.activate();
+        },
+
+        reloadPanel: function() {
+            window.location.href = "";
+        },
+
+        stopDebugMode: function() {
+            this.debugMode = false;
+            // this will also cause panel reload as a response, since we are no more in debug mode
+            inspectedPageClient.reload();
         }
 
     });

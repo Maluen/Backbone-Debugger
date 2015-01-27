@@ -138,6 +138,12 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
                       // version of the injected scripts), not needed in production.
         };
 
+        // a plain inspected page reload without injecting anything,
+        // useful for stopping the debug mode (causes removal of backbone agent)
+        this.reload = function() {
+            chrome.devtools.inspectedWindow.reload();
+        }
+
         this.initialize();
     })();
     return inspectedPageClient;
