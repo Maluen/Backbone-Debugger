@@ -69,7 +69,7 @@ body {
 .appComponentsOptions .navbar-inner {
     border: none;
     padding-left: 12px;
-    padding-right: 12px;
+    padding-right: 0;
     box-shadow: none;
     background-image: -webkit-linear-gradient(rgb(243,243,243), rgb(235,235,235));
 }
@@ -91,8 +91,14 @@ body {
     outline: none;
 }
 
+/* don't break label elements into separate lines when there is no space */
+.appComponentsOptions label {
+    white-space: nowrap;
+}
+
 .appComponentsOptions .sortForm {
     margin-top: 5px;
+    margin-left: 10px;
 }
 .appComponentsOptions .sortForm label {
     margin-right: 5px;

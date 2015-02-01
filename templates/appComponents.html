@@ -1,24 +1,28 @@
 <div>
     <div class="navbar appComponentsOptions">
         <div class="navbar-inner">
-          <ul class="nav">
+          <ul class="nav pull-left">
             <li><a class="openAll btn-link" title="Open all"><i class="icon-chevron-right icon-chevron-bottom"></i></a></li>
             <li><a class="closeAll btn-link" title="Close all"><i class="icon-chevron-right icon-chevron-top"></i></a></li>
             <li>
-                <form class="searchForm navbar-form pull-left">
-                    <input class="searchTerm" type="text" placeholder="Search..." />
-                    <button class="resetSearch btn btn-link" type="reset" title="Reset search"><i class="icon-remove"></i></button>
+                <form class="searchForm navbar-form">
+                    <label>
+                        <input class="searchTerm" type="text" placeholder="Search..." />
+                        <button class="resetSearch btn btn-link" type="reset" title="Reset search"><i class="icon-remove"></i></button>
+                    </label>
                 </form>
             </li>
           </ul>
-          <ul class="nav navbar-nav pull-right">
+          <ul class="nav pull-left">
             <li>
                 <form class="sortForm form-inline">
-                    <label>Sort:</label>
-                    <select>
-                        <option value="normal" {{#compare sortType 'normal'}}selected="selected"{{/compare}}>Oldest first</option>
-                        <option value="reverse" {{#compare sortType 'reverse'}}selected="selected"{{/compare}}>Newest first</option>
-                    </select>
+                    <label>
+                        Sort:
+                        <select>
+                            <option value="normal" {{#compare sortType 'normal'}}selected="selected"{{/compare}}>Oldest first</option>
+                            <option value="reverse" {{#compare sortType 'reverse'}}selected="selected"{{/compare}}>Newest first</option>
+                        </select>
+                    </label>
                 </form>
             </li>
           </ul>
