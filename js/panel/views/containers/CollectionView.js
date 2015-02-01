@@ -172,7 +172,7 @@ function(Backbone, _, $, View, Handlebars, setImmediate) {
             if (detachedView) {
                 // exists in the detached view, reuse
                 collectionItemView = detachedView;
-                delete this.detachedItemViews[collectionItem.index]; // not detached anymroe
+                delete this.detachedItemViews[collectionItem.index]; // not detached anymore
             } else {
                 collectionItemView = new this.CollectionItemView({
                     model: collectionItem
