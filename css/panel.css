@@ -14,6 +14,11 @@ body {
     word-break: break-all;
 }
 
+/* don't break label elements into separate lines when there is no space */
+form label {
+    white-space: nowrap;
+}
+
 .hidden {
     display: none;
 }
@@ -91,11 +96,6 @@ body {
     outline: none;
 }
 
-/* don't break label elements into separate lines when there is no space */
-.appComponentsOptions label {
-    white-space: nowrap;
-}
-
 .appComponentsOptions .sortForm {
     margin-top: 5px;
     margin-left: 10px;
@@ -169,6 +169,10 @@ body {
 
 .appComponentActions form input {
     height: 10px;
+}
+
+.appComponentActions .resetSearch {
+    margin-top: 4px;
 }
 
 .appComponentActions .sortForm {

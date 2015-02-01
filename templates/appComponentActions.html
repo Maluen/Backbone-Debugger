@@ -1,12 +1,17 @@
 <form class="searchForm navbar-form pull-left">
-    <input class="searchTerm" type="text" placeholder="Filter..." />
+    <label>
+        <input class="searchTerm" type="text" placeholder="Filter..." />
+        <button class="resetSearch btn btn-link" type="reset" title="Reset search"><i class="icon-remove"></i></button>
+    </label>
 </form>
 <form class="sortForm form-inline pull-left">
-    <label>Sort:</label>
-    <select>
-        <option value="normal" {{#compare sortType 'normal'}}selected="selected"{{/compare}}>Oldest first</option>
-        <option value="reverse" {{#compare sortType 'reverse'}}selected="selected"{{/compare}}>Newest first</option>
-    </select>
+    <label>
+        Sort:
+        <select>
+            <option value="normal" {{#compare sortType 'normal'}}selected="selected"{{/compare}}>Oldest first</option>
+            <option value="reverse" {{#compare sortType 'reverse'}}selected="selected"{{/compare}}>Newest first</option>
+        </select>
+    </label>
 </form>
 {{#if thereAreItems}}
 <table class="table table-striped table-bordered table-condensed">
