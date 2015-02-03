@@ -29,9 +29,10 @@ Modules.set('Reader', function() {
             this.isReadMoreInProgress = false;
             this.readMoreLeft = 0;
 
+            this.lastUnfilteredIndex = undefined;
+
             // inizialize position from which to read the collection (depends on the order type)
             this.position = undefined;
-            this.lastUnfilteredIndex = undefined;
             this.begin();
 
             this.readNewModels();
@@ -70,9 +71,9 @@ Modules.set('Reader', function() {
 
         begin: function() {
             this.position = this.beginPosition();
-            this.lastUnfilteredIndex = undefined;
 
-            // reset everything, that's a new begin!
+            // reset everything, this is a new begin!
+            this.lastUnfilteredIndex = undefined;
             this.unreadAll();
             this.readMoreFinished();
 
@@ -101,9 +102,9 @@ Modules.set('Reader', function() {
                 this.lastUnfilteredIndex = current? current.index : undefined;
             } else if (this.filter && !filter) {
                 // filter -> no filter
-                // => restore position
+                // => restore previous models
                 // (after a filter is setted, the user could have read many hidden models,
-                // in order to avoid their massive showing when removing the filter,
+                // thus in order to avoid their massive showing when removing the filter,
                 // we only reshow the models that were visible before having any filter)
                 var current = this.current();
                 while (current && current.index !== this.lastUnfilteredIndex) {
