@@ -35,6 +35,9 @@ function(Backbone, _, backboneAgentClient) {
             this.hiddenModels = {};
             this.visibleModels = {};
             this.detachedModels = {};
+
+            // number of models that are currently visible
+            this.visibleModelsLength = 0;
         },
 
         // connects the collection with the agent endpoint
@@ -146,7 +149,7 @@ function(Backbone, _, backboneAgentClient) {
         readerEvents: {
             'readMoreFinished': 'handleReadMoreFinished',
             'visibilityChange': 'handleVisibilityChange',
-            'begin': 'begin'
+            'begin': 'handleBegin'
         },
 
         handleReadMoreFinished: function() {
@@ -208,6 +211,7 @@ function(Backbone, _, backboneAgentClient) {
         onVisibleModel: function(model) {
             delete this.hiddenModels[model.index];
             this.visibleModels[model.index] = model;
+            this.visibleModelsLength++;
             this.trigger('visible visible:'+model.index, model);
         },
 
@@ -215,11 +219,12 @@ function(Backbone, _, backboneAgentClient) {
         onHiddenModel: function(model) {
             delete this.visibleModels[model.index];
             this.hiddenModels[model.index] = model;
+            this.visibleModelsLength--;
             this.trigger('hidden hidden:'+model.index, model);
         },
 
         // this is a new begin!
-        begin: function() {
+        handleBegin: function() {
             // keep models for reusing them
             // (the same remote models will likely be requested again in the future)
             _.each(this.hiddenModels, function(model) {
@@ -229,8 +234,10 @@ function(Backbone, _, backboneAgentClient) {
                 this.detachedModels[model.index] = model;
             }, this);
 
-            this.hiddenModels = [];
-            this.visibleModels = [];
+            this.hiddenModels = {};
+            this.visibleModels = {};
+            this.visibleModelsLength = 0;
+
             this.reset();
         }
 
