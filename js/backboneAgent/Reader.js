@@ -31,6 +31,7 @@ Modules.set('Reader', function() {
 
             // inizialize position from which to read the collection (depends on the order type)
             this.position = undefined;
+            this.lastUnfilteredIndex = undefined;
             this.begin();
 
             this.readNewModels();
@@ -63,8 +64,13 @@ Modules.set('Reader', function() {
             return this.collection.at(this.position);
         },
 
+        beginPosition: function() {
+            return (this.orderReverse) ? this.collection.length : -1;
+        },
+
         begin: function() {
-            this.position = (this.orderReverse) ? this.collection.length : -1;
+            this.position = this.beginPosition();
+            this.lastUnfilteredIndex = undefined;
 
             // reset everything, that's a new begin!
             this.unreadAll();
@@ -86,6 +92,34 @@ Modules.set('Reader', function() {
         setFilter: function(filter) {
             // remove old filter
             if (this.filter) this.filter.remove();
+
+            if (!this.filter && filter) {
+                // no filter -> filter
+                // => calculate last visible index
+                // (is the current since all the models are visible)
+                var current = this.current();
+                this.lastUnfilteredIndex = current? current.index : undefined;
+            } else if (this.filter && !filter) {
+                // filter -> no filter
+                // => restore position
+                // (after a filter is setted, the user could have read many hidden models,
+                // in order to avoid their massive showing when removing the filter,
+                // we only reshow the models that were visible before having any filter)
+                var current = this.current();
+                while (current && current.index !== this.lastUnfilteredIndex) {
+                    this.unread();
+                    this.visibilityChange(current, false); // signal model as hidden (TODO: generalize this directly in unreadModel?)
+                    current = this.prev();
+                }
+                if (!current) {
+                    // index not found, but reader now is actually at first position,
+                    // even though we have unread the first model, so subsequent read more would
+                    // never read it again, thus we manually move into the begin position
+                    this.position = this.beginPosition();
+                }
+                // an eventual pending read more is not valid anymore
+                this.readMoreFinished();
+            }
 
             // set new filter
             this.filter = filter;
