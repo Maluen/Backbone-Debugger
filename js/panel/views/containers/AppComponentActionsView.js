@@ -8,7 +8,10 @@ function(Backbone, _, $, Handlebars, CollectionView, AppComponentActionView, tem
         template: Handlebars.compile(template),
 
         CollectionItemView: AppComponentActionView,
-        collectionElSelector: ".appComponentActionsTable",
+
+        collectionElTagName: "tbody",
+        collectionElClassName: "appComponentActionsTable",
+
         searchFormElSelector: ".searchForm",
         searchTermElSelector: ".searchTerm",
 

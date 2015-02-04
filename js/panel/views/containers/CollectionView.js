@@ -13,9 +13,19 @@ function(Backbone, _, $, View, Handlebars, setImmediate) {
         template: undefined,
 
         CollectionItemView: undefined, // tipo vista di un item
-        collectionElSelector: undefined, // selettore per l'elemento html che contiene gli el delle viste degli item
+
+        // tag name of the collection el, used to create it
+        collectionElTagName: undefined,
+        // class name of the collection el, used to create it
+        collectionElClassName: undefined,
 
         started: false,
+
+        // selettore per l'elemento html (placeholder) che contiene gli el delle viste degli item
+        collectionElPlaceholderSelector: "[data-placeholder='collectionEl']",
+
+        // Note: is relative to the visible items only
+        thereAreItems: false,
 
         // number of milliseconds to pass to the debounce function (e.g. for scroll events)
         debounceDuration: 100,
@@ -24,7 +34,7 @@ function(Backbone, _, $, View, Handlebars, setImmediate) {
         isInViewport: false,
 
         isReadMoreHidden: false, // state if the 'read more' button is hidden
-        readMoreElSelector: '.readMore', // read more button selector
+        readMoreElSelector: ".readMore", // read more button selector
 
         searchFormElSelector: undefined, // jquery selector for the search form element (if any)
         searchTermElSelector: undefined, // jquery selector for the search form term input element (if any)
@@ -32,11 +42,11 @@ function(Backbone, _, $, View, Handlebars, setImmediate) {
 
         searchTerm: undefined, // currently used search term
 
-        sortSelectElSelector: '.sortForm select',
+        sortSelectElSelector: ".sortForm select",
 
         events: function() {
             var e = {};
-            e["scroll"] = this.localHandler('readMoreIfNeeded', false);
+            e["scroll"] = this.localHandler("readMoreIfNeeded", false);
             e["click .readMore"] = this.localHandler("readMore", false);
 
             e["input "+this.searchTermElSelector] = this.localHandler("startSearchTriggerTimer");
@@ -54,6 +64,13 @@ function(Backbone, _, $, View, Handlebars, setImmediate) {
             // array of item views
             this.collectionItemViews = [];
 
+            // DOM element that will contain all the item view elements,
+            // is attached to the page on render by replacing the placeholder element
+            // that is on the template.
+            // TODO: could be refactored as a sub view,
+            // meaning this view is probably more than a collection view!
+            this.collectionEl = this.createCollectionEl();
+
             this.listenTo(this.collection, "reset", _.bind(this.handleReset, this));
             this.listenTo(this.collection, "add", this.handleNewItem);
 
@@ -69,6 +86,13 @@ function(Backbone, _, $, View, Handlebars, setImmediate) {
             this.start();
         },
 
+        createCollectionEl: function() {
+            var collectionEl = document.createElement(this.collectionElTagName);
+            collectionEl.className = this.collectionElClassName || '';
+            collectionEl = $(collectionEl);
+            return collectionEl;
+        },
+
         start: function(onStarted) {
             this.collection.start(_.bind(function() { // on started
                 this.render();
@@ -81,14 +105,12 @@ function(Backbone, _, $, View, Handlebars, setImmediate) {
             setImmediate(_.bind(function() { // needed to handle the reset after pending deferred adds
                 // handle new items
                 this.clearItems();
-                this.render();
                 for (var i=0,l=this.collection.length; i<l; i++) {
                     var collectionItem = this.collection.at(i);
                     this.handleNewItem(collectionItem);
                 }
-                // there could be less items than before,
-                // thus the read more button could have become visible
-                this.readMoreIfNeeded();
+                // there could be less items than before
+                this.handleIfLessVisibleItems();
             }, this));
         },
 
@@ -114,13 +136,6 @@ function(Backbone, _, $, View, Handlebars, setImmediate) {
             setImmediate(_.bind(function() { // prevents UI blocking
                 var newCollectionItemView = this.addItem(collectionItem, collectionItemIndex);
 
-                // quando si passa da 0 elementi ad un 1 elemento bisogna fare la render in modo
-                // che il template inserisca il collectionEl, per poterlo poi gestire manualmente;
-                // inoltre evitando di rifare la render ogni volta si impedisce l'effetto "sfarfallio" che
-                // non permette di aprire i componenti durante l'aggiunta continuativa di questi, a causa
-                // dell'animazione Bootstrap che viene interrotta.
-                if (this.collectionItemViews.length == 1) this.render();
-
                 // find the DOM position in which to add the new view element:
                 // after its left sibling if exists, as first otherwise.
 
@@ -139,8 +154,7 @@ function(Backbone, _, $, View, Handlebars, setImmediate) {
                 }
                 if (!collectionItemViewLeftSibling) {
                     // first element
-                    var collectionEl = this.$(this.collectionElSelector);
-                    collectionEl.prepend(newCollectionItemView.el);
+                    this.collectionEl.prepend(newCollectionItemView.el);
                 } else {
                     // add the element after its left sibling
                     newCollectionItemView.$el.insertAfter(collectionItemViewLeftSibling.$el);
@@ -196,19 +210,41 @@ function(Backbone, _, $, View, Handlebars, setImmediate) {
             }, this));
 
             this.listenTo(this.collection, "visible:"+collectionItem.index, _.bind(function() {
-                setImmediate(function() { // defer to prevent UI blocking
+                setImmediate(_.bind(function() { // defer to prevent UI blocking
                     collectionItemView.show(true);
-                });
+                }, this));
             }, this));
 
             this.listenTo(this.collection, "hidden:"+collectionItem.index, _.bind(function() {
                 setImmediate(_.bind(function() { // defer to prevent UI blocking
                     collectionItemView.show(false);
-
-                    // less visible items -> read more could be needed
-                    this.readMoreIfNeeded();
                 }, this));
             }, this));
+
+            this.listenTo(collectionItemView, "show", _.bind(this.handleIfMoreVisibleItems, this));
+            this.listenTo(collectionItemView, "hide", _.bind(this.handleIfLessVisibleItems, this));
+        },
+
+        // call this when there could be more visible items
+        handleIfMoreVisibleItems: function() {
+            // TODO: this should be automatic and more clever via data-binding or similar
+            if (this.collection.visibleModelsLength != 0 && !this.thereAreItems) {
+                this.thereAreItems = true;
+                this.render();
+            }
+        },
+
+        // call this when there could be less visible items
+        handleIfLessVisibleItems: function() {
+            // -> there might be no visible item anymore
+            // TODO: this should be automatic and more clever via data-binding or similar
+            if (this.collection.visibleModelsLength == 0 && this.thereAreItems) {
+                this.thereAreItems = false;
+                this.render();
+            }
+
+            // -> read more could be needed
+            this.readMoreIfNeeded();
         },
 
         // N.B: il metodo è sincrono!
@@ -315,26 +351,18 @@ function(Backbone, _, $, View, Handlebars, setImmediate) {
 
         templateData: function() {
             return {
-                thereAreItems: this.collectionItemViews.length !== 0,
-                isReadMoreHidden: this.isReadMoreHidden, // keep button visiblity between renders
+                thereAreItems: this.thereAreItems,
+                isReadMoreHidden: this.isReadMoreHidden, // keep button visibility between renders
                 sortType: this.collection.orderReverse ? 'reverse' : 'normal'
             };
         },
 
         render: function() {
-            // recupera il contenitore con gli el delle viste degli item per reinserirlo poi,
-            // infatti tali el vengono aggiunti/rimossi a parte in base agli eventi della collezione,
-            // in modo da non doverli riappendere tutti da capo ad ogni render,
-            // ciò diminuisce drasticamente l'uso della cpu che altrimenti si fa sentire in caso di
-            // molti add ravvicinati (causati dall'aggiornamento in tempo reale)
-            var collectionEl = this.$(this.collectionElSelector);
-
-            var thereAreItems = (this.collectionItemViews.length!==0);
             this.el.innerHTML = this.template(this.templateData()); // DON'T use this.$el.html() because it removes the jQuery event handlers of existing sub-views
-            // reinserisce il contenitore con gli el delle viste (se applicabile)
-            if (thereAreItems && collectionEl.length > 0) {
-                var placeholderCollectionEl = this.$(this.collectionElSelector);
-                placeholderCollectionEl.replaceWith(collectionEl);
+            
+            var collectionElPlaceholder = this.$(this.collectionElPlaceholderSelector);
+            if (collectionElPlaceholder.length > 0) { // there is the intention of displaying the item views
+                collectionElPlaceholder.replaceWith(this.collectionEl);
             }
 
             // keep current search term (we don't set it via template to enable reset to empty string)

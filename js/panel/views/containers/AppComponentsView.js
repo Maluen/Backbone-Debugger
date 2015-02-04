@@ -7,7 +7,10 @@ function(Backbone, _, $, Handlebars, CollectionView, template, setImmediate) {
         template: Handlebars.compile(template),
         
         CollectionItemView: undefined, // oggetto sottotipo di AppComponentView
-        collectionElSelector: ".appComponentList",
+        
+        collectionElTagName: "ul",
+        collectionElClassName: "appComponentList nav nav-tabs nav-stacked",
+
         searchFormElSelector: ".appComponentsOptions .searchForm",
         searchTermElSelector: ".appComponentsOptions .searchTerm",
 
