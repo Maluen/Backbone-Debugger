@@ -1,4 +1,4 @@
-## v0.3
+## v0.3.0
 
 - Lazy loading of components and actions: instead of reading all of them at once and filtering on the panel, now only the requested items are loaded, moreover, filtering is done directly on the backbone agent. This makes the panel much more lighter and scalable for bigger applications (#23)
 
