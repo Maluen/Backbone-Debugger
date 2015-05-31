@@ -32,7 +32,10 @@ define(["backbone", "underscore", "inspectedPageClient"], function(Backbone, _, 
         // Activate the Backbone Agent by reloading the inspected page and injecting it at
         // the beginning of each frame.
         this.activate = function() {
-            inspectedPageClient.reloadInjecting(chrome.extension.getURL("js/backboneAgent"));
+            inspectedPageClient.reloadInjecting(
+                chrome.extension.getURL("js/backboneAgent")//,
+                //chrome.extension.getURL("js/preprocessor/preprocessor.js")
+            );
         };
 
         // Execute the function in the inspected page, using the Backbone agent as context.

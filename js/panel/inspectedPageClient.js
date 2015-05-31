@@ -91,49 +91,43 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
         // The scripts base directory must contain an index.json file with
         // a scripts array which will be injected in the provided order.
         // Note: the urls are considered as relative to the base path.
-        // "injectionData" is an optional JSON-compatible hash accessible to the scripts,
-        // is tipically used to pass special data not directly accessible from the page, such as the
-        // extension url, or for scripts configuration options.
-        this.reloadInjecting = function(scriptsBasePath, injectionData) {
-            injectionData = injectionData || {};
+        // "options.injectionData" is an optional JSON-compatible hash accessible to the scripts,
+        // is tipically used to pass special data not directly accessible from the page,
+        // such as the extension url, or for scripts configuration options.
+        // - preprocessorURL is an optional parameter stating the absolute url of the preprocessor.
+        this.reloadInjecting = function(scriptsBasePath, preprocessorURL, options) {
+            options = options || {};
+
+            var injectionData = options.injectionData || {};
+
             var me = this;
 
-            utils.httpRequest("get", scriptsBasePath+"/index.json", function(data) {
-                var index = JSON.parse(data);
+            var inject = function(injectedScript, preprocessorScript) {
+                // Reload the inspected page with the code to inject at the beginning of it
+                me.isInjecting = true;
+                chrome.devtools.inspectedWindow.reload({
+                    ignoreCache: true, // avoid to load the old and possibly different 
+                                       // cached version of the inspected page
+                    injectedScript: injectedScript,
+                    preprocessorScript: preprocessorScript
+                });
+            };
 
-                // transform scripts relative urls into their content
-                var scripts = index.scripts;
-                var fetchScripts = function(onComplete) {
-                    var scriptsLoaded = 0;
-                    _.each(scripts, function(scriptRelativeURL, index) {
-                        var scriptURL = scriptsBasePath+"/"+scriptRelativeURL;
-                        utils.httpRequest("get", scriptURL, function(data) {
-                            scripts[index] = data; // replace script relative url with its content
-                            scriptsLoaded++;
+            utils.fetchData(["index.json"], scriptsBasePath, function(data) {
+                var index = JSON.parse(data[0]);
 
-                            if (scriptsLoaded === scripts.length) {
-                                // scripts fetch complete
-                                onComplete(scripts);
-                            }
-                        });
-                    });
-                }
-                fetchScripts(function() { // on complete
+                var scriptURLs = index.scripts;
+                utils.fetchData(scriptURLs, scriptsBasePath, function(scripts) { // on complete
                     // prepare code to inject
                     // TODO: create and use source map to ease debugging
 
-                    var toInject = '(function(injectionData) {' + '\n\n'
-                                        + scripts.join('\n\n') + '\n\n'
-                                + '})('+JSON.stringify(injectionData)+');' + '\n'; // last "\n" prevents eventual EOF error
+                    var injectedScript = '(function(injectionData) {' + '\n\n'
+                                       + scripts.join('\n\n') + '\n\n'
+                                       + '})('+JSON.stringify(injectionData)+');' + '\n'; // last "\n" prevents eventual EOF error
 
-                    // Reload the inspected page with the code to inject at the beginning of it
-                    me.isInjecting = true;
-                    chrome.devtools.inspectedWindow.reload({
-                        ignoreCache: true, // avoid to load the old and possibly different 
-                                           // cached version of the inspected page
-                        injectedScript: toInject
-                    });
-                });
+                    if (!preprocessorURL) inject(injectedScript);
+                    else utils.fetchData([preprocessorURL], null, _.partial(inject, injectedScript), true);
+                }, true);
             }, true); // disable request caching (avoid to load the old and possibly different cached
                       // version of the injected scripts), not needed in production.
         };

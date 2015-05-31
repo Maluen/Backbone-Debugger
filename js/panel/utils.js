@@ -17,6 +17,28 @@ define(["underscore", "jquery"], function(_, $) {
             $.ajax(requestObj).always(callback); // the callback is called also if the request fails
         };
 
+        // Call onComplete with an array containing the files data.
+        // filesBasePath is an optional string that will be used as base for the urls.
+        this.fetchData = function(fileURLs, filesBasePath, onComplete, disableCaching) {
+            var files = [];
+
+            var filesLoaded = 0;
+            _.each(fileURLs, function(fileURL, index) {
+                var fileURL = fileURL;
+                if (filesBasePath) fileURL = filesBasePath+"/"+fileURL;
+
+                this.httpRequest("get", fileURL, _.bind(function(data) {
+                    files[index] = data; // replace script relative url with its content
+                    filesLoaded++;
+
+                    if (filesLoaded === fileURLs.length) {
+                        // files fetch complete
+                        onComplete(files);
+                    }
+                }, this), disableCaching);
+            }, this);
+        };
+
         // String utility functions.
         this.string = {
 
