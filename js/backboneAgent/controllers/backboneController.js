@@ -6,23 +6,21 @@ Modules.set('controllers.backboneController', function() {
 
     var backboneController = new (Component.extend({ // singleton
 
+        initialize: function() {
+            // function to call every time a new Backbone is detected
+            this.callback = undefined;
+        },
+
         // Calls the callback passing to it the Backbone object every time it's detected.
         // The function uses multiple methods of detection.
         onBackboneDetected: function(callback) {
-            var handleBackbone = u.bind(function(Backbone) {
-                // skip if already detected
-                // (needed because the app could define Backbone in multiple ways at once)
-                if (hidden.get(Backbone, "isDetected")) return;
-                hidden.set(Backbone, "isDetected", true);
-
-                this.trigger('backboneDetected', Backbone);
-                callback(Backbone);
-            }, this);
+            this.callback = callback;
 
             // global
-            u.onSetted(window, "Backbone", handleBackbone);
+            u.onSetted(window, "Backbone", u.bind(this.handleBackbone, this));
 
             // AMD
+            var me = this;
             u.patchFunctionLater(window, "define", function(originalFunction) { return function() {
                 // function arguments: (id? : String, dependencies? : Array, factory : Function)
 
@@ -49,7 +47,7 @@ Modules.set('controllers.backboneController', function() {
                                              typeof BackboneCandidate.Collection == "function" &&
                                              typeof BackboneCandidate.Router == "function";
                             if (isBackbone) {
-                                handleBackbone(BackboneCandidate);
+                                me.handleBackbone(BackboneCandidate);
                             }
 
                             return module;
@@ -60,6 +58,16 @@ Modules.set('controllers.backboneController', function() {
                 }
                 return originalFunction.apply(this, argumentsArray);
             }});
+        },
+
+        handleBackbone: function(Backbone) {
+            // skip if already detected
+            // (needed because the app could define Backbone in multiple ways at once)
+            if (hidden.get(Backbone, "isDetected")) return;
+            hidden.set(Backbone, "isDetected", true);
+
+            this.trigger('backboneDetected', Backbone);
+            this.callback(Backbone);
         }
 
     }))();

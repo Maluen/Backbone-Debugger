@@ -53,7 +53,12 @@ Modules.set('backboneAgent', function() {
         Reader: Modules.get('Reader'),
         filters: Modules.get('filters.filters'),
 
-        appComponentControllers: appComponentControllers
+        appComponentControllers: appComponentControllers,
+
+        // manual Backbone detection
+        handleBackbone: function(Backbone) {
+            return backboneController.handleBackbone(Backbone);
+        }
 
     }))();
 
