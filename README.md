@@ -28,6 +28,22 @@ Install from Chrome Web Store
 
 Follow this method if you want the latest stable release, it will also update automatically.
 
+Backbone detection
+--------
+If you get the message "Waiting for Backbone" indefinitely, then Backbone can't be found, currently the only supported automatic detection is via window.Backbone or via AMD with window.define.  
+
+To send the Backbone object to the debugger manually, use the following code just after requiring it in the main file, before creating any application component, like views or models:
+
+```javascript
+var Backbone = require('Backbone'); // example: backbone is imported
+// Add this!
+if (window.__backboneAgent) {
+  window.__backboneAgent.handleBackbone(Backbone);
+}
+```
+
+In case this isn't enough, please open an issue.
+
 Known Limitations
 --------
 Support for apps that modify the standard Backbone behavior, e.g. apps that patch core methods like extend or 

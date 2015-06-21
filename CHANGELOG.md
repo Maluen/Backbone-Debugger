@@ -1,3 +1,8 @@
+## v0.3.1
+
+- Add support for manual Backbone detection to fix eventual infinite "Waiting for Backbone" message. (see README) (#40)
+- Update used WatchJS version. (#39)
+
 ## v0.3.0
 
 - Lazy loading of components and actions: instead of reading all of them at once and filtering on the panel, now only the requested items are loaded, moreover, filtering is done directly on the backbone agent. This makes the panel much more lighter and scalable for bigger applications (#23)
