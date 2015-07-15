@@ -57,7 +57,7 @@ Modules.set('utils', function() {
         },
 
         // Note: uses WatchJS dependency.
-        watchOnce: function(object, property, callback) {
+        watchOnce: function(object, property, callback, recursionLevel) {
             watch(object, property, function onceHandler(prop, action, newValue, oldValue) {
                 // by doing the unwatch before calling the callback (instead that doing it after),
                 // is possible for the callback to set the property again without ending up in an
@@ -65,7 +65,7 @@ Modules.set('utils', function() {
                 unwatch(object, property, onceHandler);
 
                 callback(prop, action, newValue, oldValue);
-            });
+            }, recursionLevel);
         },
 
         // Call the callback every time the property of the object is setted, passing to it
@@ -145,7 +145,7 @@ Modules.set('utils', function() {
 
                     callback(newValue);
                 }
-            });
+            }, 0);
         },
 
         // Listen for changes to the object property and calls the callback when that happens.
