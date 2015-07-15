@@ -138,7 +138,10 @@ Modules.set('utils', function() {
         // Like onDefined, but calls the callback just once.
         // Note: uses WatchJS dependency.
         onceDefined: function(object, property, callback) {
-            if (object[property] !== undefined) callback(object[property]);
+            if (object[property] !== undefined) {
+                callback(object[property]);
+                return;
+            }
             watch(object, property, function handler(prop, action, newValue, oldValue) {
                 if (newValue !== undefined) {
                     unwatch(object, property, handler);
