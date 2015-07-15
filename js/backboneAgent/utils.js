@@ -196,9 +196,25 @@ Modules.set('utils', function() {
         // Replace the 'functionName' function property of object
         // with the one returned by the 'patcher' function.
         // The patcher function is called with the original function as argument.
-        patchFunction: function(object, functionName, patcher) {
+        patchFunction: function(object, functionName, patcher, options) {
+            options = options || {};
+
             var originalFunction = object[functionName];
             object[functionName] = patcher(originalFunction);
+
+            if (options.preserveArity) {
+                var arity = originalFunction.length;
+                var params = [];
+                for (var i=0; i<arity; i++) {
+                  params[i] = "param"+i;
+                }
+                var paramsString = params.join(', ');
+
+                // wrap the patched function in another function with the original arity
+                object[functionName] = new Function(['fn'], 'return function('+paramsString+') { ' +
+                    'return fn.apply(this, arguments);' +
+                '};')(object[functionName]);
+            }
 
             // When calling onString on the patched function, call the originalFunction onString.
             // This is needed to allow an user of the originalFunction to manipulate its 

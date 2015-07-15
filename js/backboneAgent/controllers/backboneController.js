@@ -30,28 +30,29 @@ Modules.set('controllers.backboneController', function() {
                 for (var i=0,l=argumentsArray.length; i<l; i++) {
                     if (typeof argumentsArray[i] == "function") {
                         // factory function found, patch it.
-                        // NOTE: in the patcher function, specify the parameters for the
-                        // default modules, or in case of a module with no dependencies but
-                        // that uses the default modules internally, the original define would see a 0-arity
-                        // function and would call it without them (see define() in the AMD API)
+                        // NOTE: the patcher function must preserve the original arity,
+                        // since it is used by loaders (RequireJS), in case of a module
+                        // with no explicit dependencies, to understand when to pass them anyway
+                        // (e.g. by finding the require calls in the factory body).
                         u.patchFunction(argumentsArray, i, function(originalFunction) {
-                        return function(require, exports, modules) {
-                            var module = originalFunction.apply(this, arguments);
+                            return function() {
+                                var module = originalFunction.apply(this, arguments);
 
-                            // check if Backbone has been defined by the factory fuction
-                            // (some factories set "this" to Backbone)
-                            var BackboneCandidate = module || this;
-                            var isBackbone = u.isObject(BackboneCandidate) &&
-                                             typeof BackboneCandidate.View == "function" &&
-                                             typeof BackboneCandidate.Model == "function" &&
-                                             typeof BackboneCandidate.Collection == "function" &&
-                                             typeof BackboneCandidate.Router == "function";
-                            if (isBackbone) {
-                                me.handleBackbone(BackboneCandidate);
+                                // check if Backbone has been defined by the factory fuction
+                                // (some factories set "this" to Backbone)
+                                var BackboneCandidate = module || this;
+                                var isBackbone = u.isObject(BackboneCandidate) &&
+                                                 typeof BackboneCandidate.View == "function" &&
+                                                 typeof BackboneCandidate.Model == "function" &&
+                                                 typeof BackboneCandidate.Collection == "function" &&
+                                                 typeof BackboneCandidate.Router == "function";
+                                if (isBackbone) {
+                                    me.handleBackbone(BackboneCandidate);
+                                }
+
+                                return module;
                             }
-
-                            return module;
-                        }});
+                        }, { preserveArity: true });
 
                         break;
                     }
