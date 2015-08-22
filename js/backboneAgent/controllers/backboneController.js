@@ -17,7 +17,11 @@ Modules.set('controllers.backboneController', function() {
             this.callback = callback;
 
             // global
-            u.onSetted(window, "Backbone", u.bind(this.handleBackbone, this));
+            u.onSetted(window, "Backbone", u.bind(function (backbone) {
+                if (backbone) {
+                    this.handleBackbone(backbone);
+                }
+            }, this));
 
             // AMD
             var me = this;
