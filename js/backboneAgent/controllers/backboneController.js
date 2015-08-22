@@ -11,8 +11,6 @@ Modules.set('controllers.backboneController', function() {
             this.callback = undefined;
         },
 
-
-
         // Calls the callback passing to it the Backbone object every time it's detected.
         // The function uses multiple methods of detection.
         onBackboneDetected: function(callback) {

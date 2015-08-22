@@ -168,7 +168,7 @@ form label {
 }
 
 .appComponentActions form input {
-    height: 10px;
+    height: 14px;
 }
 
 .appComponentActions .resetSearch {
@@ -182,7 +182,7 @@ form label {
 .appComponentActions .sortForm select {
     width: 100px;
     padding: 0;
-    height: 20px;
+    height: 24px;
 }
 
 .appComponentActions table {
