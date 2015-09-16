@@ -8,25 +8,33 @@ function(Backbone, _, $, View, Handlebars, template) {
         template: Handlebars.compile(template),
 
         // the waiting text to display
-        waitingText: undefined,
+        waitingPhase: undefined,
 
         initialize: function(options) {
             View.prototype.initialize.apply(this, arguments);
 
             options = options || {};
 
-            this.setWaitingText(options.waitingText || '');
-            // (first render provided by above function)
+            this.render();
         },
 
-        setWaitingText: function(waitingText) {
-            this.waitingText = waitingText;
+        inspectedPagePhase: function() {
+            return this.setWaitingPhase('inspectedPage');
+        },
+
+        backbonePhase: function() {
+            return this.setWaitingPhase('backbone');
+        },
+
+        setWaitingPhase: function(waitingPhase) {
+            this.waitingPhase = waitingPhase;
             this.render();
         },
 
         templateData: function() {
             return {
-                'waitingText': this.waitingText
+                inspectedPagePhase: this.waitingPhase === 'inspectedPage',
+                backbonePhase: this.waitingPhase === 'backbone'
             };
         },
 
