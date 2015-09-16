@@ -35,7 +35,7 @@ If you get the message "Waiting for Backbone" indefinitely, then Backbone can't 
 To send the Backbone object to the debugger manually, use the following code just after requiring it in the main file, before creating any application component, like views or models:
 
 ```javascript
-var Backbone = require('Backbone'); // example: backbone is imported
+var Backbone = require('backbone'); // example: backbone is imported
 // Add this!
 if (window.__backboneAgent) {
   window.__backboneAgent.handleBackbone(Backbone);
