@@ -29,7 +29,7 @@ function(Backbone, _, backboneAgentClient) {
             this.updateComparator();
 
             // hash <model index, model>
-            // (hash for efficiency reason, since an array could be very sparse!)
+            // (hash is used since an array could be very sparse!)
             this.hiddenModels = {};
             this.visibleModels = {};
             this.detachedModels = {};
