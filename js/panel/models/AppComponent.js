@@ -16,8 +16,6 @@ function(Backbone, _, AppComponentActions, backboneAgentClient, setImmediate) {
         isRealTimeUpdateActive: false,
 
         initialize: function(attributes, options) {
-            _.bindAll(this);
-
             this.actions = new AppComponentActions(undefined, {
                 component: this
             });

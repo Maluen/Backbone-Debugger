@@ -11,7 +11,7 @@ function(Backbone, _, backboneAgentClient, setImmediate) {
         // see backbone agent for supported attributes
 
         initialize: function(attributes, options) {
-            _.bindAll(this);
+
         },
 
         // TODO: same as AppComponent, refactor to have a base Model

@@ -25,8 +25,6 @@ function(Backbone, _, backboneAgentClient) {
         readLength: 5,
 
         initialize: function(models, options) {
-            _.bindAll(this);
-
             // default comparator
             this.updateComparator();
 

@@ -3,8 +3,6 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
         _.extend(this, Backbone.Events);
 
         this.initialize = function() {
-            _.bindAll(this);
-
             // true when the injection process is being executed, tipically used by the router
             // to decide whether to reload the panel or not.
             this.isInjecting = false;

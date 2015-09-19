@@ -9,8 +9,6 @@ define(["backbone", "underscore", "inspectedPageClient"], function(Backbone, _, 
         this.clientIndex = undefined;
 
         this.initialize = function() {
-            _.bindAll(this);
-
             // the frame url in which Backbone has been detected
             this.frameURL = undefined;
         };

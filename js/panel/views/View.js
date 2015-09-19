@@ -3,8 +3,6 @@ define(["backbone", "underscore", "jquery"], function(Backbone, _, $) {
     var View = Backbone.View.extend({
 
         initialize: function(options) {
-            _.bindAll(this);
-
             this.domListeners = [];
         },
 

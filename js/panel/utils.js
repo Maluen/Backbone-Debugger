@@ -2,7 +2,7 @@ define(["underscore", "jquery"], function(_, $) {
     var utils = new (function() {
 
         this.initialize = function() {
-            _.bindAll(this);
+
         };
 
         this.httpRequest = function(method, url, callback, disableCaching) {

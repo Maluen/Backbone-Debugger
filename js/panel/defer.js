@@ -5,8 +5,6 @@ define(["underscore"], function(_) {
     var defer = new (function() {
 
         this.initialize = function() {
-            _.bindAll(this);
-
             this.queue = [];
         };
 
