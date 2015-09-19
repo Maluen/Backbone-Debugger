@@ -19,7 +19,7 @@ function(Backbone, _, $, View, AppComponentActionsView) {
                 parent: this
             });
 
-            this.listenTo(this.model, "change", this.render);
+            this.listenTo(this.model, "change", _.bind(this.render, this));
 
             this.render();
         },

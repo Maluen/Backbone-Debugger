@@ -10,7 +10,7 @@ function(Backbone, _, AppComponent, backboneAgentClient) {
 
         // see backbone agent for supported attributes
 
-        // stampa l'elemento html della vista sulla console
+        // print the view el on the console
         printElement: function() {
             backboneAgentClient.execFunction(function(componentIndex) {
                 var appViewInfo = this.appComponentsInfos['View'].at(componentIndex);

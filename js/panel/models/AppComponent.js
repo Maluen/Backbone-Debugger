@@ -42,7 +42,7 @@ function(Backbone, _, AppComponentActions, backboneAgentClient, setImmediate) {
             }, [this.category, this.index],
             _.bind(function(appComponentAttributes) { // on executed
                 setImmediate(_.bind(function() { // prevent UI blocking
-                    // resetta gli attributi
+                    // reset attributes
                     this.clear({silent: true});
                     this.set(appComponentAttributes);
                     this.realTimeUpdate();
@@ -58,8 +58,7 @@ function(Backbone, _, AppComponentActions, backboneAgentClient, setImmediate) {
 
             setImmediate(_.bind(function() { // binding many consecutive events freezes the ui (happens if there are a lot of app components)
                 var messageName = "backboneAgent:"+this.category+":"+this.index+":change";
-                this.listenTo(backboneAgentClient, messageName, 
-                _.bind(function(message) {
+                this.listenTo(backboneAgentClient, messageName, _.bind(function(message) {
                     var changeInfo = message.data;
 
                     // update the local value of the changed attribute
@@ -83,7 +82,7 @@ function(Backbone, _, AppComponentActions, backboneAgentClient, setImmediate) {
             this.isRealTimeUpdateActive = true;
         },
 
-        // stampa il componente dell'app sulla console
+        // print the app component on the console
         printThis: function() {
             backboneAgentClient.execFunction(function(componentCategory, componentIndex) {
                 var appComponentInfo = this.appComponentsInfos[componentCategory].at(componentIndex);

@@ -100,24 +100,22 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
 
             var injectionData = options.injectionData || {};
 
-            var me = this;
-
-            var inject = function(injectedScript, preprocessorScript) {
+            var inject = _.bind(function(injectedScript, preprocessorScript) {
                 // Reload the inspected page with the code to inject at the beginning of it
-                me.isInjecting = true;
+                this.isInjecting = true;
                 chrome.devtools.inspectedWindow.reload({
                     ignoreCache: true, // avoid to load the old and possibly different 
                                        // cached version of the inspected page
                     injectedScript: injectedScript,
                     preprocessorScript: preprocessorScript
                 });
-            };
+            }, this);
 
-            utils.fetchData(["index.json"], scriptsBasePath, function(data) {
+            utils.fetchData(["index.json"], scriptsBasePath, _.bind(function(data) {
                 var index = JSON.parse(data[0]);
 
                 var scriptURLs = index.scripts;
-                utils.fetchData(scriptURLs, scriptsBasePath, function(scripts) { // on complete
+                utils.fetchData(scriptURLs, scriptsBasePath, _.bind(function(scripts) { // on complete
                     // prepare code to inject
                     // TODO: create and use source map to ease debugging
 
@@ -127,8 +125,8 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
 
                     if (!preprocessorURL) inject(injectedScript);
                     else utils.fetchData([preprocessorURL], null, _.partial(inject, injectedScript), true);
-                }, true);
-            }, true); // disable request caching (avoid to load the old and possibly different cached
+                }, this), true);
+            }, this), true); // disable request caching (avoid to load the old and possibly different cached
                       // version of the injected scripts), not needed in production.
         };
 
@@ -136,7 +134,7 @@ define(["backbone", "underscore", "panelPort", "utils"], function(Backbone, _, p
         // useful for stopping the debug mode (causes removal of backbone agent)
         this.reload = function() {
             chrome.devtools.inspectedWindow.reload();
-        }
+        };
 
         this.initialize();
     })();

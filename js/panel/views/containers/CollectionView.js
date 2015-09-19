@@ -72,7 +72,7 @@ function(Backbone, _, $, View, Handlebars, setImmediate) {
             this.collectionEl = this.createCollectionEl();
 
             this.listenTo(this.collection, "reset", _.bind(this.handleReset, this));
-            this.listenTo(this.collection, "add", this.handleNewItem);
+            this.listenTo(this.collection, "add", _.bind(this.handleNewItem, this));
 
             // hash <model index, item>
             // contains the items that should have been removed, but that are kept
