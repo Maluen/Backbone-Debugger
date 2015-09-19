@@ -13,6 +13,8 @@ function(Backbone, _, $, View, AppComponentActionsView) {
         initialize: function(options) {
             View.prototype.initialize.apply(this, arguments);
 
+            this.renderDOMListeners = [];
+
             // create sub-view for the component actions
             this.appComponentActionsView = new AppComponentActionsView({
                 collection: this.model.actions,
@@ -50,8 +52,9 @@ function(Backbone, _, $, View, AppComponentActionsView) {
         },
 
         render: function() {
-            // before render, remove .appComponent handlers to prevent memory leaks
-            this.$('.appComponent').off();
+            // before render, clear render DOM listeners to prevent memory leaks and other nasty side effects
+            _.each(this.renderDOMListeners, this.stopDOMListening, this);
+            this.renderDOMListeners = [];
 
             var isHighlighting = this.$('.appComponentToggle').hasClass('highlight');
 
@@ -63,36 +66,42 @@ function(Backbone, _, $, View, AppComponentActionsView) {
             // restore animation if was active before render
             if (isHighlighting) this.highlightAnimation();
 
-            // TODO: unbind below elements on view remove to prevent memory leaks
-            // (though as for now the components are never removed)
-
             // prevents the browser from rendering the component content when it is collapsed (closed), 
             // drastically decreasing the rendering time when the application has lots of components
             var appComponent = this.$('.appComponent');
             if (!templateData['isOpen']) {
                 appComponent.css("display", "none");
             }
-            appComponent.on('hidden', function(event) { // fired just after the hide animation ends
-                if ($(event.target).is(appComponent)) { // don't handle if fired by child collapsable elements
-                    appComponent.css("display", "none");
-                }
+            this.renderDOMListeners.push(
+                // fired by bootstrap just after the hide animation ends
+                this.listenToDOM(appComponent, 'hidden', function(event) {
+                    if ($(event.target).is(appComponent)) { // don't handle if fired by child collapsable elements
+                        appComponent.css("display", "none");
+                    }
+                }),
 
-            });
-            appComponent.on('show', function(event) { // fired just before the show animation starts
-                if ($(event.target).is(appComponent)) { // don't handle if fired by child collapsable elements
-                    appComponent.css("display", "block");
-                }
-            });
+                // fired by bootstrap just before the show animation starts
+                this.listenToDOM(appComponent, 'show', function(event) {
+                    if ($(event.target).is(appComponent)) { // don't handle if fired by child collapsable elements
+                        appComponent.css("display", "block");
+                    }
+                })
+            );
 
             // keep track of (manual) view open/close or collapsable elements collapse/uncollapse actions
-            this.$el.on('shown', _.bind(function(event) { // fired just after the show animation finished
-                if ($(event.target).is(appComponent)) this.trigger('open');
-                else this.trigger('collapsable:open');
-            }, this));
-            this.$el.on('hidden', _.bind(function(event) { // fired just after the hide animation finished
-                if ($(event.target).is(appComponent)) this.trigger('close');
-                else this.trigger('collapsable:close');
-            }, this));
+            this.renderDOMListeners.push(
+                // fired by bootstrap just after the show animation finished
+                this.listenToDOM(this.$el, 'shown', function(event) {
+                    if ($(event.target).is(appComponent)) this.trigger('open');
+                    else this.trigger('collapsable:open');
+                }),
+
+                // fired by bootstrap just after the hide animation finished
+                this.listenToDOM(this.$el, 'hidden', function(event) {
+                    if ($(event.target).is(appComponent)) this.trigger('close');
+                    else this.trigger('collapsable:close');
+                })
+            );
 
             return this;
         },

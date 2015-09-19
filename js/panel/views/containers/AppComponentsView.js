@@ -27,7 +27,7 @@ function(Backbone, _, $, Handlebars, CollectionView, template, setImmediate) {
 
         start: function(onStarted) {
             CollectionView.prototype.start.call(this, _.bind(function() { // on started
-                $(window).on('resize', _.bind(this.readMoreIfNeeded, this));
+                this.listenToDOM($(window), 'resize', this.readMoreIfNeeded);
                 var changeEvents = "child:close child:hide child:collapsable:close";
                 this.listenTo(this, changeEvents, this.readMoreIfNeeded);
 
