@@ -9,9 +9,9 @@ function(Backbone, _, AppComponents, AppView, backboneAgentClient) {
         url: '/views',
 
         unhighlightViewElements: function() {
-        	backboneAgentClient.execFunction(function() {
-        	    this.appComponentControllers['View'].unhighlightViewElements();
-        	});
+            backboneAgentClient.execFunction(function() {
+                this.appComponentControllers['View'].unhighlightViewElements();
+            });
         }
 
     }))();
