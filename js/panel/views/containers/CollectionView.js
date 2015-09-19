@@ -71,8 +71,8 @@ function(Backbone, _, $, View, Handlebars, setImmediate) {
             // meaning this view is probably more than a collection view!
             this.collectionEl = this.createCollectionEl();
 
-            this.listenTo(this.collection, "reset", _.bind(this.handleReset, this));
-            this.listenTo(this.collection, "add", _.bind(this.handleNewItem, this));
+            this.listenTo(this.collection, "reset", this.handleReset);
+            this.listenTo(this.collection, "add", this.handleNewItem);
 
             // hash <model index, item>
             // contains the items that should have been removed, but that are kept
@@ -205,24 +205,24 @@ function(Backbone, _, $, View, Handlebars, setImmediate) {
             // retrigger the child view events, so to have a global proxy
             // (used to react to child events, like hide/show, 
             // for example to read more components if needed)
-            this.listenTo(collectionItemView, "all", _.bind(function(eventName) {
+            this.listenTo(collectionItemView, "all", function(eventName) {
                 this.trigger("child:"+eventName, collectionItemView);
-            }, this));
+            });
 
-            this.listenTo(this.collection, "visible:"+collectionItem.index, _.bind(function() {
+            this.listenTo(this.collection, "visible:"+collectionItem.index, function() {
                 setImmediate(_.bind(function() { // defer to prevent UI blocking
                     collectionItemView.show(true);
                 }, this));
-            }, this));
+            });
 
-            this.listenTo(this.collection, "hidden:"+collectionItem.index, _.bind(function() {
+            this.listenTo(this.collection, "hidden:"+collectionItem.index, function() {
                 setImmediate(_.bind(function() { // defer to prevent UI blocking
                     collectionItemView.show(false);
                 }, this));
-            }, this));
+            });
 
-            this.listenTo(collectionItemView, "show", _.bind(this.handleIfMoreVisibleItems, this));
-            this.listenTo(collectionItemView, "hide", _.bind(this.handleIfLessVisibleItems, this));
+            this.listenTo(collectionItemView, "show", this.handleIfMoreVisibleItems);
+            this.listenTo(collectionItemView, "hide", this.handleIfLessVisibleItems);
         },
 
         // call this when there could be more visible items

@@ -23,8 +23,8 @@ function(Backbone, _, $, Handlebars, CollectionView, AppComponentActionView, tem
 
         start: function(onStarted) {
             CollectionView.prototype.start.call(this, _.bind(function() { // on started
-                this.listenTo(this.appComponentView, "open show", _.bind(this.checkIfIsInViewport, this));
-                this.listenTo(this.appComponentView, "close hide", _.bind(this.notifyIsNotInViewport, this));
+                this.listenTo(this.appComponentView, "open show", this.checkIfIsInViewport);
+                this.listenTo(this.appComponentView, "close hide", this.notifyIsNotInViewport);
                 this.checkIfIsInViewport();
 
                 this.readMoreIfNeeded();

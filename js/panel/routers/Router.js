@@ -10,7 +10,7 @@ function(Backbone, inspectedPageClient, backboneAgentClient, WaitingView, Debugg
             // (see below)
             this.debugMode = false;
 
-            this.listenTo(inspectedPageClient, "updated", _.bind(function(updateDetails) {
+            this.listenTo(inspectedPageClient, "updated", function(updateDetails) {
                 if (inspectedPageClient.isInjecting) {
                     // we are injecting scripts into the inspected page
                     // => reload the panel to wait for injected scripts loading (i.e. backbone agent)
@@ -33,7 +33,7 @@ function(Backbone, inspectedPageClient, backboneAgentClient, WaitingView, Debugg
                         }
                     }, this));
                 }
-            }, this));
+            });
         },
 
         routes: {

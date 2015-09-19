@@ -29,7 +29,7 @@ function(Backbone, _, $, Handlebars, CollectionView, template, setImmediate) {
             CollectionView.prototype.start.call(this, _.bind(function() { // on started
                 $(window).on('resize', _.bind(this.readMoreIfNeeded, this));
                 var changeEvents = "child:close child:hide child:collapsable:close";
-                this.listenTo(this, changeEvents, _.bind(this.readMoreIfNeeded, this));
+                this.listenTo(this, changeEvents, this.readMoreIfNeeded);
 
                 if (onStarted) onStarted();
             }, this));
@@ -112,12 +112,12 @@ function(Backbone, _, $, Handlebars, CollectionView, template, setImmediate) {
                 // search the component
                 this.search('"index '+componentIndex+'"'); // strict search
                 // wait end of search
-                this.listenToOnce(this, "child:show", _.bind(function(child) { // the component child passed the search
+                this.listenToOnce(this, "child:show", function(child) { // the component child passed the search
                     if (child.model.index == componentIndex) { // child is the component we are searching
                         componentView = child;
                         onFound(componentView);
                     }
-                }, this));
+                });
             }
         }
 

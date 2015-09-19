@@ -95,7 +95,7 @@ define(["backbone", "underscore", "inspectedPageClient"], function(Backbone, _, 
                 this.stopListening.apply(this, backboneDetectedListener);
 
                 this.frameURL = frameURL; // execute code on backbone frame by default
-                this.listenTo(inspectedPageClient, "all", _.bind(function(name, message) {
+                this.listenTo(inspectedPageClient, "all", function(name, message) {
                     // re-trigger only events of the backbone agent instance
                     // that is in the backbone frame
                     var isValidMessage = message.frameURL == this.frameURL &&
@@ -103,7 +103,7 @@ define(["backbone", "underscore", "inspectedPageClient"], function(Backbone, _, 
                     if (isValidMessage) {
                         this.trigger.apply(this, arguments);
                     }
-                }, this));
+                });
 
                 if (onDetected) onDetected();
             }, this));

@@ -11,7 +11,7 @@ function(Backbone, _, $, View, Handlebars, template) {
         initialize: function(options) {
             View.prototype.initialize.apply(this, arguments);
 
-            this.listenTo(this.model, "change", _.bind(this.render, this));
+            this.listenTo(this.model, "change", this.render);
 
             this.render();
         },

@@ -56,7 +56,7 @@ function(Backbone, _, AppComponentActions, backboneAgentClient, setImmediate) {
 
             setImmediate(_.bind(function() { // binding many consecutive events freezes the ui (happens if there are a lot of app components)
                 var messageName = "backboneAgent:"+this.category+":"+this.index+":change";
-                this.listenTo(backboneAgentClient, messageName, _.bind(function(message) {
+                this.listenTo(backboneAgentClient, messageName, function(message) {
                     var changeInfo = message.data;
 
                     // update the local value of the changed attribute
@@ -68,7 +68,7 @@ function(Backbone, _, AppComponentActions, backboneAgentClient, setImmediate) {
                         this.set(changeInfo.attributeName, attributeValue);
                     }, this));
 
-                }, this));
+                });
 
                 // l'avvio della realTimeUpdate è rimandato con la setImmediate, per cui eventuali report
                 // inviati tra l'esecuzione e l'effettivo avvio di questa non sono stati gestiti,

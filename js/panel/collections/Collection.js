@@ -71,8 +71,7 @@ function(Backbone, _, backboneAgentClient) {
                 eventHandler = typeof eventHandler == 'string' ?
                                 this[eventHandler] : eventHandler;
 
-                this.listenTo(backboneAgentClient, prefix+eventName, 
-                            _.bind(eventHandler, this));
+                this.listenTo(backboneAgentClient, prefix+eventName, eventHandler);
             }, this);
         },
 
