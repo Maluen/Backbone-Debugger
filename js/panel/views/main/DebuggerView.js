@@ -22,12 +22,24 @@ function(Backbone, _, $, View, Handlebars, template,
         initialize: function(options) {
             View.prototype.initialize.apply(this, arguments);
 
+            this.preventBackspaceBackNavigation();
+
             this.render();
 
             // open default tab
             var defaultTabElement = this.$(".mainTabs>.active");
             var defaultTabContentElement = this.$(defaultTabElement.find('a').attr("href"));
             this.openTab(defaultTabElement, defaultTabContentElement);
+        },
+
+        // Prevent the backspace key from navigating back.
+        // Based on http://stackoverflow.com/a/13756505
+        preventBackspaceBackNavigation: function() {
+            this.listenToDOM($(document), 'keydown', function(event) {
+                if (event.which === 8 && !$(event.target).is("input:not([readonly]):not([type=radio]):not([type=checkbox]), textarea, [contentEditable], [contentEditable=true]")) {
+                  event.preventDefault();
+                }
+            });
         },
 
         render: function() {
