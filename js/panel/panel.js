@@ -6,7 +6,7 @@ require.config({
         templates: '../../templates',
 
         jquery: '../lib/jquery',
-        underscore: '../lib/underscore-min',
+        underscore: '../lib/underscore',
         backbone: '../lib/backbone',
         text: '../lib/text',
         bootstrap: '../lib/bootstrap.min',
