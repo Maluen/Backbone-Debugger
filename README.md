@@ -25,9 +25,11 @@ Using Google Chrome:
 
 Install from Chrome Web Store
 --------
-* Go to the [extension page](https://chrome.google.com/webstore/detail/backbone-debugger/bhljhndlimiafopmmhjlgfpnnchjjbhd) and follow the instructions. Leave a review if you can!    
 
 Follow this method if you want the latest stable release, it will also update automatically.
+
+* Go to the [extension page](https://chrome.google.com/webstore/detail/backbone-debugger/bhljhndlimiafopmmhjlgfpnnchjjbhd) and follow the instructions. Leave a review if you can!    
+* Restart the browser.
 
 Backbone detection
 --------
