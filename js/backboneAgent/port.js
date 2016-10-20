@@ -51,7 +51,7 @@ Modules.set('port', function() {
 				target: 'page',
 				timestamp: new Date().getTime(),
 				name: 'connect'
-			}, [this.channel.port2], '*');
+			}, '*', [this.channel.port2]);
 
 			this.isConnectedWithExtension = true;
 		},
