@@ -76,7 +76,7 @@ var contentScript = new (function() { // singleton
 			target: 'extension',
 			timestamp: new Date().getTime(),
 			name: 'connect'
-		}, [this.channel.port2], '*');
+		}, '*', [this.channel.port2]);
 
 		this.isConnectedWithPage = true;
 	};
