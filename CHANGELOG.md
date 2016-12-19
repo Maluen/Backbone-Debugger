@@ -1,3 +1,18 @@
+## v0.3.2
+
+- Fix once watchers: no recursion #41
+- Fix onceDefined: don't watch if property is already defined #41
+- patchDefine: preserve arity #41
+- Handle case where backbone is set to undefined
+- Handle case where backbone is set to non-object
+- Fix height of panel actions controls
+- Show Backbone detection workaround on "Waiting for Backbone..." view #31
+- Panel: use listenToDOM to remove potential memory leaks
+- Prevent backspace navigation in panel debuggerview
+- Corrected ordering of parameters in postmessage()
+- Update some of the used libraries
+- Cleanups
+
 ## v0.3.1
 
 - Add support for manual Backbone detection to fix eventual infinite "Waiting for Backbone" message. (see README) (#40)
