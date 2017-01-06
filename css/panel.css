@@ -2,7 +2,7 @@ html, body {
     height: 100%;
 }
 
-.fill { 
+.fill {
     height: 100%;
     overflow: hidden;
 }
@@ -67,6 +67,7 @@ form label {
     width: 100%;
     height: auto;
     background: #FFF;
+    box-shadow: 2px 2px 4px rgba( 0, 0, 0, 0.1);
 }
 
 .tabs-left>.nav-tabs>li, .tabs-right>.nav-tabs>li {
@@ -85,6 +86,23 @@ form label {
     background: transparent;
 }
 
+.tabs-left>.nav-tabs>li#appTitleTab {
+    float: left;
+}
+
+.tabs-left>.nav-tabs>li>p {
+    padding: 8px;
+    line-height: 20px;
+    margin: 0;
+}
+
+.tabs-left>.nav-tabs>li#appTitleTab>p {
+    font-family: sans-serif;
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 10px;
+}
+
 .mainTabsContent {
     position: relative; /* required for .tab-pane absolute positioning */
 
@@ -99,15 +117,46 @@ form label {
     width: 100%;
 }
 
+.appComponentsOptions li {
+    height: 40px;
+}
+
+/** Responsive **/
 .appComponentsOptions .navbar-inner {
     border: none;
     padding-left: 12px;
     padding-right: 0;
     box-shadow: none;
-    background-image: -webkit-linear-gradient(rgb(243,243,243), rgb(235,235,235));
 }
-.appComponentsOptions li {
-    height: 40px;
+
+@media (min-width: 1181px) {
+    .appComponentsOptions {
+        position: fixed;
+        top: 0;
+        left: 160px;
+    }
+
+    .appComponentsOptions .navbar-inner {
+        background: transparent;
+    }
+
+    .appComponentsOptions .navbar-inner .searchForm .searchTerm {
+        border: none;
+        box-shadow: 1px 1px 2px rgba( 0, 0, 0, 0.1);
+    }
+
+    .appComponentsOptions .navbar-inner .sortForm select {
+        border: none;
+        box-shadow: 1px 1px 2px rgba( 0, 0, 0, 0.1);
+    }
+}
+
+@media (max-width: 1180px) {
+
+    .appComponentsOptions .navbar-inner {
+        background-image: -webkit-linear-gradient(rgb(243,243,243), rgb(235,235,235));
+    }
+
 }
 
 .icon-chevron-bottom {
@@ -163,7 +212,7 @@ form label {
 }
 
 @-webkit-keyframes highlight {
-    0%  { background-color: #57A0FF; 
+    0%  { background-color: #57A0FF;
           color: black; }
 }
 .highlight {
@@ -216,3 +265,4 @@ form label {
 .appComponentActions table {
     margin-bottom: 0;
 }
+
