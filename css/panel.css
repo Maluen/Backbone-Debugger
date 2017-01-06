@@ -52,8 +52,17 @@ form label {
 /* Turns dropdown into dropright for left-aligned nav-tabs */
 .tabs-left .nav-tabs .dropdown-menu {
     position: absolute;
-    left: 99px;
-    top: -2px;
+    left: -89px;
+    top: 35px;
+    border-radius: 0;
+}
+
+.tabs-left .nav-tabs .dropdown-menu li a {
+    padding: 10px 20px;
+}
+
+.tabs-left .nav-tabs .dropdown-menu li a:hover {
+    background: #03a9f4;
 }
 
 .caret-right {
@@ -68,6 +77,23 @@ form label {
     height: auto;
     background: #FFF;
     box-shadow: 2px 2px 4px rgba( 0, 0, 0, 0.1);
+}
+
+.tabs-left>.nav-tabs.nav-tabs>li>.dropdown-toggle>.caret {
+    transition: transform 0.3s ease-in-out;
+}
+
+.tabs-left>.nav-tabs.nav-tabs .open .dropdown-toggle {
+    color: #0088cc;
+    border: none;
+    background: transparent;
+}
+
+.tabs-left>.nav-tabs.nav-tabs .open .caret {
+    border-top-color: #0088cc;
+    border-bottom-color: #0088cc;
+
+    transform: rotate(360deg);
 }
 
 .tabs-left>.nav-tabs>li, .tabs-right>.nav-tabs>li {
