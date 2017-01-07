@@ -249,7 +249,7 @@ form label {
     background-color: white;
     border-style: solid;
     border-color: rgb(221, 221, 221);
-    border-width: 1px;
+    border-width: 0 1px 1px;
     border-collapse: collapse;
     -webkit-user-select: text;
 }
@@ -292,3 +292,30 @@ form label {
     margin-bottom: 0;
 }
 
+.nav-tabs.nav-stacked>li>a {
+    background: #03A9F4;
+    color: #FFF;
+    text-shadow: none;
+}
+
+.nav-tabs.nav-stacked>li>a.collapse, .nav-tabs.nav-stacked>li>a.collapsed {
+    background: #FFF;
+    color: #333333;
+    text-shadow: none;
+}
+
+.appComponent > ul {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+}
+
+.appComponent > ul > li {
+    width: 25%;
+    padding: 20px 5px;
+}
+
+.appComponent > ul > li:last-child {
+    width: 100%;
+    padding: 0;
+}
