@@ -75,7 +75,10 @@ form label {
     border: 0;
     width: 100%;
     height: auto;
-    background: #FFF;
+}
+
+.tabs-left .mainTabs {
+    background: #FFFFFF;
     box-shadow: 2px 2px 4px rgba( 0, 0, 0, 0.1);
 }
 
@@ -246,6 +249,11 @@ form label {
 .appComponentList>li {
     background-color: #EBEBEB;
     margin-bottom: 0;
+}
+
+.appComponentList {
+    background: transparent;
+    padding-bottom: 40px;
 }
 
 .appComponentToggle {
