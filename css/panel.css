@@ -139,7 +139,7 @@ form label {
 }
 
 .mainTabsContent>.tab-pane {
-    height: 100%;
+    height: calc(100% - 40px);
     overflow-y: auto;
     display: block !important; /* prevents render on tab change */
     position: absolute;
@@ -159,10 +159,17 @@ form label {
 }
 
 @media (min-width: 1181px) {
-    .tab-pane[isVisible="true"] .appComponentsOptions {
+    .tab-pane .appComponentsOptions {
+        height: 0;
+        opacity: 0;
+    }
+
+    .tab-pane.active .appComponentsOptions {
         position: fixed;
         top: 0;
         left: 160px;
+        height: initial;
+        opacity: 1;
     }
 
     .appComponentsOptions .navbar-inner {
@@ -249,7 +256,7 @@ form label {
     text-align: center;
     width: 100%;
     word-break: initial;
-    padding-bottom: 100px;
+    padding-bottom: 40px;
 }
 
 .appComponentsContent {

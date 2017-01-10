@@ -62,7 +62,6 @@ function(Backbone, _, $, View, Handlebars, template,
                 // NOTE: the distance between the contents should be greater than the maximum
                 // devtools width (i.e. the screen width) or the contents may overlap
                 tabView.$el.css("left", tabIndex*1000+"em");
-                tabView.$el.attr("isVisible", false);
                 tabIndex++;
             }, this);
 
@@ -82,15 +81,12 @@ function(Backbone, _, $, View, Handlebars, template,
 
             // change highlighted tab
             currentTabElement.removeClass("active");
-            currentTabElement.attr("isVisible", false);
             tabElement.addClass("active");
 
             // display tab content
             var tabsContentContainer = this.$('.mainTabsContent');
             tabsContentContainer.scrollLeft(tabsContentContainer.scrollLeft() +
                                            tabContentElement.position().left);
-
-            tabContentElement.attr("isVisible", true);
 
             // notify opened to new tab
             var tabId = tabContentElement.attr('id');
