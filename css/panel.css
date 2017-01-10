@@ -247,6 +247,9 @@ form label {
 
 .more {
     text-align: center;
+    width: 100%;
+    word-break: initial;
+    padding-bottom: 100px;
 }
 
 .appComponentsContent {
@@ -262,6 +265,7 @@ form label {
 .appComponentList {
     background: transparent;
     padding-bottom: 40px;
+    float: none !important;
 }
 
 .appComponentToggle {
