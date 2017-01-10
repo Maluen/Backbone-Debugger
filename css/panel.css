@@ -344,6 +344,12 @@ form label {
     text-shadow: none;
 }
 
+.nav-tabs.nav-stacked>li>a.collapse:hover, .nav-tabs.nav-stacked>li>a.collapsed:hover {
+    border-color: #64B5F6;
+    background: #64B5F6;
+    color: #FFF;
+}
+
 .appComponent > ul {
     display: flex;
     flex-wrap: wrap;
