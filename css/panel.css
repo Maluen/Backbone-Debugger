@@ -203,6 +203,12 @@ form label {
     }
 }
 
+@media (max-width: 655px) {
+    #appTitleTab {
+        display: none;
+    }
+}
+
 .icon-chevron-bottom {
     -webkit-transform: rotate(90deg);
 }
