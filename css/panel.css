@@ -134,7 +134,7 @@ form label {
 
 .mainTabsContent {
     position: relative; /* required for .tab-pane absolute positioning */
-
+    width: 100vw;
     margin-top: 40px; /* Push the content down so it's visible */
 }
 
@@ -210,6 +210,14 @@ form label {
     #appTitleTab {
         display: none;
     }
+}
+
+@media (max-width: 500px) {
+
+    .tabs-left>.nav-tabs>li>a, .tabs-right>.nav-tabs>li>a {
+        min-width: initial;
+    }
+
 }
 
 .icon-chevron-bottom {
