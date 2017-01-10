@@ -159,7 +159,7 @@ form label {
 }
 
 @media (min-width: 1181px) {
-    .appComponentsOptions {
+    .tab-pane[isVisible="true"] .appComponentsOptions {
         position: fixed;
         top: 0;
         left: 160px;
