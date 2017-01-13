@@ -1,3 +1,7 @@
+## v0.4
+
+- New responsive theme #50
+
 ## v0.3.2
 
 - Fix once watchers: no recursion #41
