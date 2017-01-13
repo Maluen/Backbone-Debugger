@@ -38,6 +38,7 @@ function(Backbone, _, $, Handlebars, CollectionView, template, setImmediate) {
         // Call this function to notify the view that it has been opened (since is a tab)
         notifyOpened: function() {
             this.notifyIsInViewport();
+            this.$el.addClass("active");
 
             // HACK: give focus to the view, otherwise mousewheel scrolling won't work
             this.render();
@@ -46,6 +47,7 @@ function(Backbone, _, $, Handlebars, CollectionView, template, setImmediate) {
         // Call this function to notify the view that it has been opened (since is a tab)
         notifyClosed: function() {
             this.notifyIsNotInViewport();
+            this.$el.removeClass("active");
         },
 
         openAll: function() {

@@ -2,7 +2,7 @@ html, body {
     height: 100%;
 }
 
-.fill { 
+.fill {
     height: 100%;
     overflow: hidden;
 }
@@ -29,6 +29,7 @@ form label {
 
 .btn-link {
     padding: 0;
+    vertical-align: top;
 }
 
 .container-fluid {
@@ -52,34 +53,209 @@ form label {
 /* Turns dropdown into dropright for left-aligned nav-tabs */
 .tabs-left .nav-tabs .dropdown-menu {
     position: absolute;
-    left: 99px;
-    top: -2px;
+    left: -89px;
+    top: 35px;
+    border-radius: 0;
 }
+
+.tabs-left .nav-tabs .dropdown-menu li a {
+    padding: 10px 20px;
+}
+
+.tabs-left .nav-tabs .dropdown-menu li a:hover {
+    background: #03a9f4;
+}
+
 .caret-right {
     -webkit-transform: rotate(270deg);
 }
 
+/* Position tabs to the top */
+.tabs-left .nav-tabs {
+    float: right;
+    border: 0;
+    width: 100%;
+    height: auto;
+}
+
+.tabs-left .mainTabs {
+    background: #FFFFFF;
+    box-shadow: 2px 2px 4px rgba( 0, 0, 0, 0.1);
+}
+
+@media (max-width: 380px) {
+    .tabs-left .mainTabs {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+
+    .tabs-left .mainTabs #optionsTab {
+        order: 5;
+    }
+
+    .tabs-left .mainTabs #appRoutersTab {
+        order: 4;
+    }
+
+    .tabs-left .mainTabs #appCollectionsTab {
+        order: 3;
+    }
+
+    .tabs-left .mainTabs #appModelsTab {
+        order: 2;
+    }
+
+    .tabs-left .mainTabs #appViewsTab {
+        order: 1;
+    }
+
+}
+
+.tabs-left>.nav-tabs.nav-tabs>li>.dropdown-toggle>.caret {
+    transition: transform 0.3s ease-in-out;
+}
+
+.tabs-left>.nav-tabs.nav-tabs .open .dropdown-toggle {
+    color: #0088cc;
+    border: none;
+    background: transparent;
+}
+
+.tabs-left>.nav-tabs.nav-tabs .open .caret {
+    border-top-color: #0088cc;
+    border-bottom-color: #0088cc;
+
+    transform: rotate(360deg);
+}
+
+.tabs-left>.nav-tabs>li, .tabs-right>.nav-tabs>li {
+    float: right;
+    display: inline-block;
+}
+
+.tabs-left>.nav-tabs>li>a {
+    border-width: 0 0 2px 0;
+    border-radius: 0;
+}
+
+.tabs-left>.nav-tabs>li>a:hover, .tabs-left>.nav-tabs>li>a:focus {
+    border: 0;
+    border-bottom: 2px solid #B3E5FC;
+    background: transparent;
+}
+
+.tabs-left>.nav-tabs>li#appTitleTab {
+    float: left;
+}
+
+.tabs-left>.nav-tabs>li>p {
+    padding: 8px;
+    line-height: 20px;
+    margin: 0;
+}
+
+.tabs-left>.nav-tabs>li#appTitleTab>p {
+    font-family: sans-serif;
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 10px;
+}
+
 .mainTabsContent {
     position: relative; /* required for .tab-pane absolute positioning */
+    width: 100vw;
+    margin-top: 40px; /* Push the content down so it's visible */
 }
 
 .mainTabsContent>.tab-pane {
-    height: 100%;
+    height: calc(100% - 40px);
     overflow-y: auto;
     display: block !important; /* prevents render on tab change */
     position: absolute;
     width: 100%;
 }
 
+.appComponentsOptions li {
+    height: 40px;
+}
+
+/** Responsive **/
 .appComponentsOptions .navbar-inner {
     border: none;
     padding-left: 12px;
     padding-right: 0;
     box-shadow: none;
-    background-image: -webkit-linear-gradient(rgb(243,243,243), rgb(235,235,235));
 }
-.appComponentsOptions li {
-    height: 40px;
+
+@media (min-width: 1181px) {
+    .tab-pane .appComponentsOptions {
+        height: 0;
+        opacity: 0;
+    }
+
+    .tab-pane.active .appComponentsOptions {
+        position: fixed;
+        top: 0;
+        left: 160px;
+        height: initial;
+        opacity: 1;
+    }
+
+    .appComponentsOptions .navbar-inner {
+        background: transparent;
+    }
+
+    .appComponentsOptions .navbar-inner > .nav {
+        background: #FFF;
+    }
+
+    .appComponentsOptions .navbar-inner .searchForm .searchTerm {
+        border: none;
+        box-shadow: 1px 1px 2px rgba( 0, 0, 0, 0.1);
+    }
+
+    .appComponentsOptions .navbar-inner .sortForm select {
+        border: none;
+        box-shadow: 1px 1px 2px rgba( 0, 0, 0, 0.1);
+    }
+}
+
+@media (max-width: 1180px) {
+
+    .appComponentsOptions .navbar-inner {
+        background: transparent;
+        margin-top: 5px;
+    }
+
+    .appComponentsOptions .navbar-inner {
+        background: transparent;
+    }
+
+    .appComponentsOptions .navbar-inner .searchForm .searchTerm {
+        border: none;
+        box-shadow: 1px 1px 2px rgba( 0, 0, 0, 0.1);
+    }
+
+    .appComponentsOptions .navbar-inner .sortForm select {
+        border: none;
+        box-shadow: 1px 1px 2px rgba( 0, 0, 0, 0.1);
+    }
+}
+
+@media (max-width: 655px) {
+    #appTitleTab {
+        display: none;
+    }
+}
+
+@media (max-width: 500px) {
+
+    .tabs-left>.nav-tabs>li>a, .tabs-right>.nav-tabs>li>a {
+        min-width: initial;
+    }
+
 }
 
 .icon-chevron-bottom {
@@ -109,6 +285,9 @@ form label {
 
 .more {
     text-align: center;
+    width: 100%;
+    word-break: initial;
+    padding-bottom: 40px;
 }
 
 .appComponentsContent {
@@ -119,6 +298,11 @@ form label {
 .appComponentList>li {
     background-color: #EBEBEB;
     margin-bottom: 0;
+}
+
+.appComponentList {
+    background: transparent;
+    float: none !important;
 }
 
 .appComponentToggle {
@@ -135,8 +319,8 @@ form label {
 }
 
 @-webkit-keyframes highlight {
-    0%  { background-color: #57A0FF; 
-          color: black; }
+    0%  { background-color: #57A0FF;
+        color: black; }
 }
 .highlight {
     -webkit-animation: highlight 2s;
@@ -146,7 +330,7 @@ form label {
     background-color: white;
     border-style: solid;
     border-color: rgb(221, 221, 221);
-    border-width: 1px;
+    border-width: 0 1px 1px;
     border-collapse: collapse;
     -webkit-user-select: text;
 }
@@ -187,4 +371,47 @@ form label {
 
 .appComponentActions table {
     margin-bottom: 0;
+}
+
+.nav-tabs.nav-stacked>li>a {
+    background: #03A9F4;
+    color: #FFF;
+    text-shadow: none;
+}
+
+.nav-tabs.nav-stacked>li>a.collapse, .nav-tabs.nav-stacked>li>a.collapsed {
+    background: #FFF;
+    color: #333333;
+    text-shadow: none;
+}
+
+.nav-tabs.nav-stacked>li>a.collapse:hover, .nav-tabs.nav-stacked>li>a.collapsed:hover {
+    border-color: #64B5F6;
+    background: #64B5F6;
+    color: #FFF;
+}
+
+.appComponent > ul {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+}
+
+.appComponent > ul > li {
+    width: 25%;
+    padding: 5px;
+}
+
+.appComponent > ul > li:last-child {
+    width: 100%;
+}
+
+@media (max-width: 750px) {
+    .appComponent > ul {
+        flex-direction: column;
+    }
+
+    .appComponent > ul > li {
+        width: 100%;
+    }
 }
