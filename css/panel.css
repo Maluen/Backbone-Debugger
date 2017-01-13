@@ -82,6 +82,36 @@ form label {
     box-shadow: 2px 2px 4px rgba( 0, 0, 0, 0.1);
 }
 
+@media (max-width: 380px) {
+    .tabs-left .mainTabs {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+
+    .tabs-left .mainTabs #optionsTab {
+        order: 5;
+    }
+
+    .tabs-left .mainTabs #appRoutersTab {
+        order: 4;
+    }
+
+    .tabs-left .mainTabs #appCollectionsTab {
+        order: 3;
+    }
+
+    .tabs-left .mainTabs #appModelsTab {
+        order: 2;
+    }
+
+    .tabs-left .mainTabs #appViewsTab {
+        order: 1;
+    }
+
+}
+
 .tabs-left>.nav-tabs.nav-tabs>li>.dropdown-toggle>.caret {
     transition: transform 0.3s ease-in-out;
 }
