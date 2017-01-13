@@ -29,6 +29,7 @@ form label {
 
 .btn-link {
     padding: 0;
+    vertical-align: top;
 }
 
 .container-fluid {
@@ -301,7 +302,6 @@ form label {
 
 .appComponentList {
     background: transparent;
-    padding-bottom: 40px;
     float: none !important;
 }
 
@@ -399,12 +399,11 @@ form label {
 
 .appComponent > ul > li {
     width: 25%;
-    padding: 20px 5px;
+    padding: 5px;
 }
 
 .appComponent > ul > li:last-child {
     width: 100%;
-    padding: 0;
 }
 
 @media (max-width: 750px) {
