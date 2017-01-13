@@ -290,7 +290,7 @@ form label {
 
 @-webkit-keyframes highlight {
     0%  { background-color: #57A0FF;
-          color: black; }
+        color: black; }
 }
 .highlight {
     -webkit-animation: highlight 2s;
@@ -375,4 +375,14 @@ form label {
 .appComponent > ul > li:last-child {
     width: 100%;
     padding: 0;
+}
+
+@media (max-width: 750px) {
+    .appComponent > ul {
+        flex-direction: column;
+    }
+
+    .appComponent > ul > li {
+        width: 100%;
+    }
 }
