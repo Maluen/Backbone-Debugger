@@ -64,7 +64,7 @@
             } else {
                 for(var i in a){
                     if (a.hasOwnProperty(i)) {
-                        if(b[i] === undefined) {
+                        if(b && !b.hasOwnProperty(i)) {
                             aplus.push(i);
                         }
                     }
@@ -78,7 +78,7 @@
             } else {
                 for(var j in b){
                     if (b.hasOwnProperty(j)) {
-                        if(a[j] === undefined) {
+                        if(a && !a.hasOwnProperty(j)) {
                             bplus.push(j);
                         }
                     }
@@ -199,7 +199,7 @@
     };
 
     var watchOne = function (obj, prop, watcher, level, addNRemove) {
-        if ((typeof obj == "string") || (!(obj instanceof Object) && !isArray(obj))) { //accepts only objects and array (not string)
+        if ((typeof obj == "string") || (!(obj instanceof Object) && !isArray(obj)) || prop instanceof Object) { //accepts only objects and array (not string)
             return;
         }
 
