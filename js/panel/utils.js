@@ -8,13 +8,20 @@ define(["underscore", "jquery"], function(_, $) {
         this.httpRequest = function(method, url, callback, disableCaching) {
             var requestObj = {
                 type: method,
-                url: url
+                url: url,
+                dataType: 'text' // disable automatic js execution
             };
             if (disableCaching === true) {
                 requestObj.cache = false;
             }
 
-            $.ajax(requestObj).always(callback); // the callback is called also if the request fails
+            $.ajax(requestObj)
+                .done(function(data) {
+                    callback(data);
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                    console.error('httpRequest fail', url, textStatus, errorThrown);
+                })
         };
 
         // Call onComplete with an array containing the files data.
