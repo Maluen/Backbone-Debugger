@@ -1,3 +1,8 @@
+## v0.4.1
+
+- $.ajax: prevent automatic js execution (#52)
+- Add checks in WatchJS to avoid endless loop (See marionettejs/marionette.inspector#331 and melanke/Watch.JS#110)
+
 ## v0.4
 
 - New responsive theme #50
