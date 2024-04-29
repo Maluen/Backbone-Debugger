@@ -31,8 +31,8 @@ define(["backbone", "underscore", "inspectedPageClient"], function(Backbone, _, 
         // the beginning of each frame.
         this.activate = function() {
             inspectedPageClient.reloadInjecting(
-                chrome.extension.getURL("js/backboneAgent")//,
-                //chrome.extension.getURL("js/preprocessor/preprocessor.js")
+                chrome.runtime.getURL("js/backboneAgent")//,
+                //chrome.runtime.getURL("js/preprocessor/preprocessor.js")
             );
         };
 

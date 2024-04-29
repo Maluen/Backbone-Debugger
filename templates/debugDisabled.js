@@ -1,3 +1,8 @@
+define(["underscore"],
+function(_) {
+    return () => `
 <div id="debugDisabled" class="container-fluid">
     <a href="#restartAppInDebugMode" class="btn btn-link">Restart the application in debug mode.</a>
 </div>
+`;
+});

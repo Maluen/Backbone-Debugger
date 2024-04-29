@@ -1,8 +1,8 @@
 /* This collection is sorted in reverse order (latest first) */
 
 define(["backbone", "underscore", "backboneAgentClient",
-        "collections/Collection", "models/AppComponentAction", "setImmediate"],
-function(Backbone, _, backboneAgentClient, Collection, AppComponentAction, setImmediate) {
+        "collections/Collection", "models/AppComponentAction"],
+function(Backbone, _, backboneAgentClient, Collection, AppComponentAction) {
 
     var AppComponentActions = Collection.extend({
 

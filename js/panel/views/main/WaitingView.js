@@ -1,11 +1,11 @@
 /* View activated while waiting for the inspected page loading. */
 
-define(["backbone", "underscore", "jquery", "views/View", "handlebars", "text!templates/waiting.html"],
-function(Backbone, _, $, View, Handlebars, template) {
+define(["backbone", "underscore", "jquery", "views/View", "templates/waiting"],
+function(Backbone, _, $, View, template) {
 
     var WaitingView = View.extend({
 
-        template: Handlebars.compile(template),
+        template: template,
 
         // the waiting text to display
         waitingPhase: undefined,

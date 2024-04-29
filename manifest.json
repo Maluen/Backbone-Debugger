@@ -3,19 +3,18 @@
   "version": "0.4.1",
   "description": "Developer Tools extension for debugging Backbone.js applications.",
   "author": "Manuel Dell'Elce and contributors",
-  "minimum_chrome_version": "22.0",
+  "minimum_chrome_version": "110",
   "icons": {
     "16": "img/extension16.png",
     "48": "img/extension48.png",
     "128": "img/extension128.png"
   },
-  "manifest_version": 2,
+  "manifest_version": 3,
   
   "devtools_page": "devtools.html",
   
   "background": {
-    "scripts": ["js/background.js"],
-    "persistent": false
+    "service_worker": "js/background.js"
   },
 
   "content_scripts": [
@@ -29,11 +28,11 @@
   ],
 
   "web_accessible_resources": [
-    "js/lib/*",
-    "js/backboneAgent/*"
+    {
+      "resources": ["js/lib/*", "js/backboneAgent/*"],
+      "matches": ["<all_urls>"]
+    }
   ],
-
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
 
   "permissions": [
     "tabs"

@@ -1,12 +1,12 @@
 /* View for AppView model */
 
 define(["backbone", "underscore", "jquery", "views/AppComponentView",
-        "handlebars", "text!templates/appView.html"],
-function(Backbone, _, $, AppComponentView, Handlebars, template) {
+        "templates/appView"],
+function(Backbone, _, $, AppComponentView, template) {
 
     var AppViewView = AppComponentView.extend({
 
-        template: Handlebars.compile(template),
+        template: template,
 
         events: $.extend({
             "click .printElement": "printElement",

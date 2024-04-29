@@ -1,8 +1,8 @@
 /* L'aggiornamento in tempo reale viene attivato automaticamente al termine della fetch. */
 
 define(["backbone", "underscore", "collections/AppComponentActions", 
-        "backboneAgentClient", "setImmediate"],
-function(Backbone, _, AppComponentActions, backboneAgentClient, setImmediate) {
+        "backboneAgentClient"],
+function(Backbone, _, AppComponentActions, backboneAgentClient) {
 
     var AppComponent = Backbone.Model.extend({
 
@@ -39,7 +39,7 @@ function(Backbone, _, AppComponentActions, backboneAgentClient, setImmediate) {
                 return appComponentInfo.attributes;
             }, [this.category, this.index],
             _.bind(function(appComponentAttributes) { // on executed
-                setImmediate(_.bind(function() { // prevent UI blocking
+                setTimeout(_.bind(function() { // prevent UI blocking
                     // reset attributes
                     this.clear({silent: true});
                     this.set(appComponentAttributes);
@@ -54,7 +54,7 @@ function(Backbone, _, AppComponentActions, backboneAgentClient, setImmediate) {
             // (per evitare che la logica venga eseguita più di una volta)
             if (this.isRealTimeUpdateActive) return;
 
-            setImmediate(_.bind(function() { // binding many consecutive events freezes the ui (happens if there are a lot of app components)
+            setTimeout(_.bind(function() { // binding many consecutive events freezes the ui (happens if there are a lot of app components)
                 var messageName = "backboneAgent:"+this.category+":"+this.index+":change";
                 this.listenTo(backboneAgentClient, messageName, function(message) {
                     var changeInfo = message.data;
@@ -70,7 +70,7 @@ function(Backbone, _, AppComponentActions, backboneAgentClient, setImmediate) {
 
                 });
 
-                // l'avvio della realTimeUpdate è rimandato con la setImmediate, per cui eventuali report
+                // l'avvio della realTimeUpdate è rimandato con la setTimeout, per cui eventuali report
                 // inviati tra l'esecuzione e l'effettivo avvio di questa non sono stati gestiti,
                 // facendo la fetch adesso si ottiene allora lo stato comprensivo degli eventuali cambiamenti,
                 // dopodichè i prossimi report saranno gestiti.

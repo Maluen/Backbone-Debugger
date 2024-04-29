@@ -87,7 +87,7 @@ var contentScript = new (function() { // singleton
 		this.pagePortIn.addEventListener('message', (function(event) {
 			var message = event.data;
 			message.frameURL = this.frameURL;
-			chrome.extension.sendMessage(message);
+			chrome.runtime.sendMessage(message);
 		}).bind(this));
 		this.pagePortIn.start();
 	};
@@ -107,7 +107,7 @@ var contentScript = new (function() { // singleton
 		// Sends a message to the background when the DOM of the inspected page is ready
 		// (typically used by the panel to check if the backbone agent is on the page).
 		window.addEventListener('DOMContentLoaded', function() {
-		    chrome.extension.sendMessage({
+		    chrome.runtime.sendMessage({
 		        target: 'page',
 		        name: 'ready'
 		    });

@@ -1,10 +1,10 @@
-define(["backbone", "underscore", "jquery", "handlebars", "views/containers/CollectionView",
-        "text!templates/appComponents.html", "setImmediate"],
-function(Backbone, _, $, Handlebars, CollectionView, template, setImmediate) {
+define(["backbone", "underscore", "jquery", "views/containers/CollectionView",
+        "templates/appComponents"],
+function(Backbone, _, $, CollectionView, template) {
 
     var AppComponentsView = CollectionView.extend({
 
-        template: Handlebars.compile(template),
+        template: template,
         
         CollectionItemView: undefined, // oggetto sottotipo di AppComponentView
         
@@ -62,7 +62,7 @@ function(Backbone, _, $, Handlebars, CollectionView, template, setImmediate) {
             this.forEachItemView(_.bind(function(componentView, i, collectionItemViews) {
                 // don't move this outside or the operation will never end if there aren't item views
                 this.openAllInProgress = true;
-                setImmediate(_.bind(function() { // smooth page reflow (one component view at a time)
+                setTimeout(_.bind(function() { // smooth page reflow (one component view at a time)
                     if (componentView.isShown()) componentView.open();
                     if (i == collectionItemViewsLength-1) {
                         // just opened the last item, operation completed
@@ -81,7 +81,7 @@ function(Backbone, _, $, Handlebars, CollectionView, template, setImmediate) {
 
             this.forEachItemView(_.bind(function(componentView, i, collectionItemViews) {
                 this.closeAllInProgress = true;
-                setImmediate(_.bind(function() { // smooth page reflow (one component view at a time)
+                setTimeout(_.bind(function() { // smooth page reflow (one component view at a time)
                     if (componentView.isShown()) componentView.close();
                     if (i == collectionItemViewsLength-1) {
                         // just closed the last item, operation completed

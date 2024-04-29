@@ -1,3 +1,6 @@
+define(["underscore"],
+function(_) {
+    return () => `
 <div class="container-fluid fill">
     <div class="tabbable tabs-left fill"> <!-- Only required for left/right tabs -->
         <ul class="nav nav-tabs mainTabs">
@@ -38,4 +41,5 @@
         </div>
     </div>
 </div>
-
+`;
+});

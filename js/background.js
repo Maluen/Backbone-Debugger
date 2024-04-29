@@ -4,6 +4,7 @@
  tab they belong to.
 */
 
+var panelConnectedCount = 0;
 // Hash <panel tab id, panel commmunication port>
 var panelPorts = {};
 // Hash <panel tab id, panel frameURL>
@@ -12,8 +13,10 @@ var panelFrames = {};
 var panelClientIndexes = {};
 
 // Panel registration
-chrome.extension.onConnect.addListener(function(port) {
+chrome.runtime.onConnect.addListener(function(port) {
     if (port.name !== 'devtoolspanel') return;
+    panelConnectedCount += 1;
+    keepAlive();
 
     var tabId;
 
@@ -21,12 +24,14 @@ chrome.extension.onConnect.addListener(function(port) {
         if (message.name == 'identification') {
             tabId = message.data;
             panelPorts[tabId] = port;
-
-            port.onDisconnect.addListener(function() {
-                handlePanelDisconnect(tabId);
-            });
         } else {
             handlePanelMessage(message, tabId);
+        }
+    });
+    port.onDisconnect.addListener(function() {
+        panelConnectedCount -= 1;
+        if (typeof tabId !== 'undefined') { // after identification
+            handlePanelDisconnect(tabId);
         }
     });
 });
@@ -78,7 +83,7 @@ var handleContentScriptMessage = function(message, tabId) {
 };
 
 // Receives messages from the content scripts
-chrome.extension.onMessage.addListener(function(message, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     if (sender.tab) {
         var tabId = sender.tab.id;
         handleContentScriptMessage(message, tabId);
@@ -104,8 +109,18 @@ chrome.tabs.onUpdated.addListener(function(updatedTabId, changeInfo) {
 });
 
 // Open a notification page when the extension gets updated
-chrome.runtime.onInstalled.addListener(function(details) {
-    if (details.reason == 'update') {
-        chrome.tabs.create({url: chrome.extension.getURL('updated.html')});
+// chrome.runtime.onInstalled.addListener(function(details) {
+//     if (details.reason == 'update') {
+//         chrome.tabs.create({url: chrome.runtime.getURL('updated.html')});
+//     }
+// });
+
+// Based on https://stackoverflow.com/a/66618269
+const keepAlive = () => {
+    if (panelConnectedCount > 0) {
+        chrome.runtime.getPlatformInfo();
     }
-});
+};
+const startKeepAliveInterval = () => setInterval(keepAlive, 20e3);
+chrome.runtime.onStartup.addListener(startKeepAliveInterval);
+startKeepAliveInterval();

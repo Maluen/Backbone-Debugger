@@ -1,10 +1,10 @@
 define(["backbone", "underscore", "jquery", "views/AppComponentView",
-        "handlebars", "text!templates/appCollection.html"],
-function(Backbone, _, $, AppComponentView, Handlebars, template) {
+        "templates/appCollection"],
+function(Backbone, _, $, AppComponentView, template) {
 
     var AppCollectionView = AppComponentView.extend({
 
-        template: Handlebars.compile(template),
+        template: template,
 
         templateData: function() {
             var templateData = AppComponentView.prototype.templateData.apply(this, arguments);

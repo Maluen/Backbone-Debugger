@@ -5,8 +5,8 @@
             ciò è necessario per il funzionamento della gestione separata di tale collectionEl
             (vedi metodo render). */
 
-define(["backbone", "underscore", "jquery", "views/View", "handlebars", "setImmediate"],
-function(Backbone, _, $, View, Handlebars, setImmediate) {
+define(["backbone", "underscore", "jquery", "views/View"],
+function(Backbone, _, $, View) {
 
     var AppComponentsView = View.extend({
 
@@ -102,7 +102,7 @@ function(Backbone, _, $, View, Handlebars, setImmediate) {
         },
 
         handleReset: function() {
-            setImmediate(_.bind(function() { // needed to handle the reset after pending deferred adds
+            setTimeout(_.bind(function() { // needed to handle the reset after pending deferred adds
                 // handle new items
                 this.clearItems();
                 for (var i=0,l=this.collection.length; i<l; i++) {
@@ -130,10 +130,10 @@ function(Backbone, _, $, View, Handlebars, setImmediate) {
 
         // Aggiunge l'elemento e lo visualizza nel DOM
         handleNewItem: function(collectionItem) {
-            // don't move the indexOf calculation inside the setImmediate or we'll have an invalid value if
+            // don't move the indexOf calculation inside the setTimeout or we'll have an invalid value if
             // other new items are prepended during the waiting time
             var collectionItemIndex = this.collection.indexOf(collectionItem);
-            setImmediate(_.bind(function() { // prevents UI blocking
+            setTimeout(_.bind(function() { // prevents UI blocking
                 var newCollectionItemView = this.addItem(collectionItem, collectionItemIndex);
 
                 // find the DOM position in which to add the new view element:
@@ -210,13 +210,13 @@ function(Backbone, _, $, View, Handlebars, setImmediate) {
             });
 
             this.listenTo(this.collection, "visible:"+collectionItem.index, function() {
-                setImmediate(_.bind(function() { // defer to prevent UI blocking
+                setTimeout(_.bind(function() { // defer to prevent UI blocking
                     collectionItemView.show(true);
                 }, this));
             });
 
             this.listenTo(this.collection, "hidden:"+collectionItem.index, function() {
-                setImmediate(_.bind(function() { // defer to prevent UI blocking
+                setTimeout(_.bind(function() { // defer to prevent UI blocking
                     collectionItemView.show(false);
                 }, this));
             });
@@ -281,7 +281,7 @@ function(Backbone, _, $, View, Handlebars, setImmediate) {
         readMoreIfNeeded: function() {
             if (!this.started) return; // prevent premature call
 
-            setImmediate(_.bind(function() { // wait end of pending browser renders (so to work on updated state)
+            setTimeout(_.bind(function() { // wait end of pending browser renders (so to work on updated state)
                 if (this.isReadMoreNeeded()) {
                     this.readMore(_.bind(function() { // on complete
                         this.readMoreIfNeeded();

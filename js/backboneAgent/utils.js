@@ -204,16 +204,12 @@ Modules.set('utils', function() {
 
             if (options.preserveArity) {
                 var arity = originalFunction.length;
-                var params = [];
-                for (var i=0; i<arity; i++) {
-                  params[i] = "param"+i;
-                }
-                var paramsString = params.join(', ');
-
-                // wrap the patched function in another function with the original arity
-                object[functionName] = new Function(['fn'], 'return function('+paramsString+') { ' +
-                    'return fn.apply(this, arguments);' +
-                '};')(object[functionName]);
+                Object.defineProperty(object[functionName], 'length', {
+                    configurable: true,
+                    enumerable: true,
+                    value: arity,
+                    writable: true,
+                });
             }
 
             // When calling onString on the patched function, call the originalFunction onString.

@@ -1,10 +1,13 @@
+define(["underscore"],
+function(_) {
+    return ({ index, component_name, isOpen }) => `
 <a class="appComponentToggle collapsed btn btn-link"
    data-toggle="collapse" 
-   data-target="#router{{index}}">
-   <span>Router {{index}} {{#unlessNull component_name}} : {{component_name}} {{/unlessNull}}</span>
+   data-target="#router${_.escape(index)}">
+   <span>Router ${_.escape(index)} ${component_name !== null ? _.escape(component_name) : ''}</span>
 </a>
 
-<div id="router{{index}}" class="appComponent collapse {{#if isOpen}}in{{/if}}">
+<div id="router${_.escape(index)}" class="appComponent collapse ${isOpen ? `in` : ''}">
     
     <ul>
         <!--
@@ -26,3 +29,5 @@
         </li>
     </ul>
 </div>
+`;
+});

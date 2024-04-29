@@ -10,9 +10,6 @@ require.config({
         backbone: '../lib/backbone',
         text: '../lib/text',
         bootstrap: '../lib/bootstrap.min',
-        handlebars_original: '../lib/handlebars',
-        handlebars: '../lib/handlebars-blocks',
-        setImmediate: '../lib/setImmediate'
     },
     // non-amd library loaders
     shim: {
@@ -22,27 +19,20 @@ require.config({
         'underscore': {
             exports: '_'
         },
+        'bootstrap': {
+            deps: ['jquery']
+        },
         'backbone': {
-            deps: ['underscore', 'jquery'],
+            deps: [
+                'underscore',
+                'jquery',
+                'bootstrap', // automatically require bootstrap when requiring an handlebars template
+            ],
             init: function () {
                 // exports
                 return this.Backbone.noConflict();
             }
         },
-        'bootstrap': {
-            deps: ['jquery']
-        },
-        'handlebars_original': {
-            deps: ['bootstrap'], // automatically require bootstrap when requiring an handlebars template
-            exports: 'Handlebars'
-        },
-        'handlebars': { // handlebars with custom block helpers
-            deps: ['handlebars_original'],
-            exports: 'Handlebars'
-        },
-        'setImmediate': {
-            exports: 'setImmediate'
-        }
     }
 });
 

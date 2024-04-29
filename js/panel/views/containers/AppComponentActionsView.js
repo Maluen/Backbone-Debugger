@@ -1,11 +1,11 @@
-define(["backbone", "underscore", "jquery", "handlebars", "views/containers/CollectionView",
-        "views/AppComponentActionView", "text!templates/appComponentActions.html"],
-function(Backbone, _, $, Handlebars, CollectionView, AppComponentActionView, template) {
+define(["backbone", "underscore", "jquery", "views/containers/CollectionView",
+        "views/AppComponentActionView", "templates/appComponentActions"],
+function(Backbone, _, $, CollectionView, AppComponentActionView, template) {
 
     var AppComponentActionsView = CollectionView.extend({
 
         className: 'appComponentActions',
-        template: Handlebars.compile(template),
+        template: template,
 
         CollectionItemView: AppComponentActionView,
 

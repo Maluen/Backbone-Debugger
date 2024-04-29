@@ -1,11 +1,11 @@
 /* NOTE: the passed model must have already been fetched or have valid attributes. */
 
-define(["backbone", "underscore", "jquery", "views/View", "handlebars", "text!templates/appComponentAction.html"],
-function(Backbone, _, $, View, Handlebars, template) {
+define(["backbone", "underscore", "jquery", "views/View", "templates/appComponentAction"],
+function(Backbone, _, $, View, template) {
 
     var AppComponentActionView = View.extend({
 
-        template: Handlebars.compile(template),
+        template: template,
         tagName: "tr",
 
         initialize: function(options) {

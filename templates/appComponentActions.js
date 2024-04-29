@@ -1,3 +1,6 @@
+define(["underscore"],
+function(_) {
+    return ({ sortType, thereAreItems, isReadMoreHidden }) => `
 <form class="searchForm navbar-form pull-left">
     <label>
         <input class="searchTerm" type="text" placeholder="Search..." />
@@ -8,12 +11,12 @@
     <label>
         Sort:
         <select>
-            <option value="normal" {{#compare sortType 'normal'}}selected="selected"{{/compare}}>Oldest first</option>
-            <option value="reverse" {{#compare sortType 'reverse'}}selected="selected"{{/compare}}>Newest first</option>
+            <option value="normal" ${sortType === 'normal' ? `selected="selected"` : ''}>Oldest first</option>
+            <option value="reverse" ${sortType === 'reverse' ? `selected="selected"` : ''}>Newest first</option>
         </select>
     </label>
 </form>
-{{#if thereAreItems}}
+${thereAreItems ? `
 <table class="table table-striped table-bordered table-condensed">
     <thead>
         <tr>
@@ -24,10 +27,12 @@
     </thead>
     <tbody data-placeholder="collectionEl"></tbody>
 </table>
-{{else}}
+` : `
 <p class="clear">No results.</p>
-{{/if}}
+`}
 
 <div class="more">
-    <a class="readMore btn-link {{#isReadMoreHidden}}hidden{{/isReadMoreHidden}}">Load more</a>
+    <a class="readMore btn-link ${isReadMoreHidden ? `hidden` : ''}">Load more</a>
 </div>
+`;
+});
