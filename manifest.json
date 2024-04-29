@@ -1,6 +1,6 @@
 {
   "name": "Backbone Debugger",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "Developer Tools extension for debugging Backbone.js applications.",
   "author": "Manuel Dell'Elce and contributors",
   "minimum_chrome_version": "110",

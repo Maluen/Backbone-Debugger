@@ -1,3 +1,7 @@
+## v0.5.0
+
+- Manifest V3
+
 ## v0.4.1
 
 - $.ajax: prevent automatic js execution (#52)
